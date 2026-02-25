@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMPS Tech | Unified Portal</title>
+    <!-- Premium Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- 3D Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-glow: rgba(79, 70, 229, 0.2);
+            --dark: #0F172A;
+            --slate: #64748B;
+            --bg: #FFFFFF;
+            --surface: rgba(255, 255, 255, 0.7);
+            --border: rgba(226, 232, 240, 0.8);
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --accent: #F43F5E;
+            --emerald: #10B981;
+            --amber: #F59E0B;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --panel-bg: #F8FAFC;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 3D Visual Layer */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
+        }
+
+        /* Top Status Ticker */
+        .ticker-wrap {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 40px;
+            background: var(--dark);
+            color: #fff;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ticker-move {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker-scroll 50s linear infinite;
+            gap: 6rem;
+        }
+
+        @keyframes ticker-scroll {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Navigation (Home/Landing View) */
+        #top-nav {
+            position: fixed;
+            top: 40px;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px;
+            z-index: 900;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: -1.5px;
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        .logo b {
+            color: var(--primary);
+        }
+
+        .btn-minimal {
+            background: var(--dark);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 11px;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-minimal:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        /* Home Page Hero */
+        .hero {
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            align-items: center;
+            padding: 0 100px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-text h1 {
+            font-size: 5.5rem;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -4px;
+            margin-bottom: 30px;
+            color: var(--dark);
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            color: var(--slate);
+            line-height: 1.6;
+            margin-bottom: 45px;
+            max-width: 500px;
+            font-weight: 500;
+        }
+
+        /* PORTAL CORE LAYOUT */
+        #view-portal {
+            display: flex;
+            height: 100vh;
+            padding: 20px;
+            gap: 20px;
+            background: transparent;
+            position: relative;
+            z-index: 1;
+            margin-top: 40px;
+            height: calc(100vh - 40px);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            padding: 40px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+            height: 100%;
+        }
+
+        .sidebar-link {
+            padding: 16px 20px;
+            border-radius: 18px;
+            color: var(--slate);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-link:hover {
+            color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .sidebar-link.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 12px 25px -5px var(--primary-glow);
+        }
+
+        .profile-stack {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .profile-card {
+            padding: 16px;
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-circle {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .btn-terminate {
+            width: 100%;
+            padding: 14px;
+            background: #fff;
+            border: 1px solid #fee2e2;
+            border-radius: 16px;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-terminate:hover {
+            background: #fee2e2;
+        }
+
+        /* Workspace Styling */
+        .workspace {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .card {
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            background: #fff;
+            border: 1px solid var(--border);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Typography */
+        .info-label {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--slate);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .info-value {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .info-sub {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--slate);
+            margin-top: 4px;
+        }
+
+        .presence-card {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 6px solid var(--primary);
+        }
+
+        .btn-claim {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            background: var(--dark);
+            color: #fff;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .btn-claim:hover {
+            background: var(--primary);
+        }
+
+        /* Metrics Visualization */
+        .stats-ring {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .stats-count {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: var(--dark);
+        }
+
+        .progress-track {
+            height: 6px;
+            background: var(--panel-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: 1s ease-out;
+        }
+
+        /* Matrix Container */
+        .matrix-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+            margin-top: 15px;
+        }
+
+        .matrix-node {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 4px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .matrix-node.verified {
+            background: var(--emerald);
+            border-color: var(--emerald);
+        }
+
+        .matrix-node.pending {
+            background: var(--amber);
+            border-color: var(--amber);
+            animation: pulse-amber 2s infinite;
+        }
+
+        @keyframes pulse-amber {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Attendance Ledger Styling */
+        .att-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .calendar-header {
+            font-size: 10px;
+            font-weight: 900;
+            text-align: center;
+            color: var(--slate);
+            text-transform: uppercase;
+            padding: 10px 0;
+        }
+
+        .calendar-cell {
+            aspect-ratio: 1;
+            background: var(--panel-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 800;
+            position: relative;
+            border: 1px solid transparent;
+            transition: 0.2s;
+            cursor: default;
+        }
+
+        .calendar-cell.today {
+            border: 2px solid var(--primary);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 8px;
+        }
+
+        .status-present {
+            background: var(--emerald);
+            box-shadow: 0 0 8px var(--emerald);
+        }
+
+        .status-pending-dot {
+            background: var(--amber);
+            box-shadow: 0 0 8px var(--amber);
+        }
+
+        .status-absent {
+            background: var(--accent);
+        }
+
+        .status-holiday {
+            background: #8B5CF6;
+        }
+
+        .attendance-log-item {
+            padding: 16px;
+            border-radius: 16px;
+            background: #fff;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        /* Task & Assignments Hub */
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .task-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            border-left: 6px solid var(--slate);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .task-card.pending {
+            border-left-color: var(--primary);
+        }
+
+        .discussion-box {
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 16px;
+            max-height: 150px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .comment {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .submission-portal {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .submission-portal input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--panel-bg);
+        }
+
+        /* Notifications */
+        .notif-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notif-item {
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: #fff;
+            position: relative;
+            border-left-width: 4px;
+            transition: 0.2s;
+        }
+
+        .notif-public {
+            border-left-color: var(--primary);
+        }
+
+        .notif-private {
+            border-left-color: var(--accent);
+        }
+
+        /* Chat System */
+        .chat-layout {
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            background: #fff;
+        }
+
+        .chat-header {
+            padding: 24px 40px;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: var(--panel-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 100px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-verified {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .badge-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f1f5f9;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="canvas-container"></div>
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Ticker Bar -->
+    <div id="ticker-bar" class="ticker-wrap hidden">
+        <div class="ticker-move">
+            <span>MORNING PHASE LOCKS AT 10:00 AM SHARP. ENSURE YOUR SYNC IS COMPLETE.</span>
+            <span>SYSTEM UPDATE: DUAL-TRACK LEDGER IS NOW OPERATING ON v6.0 PROTOCOLS.</span>
+            <span>R&D ADVISORY: PROJECT TRACK ALPHA DOCUMENTATION DUE FRIDAY.</span>
+        </div>
+    </div>
+
+    <!-- Navigation (Landing) -->
+    <nav id="top-nav" class="hidden">
+        <div class="logo"><i class="fas fa-graduation-cap"></i><span>SMPS <b>Tech</b></span></div>
+        <button onclick="App.showLogin()" class="btn-minimal">Portal Launch</button>
+    </nav>
+
+    <!-- VIEW: HOME -->
+    <div id="view-home" class="hidden">
+        <section class="hero">
+            <div class="hero-text">
+                <span
+                    style="font-weight:800; font-size:10px; color:var(--primary); letter-spacing:3px; text-transform:uppercase; background:var(--primary-glow); padding:8px 16px; border-radius:30px;">Digital
+                    Ledger v6.0</span>
+                <h1 style="margin-top: 25px;">Manage Your <br /><span style="color: var(--primary);">Academic &
+                        <br />Project Journey</span></h1>
+                <p>An integrated workspace for students to track dual-project technical lifecycles, verify presence, and
+                    sync with mentor nodes.</p>
+                <button onclick="App.showLogin()" class="btn-minimal"
+                    style="padding:22px 50px; border-radius:20px; background:var(--primary);">Initialize Workspace <i
+                        class="fas fa-arrow-right" style="margin-left:15px;"></i></button>
+            </div>
+            <div></div>
+        </section>
+    </div>
+
+    <!-- VIEW: LOGIN -->
+    <div id="view-login" class="hidden"
+        style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div class="card"
+            style="max-width: 440px; width: 100%; padding: 60px; border-radius: 40px; position: relative;">
+            <button onclick="App.showHome()"
+                style="background:none; border:none; color: var(--slate); cursor:pointer; margin-bottom: 30px;"><i
+                    class="fas fa-arrow-left"></i></button>
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-weight: 900; letter-spacing: -2px; font-size: 2.2rem;">Identify</h2>
+                <p
+                    style="font-size: 10px; font-weight: 800; color: var(--slate); text-transform: uppercase; letter-spacing: 3px; margin-top: 5px;">
+                    Access Authorized Ledger</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group" style="margin-bottom: 25px;">
+                    <label class="info-label">Registration ID (SRN)</label>
+                    <input type="text" id="login-srn"
+                        style="width: 100%; padding: 18px; border-radius: 16px; border: 1px solid var(--border); font-weight: 800; text-transform: uppercase;"
+                        placeholder="SRN001" required>
+                </div>
+                <div class="input-group" style="margin-bottom: 25px;">
+                    <label class="info-label">Access Key</label>
+                    <input type="password" id="login-pass"
+                        style="width: 100%; padding: 18px; border-radius: 16px; border: 1px solid var(--border); font-weight: 800;"
+                        placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-claim" style="background: var(--primary);">Authorize Session</button>
+                <p
+                    style="text-align: center; margin-top: 30px; font-size: 10px; color: var(--slate); font-weight: 700; font-style: italic;">
+                    SRN001 / student123</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIEW: PORTAL -->
+    <div id="view-portal" class="hidden">
+        <aside class="sidebar">
+            <div class="logo"><i class="fas fa-graduation-cap"></i><span>SMPS <b>Core</b></span></div>
+            <nav style="flex: 1; margin-top: 40px;">
+                <div onclick="App.switchTab('dashboard')" id="nav-dashboard" class="sidebar-link active"><i
+                        class="fas fa-grid-2"></i> Dashboard</div>
+                <div onclick="App.switchTab('attendance-ledger')" id="nav-attendance-ledger" class="sidebar-link"><i
+                        class="fas fa-calendar-check"></i> Attendance</div>
+                <div onclick="App.switchTab('projects')" id="nav-projects" class="sidebar-link"><i
+                        class="fas fa-microchip"></i> My Projects</div>
+                <div onclick="App.switchTab('tasks')" id="nav-tasks" class="sidebar-link"><i
+                        class="fas fa-list-check"></i> Task Center</div>
+                <div onclick="App.switchTab('comms')" id="nav-comms" class="sidebar-link"><i
+                        class="fas fa-comment-dots"></i> Sync Hub</div>
+            </nav>
+            <div class="profile-stack">
+                <div class="profile-card">
+                    <div id="usr-avatar-side" class="avatar-circle">S</div>
+                    <div class="profile-info">
+                        <h4 id="disp-name-side">Sanjana G M</h4>
+                        <p id="disp-srn-side">SRN001</p>
+                    </div>
+                </div>
+                <button onclick="App.logout()" class="btn-terminate"><i class="fas fa-power-off"></i> Sign Out</button>
+            </div>
+        </aside>
+
+        <main class="workspace">
+            <!-- TAB: Dashboard -->
+            <div id="tab-dashboard">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
+                    <div>
+                        <h2 style="font-size: 2.5rem; font-weight: 900; letter-spacing: -2px;">Command Station</h2>
+                        <div id="real-time-clock"
+                            style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-top: 5px;">Feb
+                            25, 2026 • 02:04:17 PM</div>
+                    </div>
+                    <span class="badge badge-verified"
+                        style="background:rgba(16,185,129,0.1); color:var(--emerald);">LIVE SYNC ACTIVE</span>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- Column 1 Cards -->
+                    <div class="card">
+                        <span class="info-label">Identity Node</span>
+                        <div style="margin-top: 10px;">
+                            <h3 class="info-value" id="disp-name">Sanjana G M</h3>
+                            <p class="info-sub">Electronics • SEM 5 • SRN001</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <span class="info-label">Technical Mentor</span>
+                        <div style="margin-top: 10px;">
+                            <h3 class="info-value" style="color: var(--primary);">Dr. Rajesh Kumar</h3>
+                            <p class="info-sub">Technical Head</p>
+                        </div>
+                    </div>
+
+                    <div class="card presence-card">
+                        <div style="flex: 1;">
+                            <span class="info-label">Presence Protocol</span>
+                            <div style="margin-top: 10px;"><button onclick="App.markAttendance()" id="btn-mark-att"
+                                    class="btn-claim">CLAIM DAY ENTRY</button></div>
+                        </div>
+                        <div style="text-align: right; padding-left: 20px; border-left: 1px solid var(--border);">
+                            <span class="info-label">Status</span>
+                            <div id="att-status-badge" style="margin-top: 5px;"><span class="badge"
+                                    style="background: #f1f5f9; color: var(--slate);">OFFLINE</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Attendance Analytics -->
+                    <div class="card" style="grid-column: span 2; display: flex; gap: 30px; align-items: center;">
+                        <div style="flex: 1;">
+                            <span class="info-label">Attendance Metrics Analysis</span>
+                            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 12px;">
+                                <div
+                                    style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800;">
+                                    <span>Verified Presence</span>
+                                    <span id="stat-att-days-val">18 Days</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div id="stat-att-bar" class="progress-fill"
+                                        style="width: 60%; background: var(--emerald);"></div>
+                                </div>
+
+                                <div
+                                    style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; margin-top: 10px;">
+                                    <span>Attendance Percentage</span>
+                                    <span id="stat-att-perc-label" style="color: var(--primary);">60%</span>
+                                </div>
+
+                                <div
+                                    style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; margin-top: 4px;">
+                                    <span>Pending Recognition</span>
+                                    <span id="stat-pending-val" style="color: var(--amber);">0 Nodes</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div id="stat-pending-bar" class="progress-fill"
+                                        style="width: 0%; background: var(--amber);"></div>
+                                </div>
+
+                                <div style="margin-top: 10px;">
+                                    <span class="info-label" style="font-size: 7px; letter-spacing: 1px;">Academic Cycle
+                                        Matrix</span>
+                                    <div id="dashboard-att-matrix" class="matrix-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-ring">
+                            <canvas id="statChart"></canvas>
+                            <div class="stats-count" id="stat-perc-display">60%</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: SEPARATE PROJECT STATS -->
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="info-label">Project Execution Sync (Separate Tracks)</span>
+                        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 25px;">
+                            <!-- Track Alpha Stats -->
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--emerald);">Track
+                                            Alpha</h4>
+                                        <p style="font-size: 9px; font-weight: 600; color: var(--slate);">Drone
+                                            Detection Antenna</p>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <p style="font-size: 11px; font-weight: 900;" id="stat-alpha-val">72% Verified
+                                        </p>
+                                        <p style="font-size: 8px; font-weight: 800; color: var(--amber);"
+                                            id="stat-alpha-pending">Pending: 5% Sync</p>
+                                    </div>
+                                </div>
+                                <div class="progress-track" style="height: 8px; margin-top: 12px;">
+                                    <div id="bar-alpha-verified" class="progress-fill"
+                                        style="width: 72%; background: var(--emerald);"></div>
+                                </div>
+                                <div class="progress-track"
+                                    style="height: 4px; margin-top: 4px; background: transparent; border: none;">
+                                    <div id="bar-alpha-pending" class="progress-fill"
+                                        style="width: 5%; background: var(--amber); opacity: 0.5;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Track Beta Stats -->
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                    <div>
+                                        <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Track
+                                            Beta</h4>
+                                        <p style="font-size: 9px; font-weight: 600; color: var(--slate);">Antenna
+                                            Optimization</p>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <p style="font-size: 11px; font-weight: 900;" id="stat-beta-val">58% Verified
+                                        </p>
+                                        <p style="font-size: 8px; font-weight: 800; color: var(--amber);"
+                                            id="stat-beta-pending">Pending: 10% Sync</p>
+                                    </div>
+                                </div>
+                                <div class="progress-track" style="height: 8px; margin-top: 12px;">
+                                    <div id="bar-beta-verified" class="progress-fill"
+                                        style="width: 58%; background: var(--primary);"></div>
+                                </div>
+                                <div class="progress-track"
+                                    style="height: 4px; margin-top: 4px; background: transparent; border: none;">
+                                    <div id="bar-beta-pending" class="progress-fill"
+                                        style="width: 10%; background: var(--amber); opacity: 0.5;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teams Row -->
+                    <div class="card" style="grid-column: span 4;">
+                        <span class="info-label">Assigned Node Teams (Mentor Groups: 5-8 Members)</span>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 15px;">
+                            <div id="team-alpha-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            </div>
+                            <div id="team-beta-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Attendance Ledger -->
+            <div id="tab-attendance-ledger" class="hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <div>
+                        <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px;">Attendance Ledger</h2>
+                        <p class="info-sub">Presence history and regularization protocol.</p>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-minimal" style="background: var(--dark);">Regularization</button>
+                        <button class="btn-minimal" style="background: var(--primary);"
+                            onclick="App.markAttendance()">Check-in</button>
+                    </div>
+                </div>
+                <div class="bento-grid">
+                    <div class="card" style="grid-column: span 3; padding: 30px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 class="info-value">Feb, 2026</h3>
+                            <div style="display: flex; gap: 20px; font-size: 1.2rem; color: var(--slate);"><i
+                                    class="fas fa-chevron-left cursor-pointer"></i><i
+                                    class="fas fa-chevron-right cursor-pointer"></i></div>
+                        </div>
+                        <div class="att-calendar-grid" id="att-calendar"></div>
+                        <div
+                            style="display: flex; gap: 25px; margin-top: 35px; border-top: 1px solid var(--border); padding-top: 25px;">
+                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
+                                <span class="status-dot status-present" style="position:static;"></span> Present</div>
+                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
+                                <span class="status-dot status-pending-dot" style="position:static;"></span> Pending
+                                Approval</div>
+                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
+                                <span class="status-dot status-absent" style="position:static;"></span> Absent</div>
+                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
+                                <span class="status-dot status-holiday" style="position:static;"></span> Holiday</div>
+                        </div>
+                    </div>
+                    <div class="card" style="grid-column: span 1; padding: 30px;"><span class="info-label">Verified
+                            Logs</span>
+                        <div id="att-logs" style="margin-top: 20px; display: flex; flex-direction: column;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Tasks Center -->
+            <div id="tab-tasks" class="hidden">
+                <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 40px;">Assignment
+                    Hub</h2>
+                <div id="tasks-container" class="task-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const ui = {
+            set: (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; },
+            html: (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; },
+            toggle: (id, isVisible) => { const el = document.getElementById(id); if (el) el.classList.toggle('hidden', !isVisible); }
+        };
+
+        let scene, camera, renderer, particles;
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+            const positions = new Float32Array(1500 * 3);
+            for (let i = 0; i < 4500; i++) positions[i] = (Math.random() - 0.5) * 160;
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particles = new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.12, color: 0x4F46E5, transparent: true, opacity: 0.15 }));
+            scene.add(particles);
+            camera.position.z = 70;
+            function animate() { requestAnimationFrame(animate); if (particles) particles.rotation.y += 0.0002; renderer.render(scene, camera); }
+            animate();
+        }
+
+        const App = {
+            state: {
+                profile: null,
+                verifiedPresence: 18,
+                pendingPresence: 0,
+                attendanceStatus: 'idle',
+                currentDay: 25,
+                logs: [{ time: '09:25 AM', method: 'Web Check-in', date: '24/02/2026' }, { time: '10:04 AM', method: 'Web Check-in', date: '23/02/2026' }],
+                attendanceMap: { 1: 'holiday', 8: 'holiday', 15: 'holiday', 22: 'holiday', 4: 'absent' },
+                // Project Track Data
+                projectAlpha: { verified: 72, pending: 5, name: 'Drone Detection Antenna' },
+                projectBeta: { verified: 58, pending: 10, name: 'Antenna Optimization' },
+                teamMembers: [
+                    { name: 'Sanjana G M', srn: 'SRN001' }, { name: 'Varshini A R', srn: 'SRN002' },
+                    { name: 'Aryan Singh', srn: 'SRN003' }, { name: 'Megha V', srn: 'SRN006' },
+                    { name: 'Rahul B', srn: 'SRN007' }, { name: 'Sneha J', srn: 'SRN008' },
+                    { name: 'Karthik R', srn: 'SRN005' }, { name: 'Ishita P', srn: 'SRN004' }
+                ],
+                tasks: [{ id: 1, title: 'Antenna Logic v4', desc: 'Implement logic for Alpha Segment.', assignedBy: 'Dr. Rajesh Kumar', status: 'pending', submission: '', mentorLink: 'https://drive.google.com/ref', comments: [] }]
+            },
+
+            init() {
+                const loader = document.getElementById('loader');
+                if (loader) loader.classList.add('hidden');
+                document.getElementById('login-form').onsubmit = (e) => this.handleLogin(e);
+                const session = sessionStorage.getItem('smps_v18_final_session');
+                if (session) { try { this.state.profile = JSON.parse(session); this.showPortal(); } catch (e) { this.showHome(); } } else { this.showHome(); }
+                for (let i = 2; i < 25; i++) if (!this.state.attendanceMap[i]) this.state.attendanceMap[i] = 'present';
+                init3D();
+                this.startClock();
+            },
+
+            startClock() {
+                let baseDate = new Date(2026, 1, 25, 14, 4, 17);
+                setInterval(() => {
+                    baseDate.setSeconds(baseDate.getSeconds() + 1);
+                    const clockEl = document.getElementById('real-time-clock');
+                    if (clockEl) clockEl.innerText = `${baseDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })} • ${baseDate.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+                }, 1000);
+            },
+
+            handleLogin(e) {
+                e.preventDefault();
+                const srn = document.getElementById('login-srn').value.trim().toUpperCase();
+                if (srn === 'SRN001') { this.state.profile = this.state.teamMembers[0]; sessionStorage.setItem('smps_v18_final_session', JSON.stringify(this.state.profile)); this.showPortal(); } else { alert("Verification Failed."); }
+            },
+
+            showHome() { this.hideAll(); ui.toggle('view-home', true); ui.toggle('top-nav', true); ui.toggle('ticker-bar', true); },
+            showLogin() { this.hideAll(); ui.toggle('view-login', true); },
+            showPortal() {
+                this.hideAll(); ui.toggle('view-portal', true);
+                const p = this.state.profile;
+                ui.set('disp-name', p.name); ui.set('disp-name-side', p.name); ui.set('disp-srn-side', p.srn);
+                ui.set('usr-avatar-side', p.name.charAt(0));
+                this.renderAll();
+            },
+
+            hideAll() { ['view-home', 'view-login', 'view-portal', 'top-nav', 'ticker-bar'].forEach(id => ui.toggle(id, false)); },
+
+            switchTab(tabId) {
+                ['dashboard', 'attendance-ledger', 'projects', 'tasks', 'comms'].forEach(t => { ui.toggle(`tab-${t}`, false); const nav = document.getElementById(`nav-${t}`); if (nav) nav.classList.remove('active'); });
+                ui.toggle(`tab-${tabId}`, true); const nav = document.getElementById(`nav-${tabId}`); if (nav) nav.classList.add('active');
+                if (tabId === 'attendance-ledger') this.renderAttendanceTab();
+                if (tabId === 'tasks') this.renderTasks();
+            },
+
+            renderAll() { this.renderStats(); this.renderTeams(); this.updateAttUI(); },
+
+            markAttendance() {
+                if (this.state.attendanceStatus !== 'idle') return;
+                this.state.attendanceStatus = 'pending';
+                this.state.pendingPresence = 1;
+                this.updateAttUI();
+                this.renderStats();
+            },
+
+            updateAttUI() {
+                const btn = document.getElementById('btn-mark-att');
+                const badgeBox = document.getElementById('att-status-badge');
+                if (!btn || !badgeBox) return;
+                if (this.state.attendanceStatus === 'pending') {
+                    btn.disabled = true; btn.innerText = "PENDING APPROVAL";
+                    badgeBox.innerHTML = `<span class="badge badge-pending">PENDING</span>`;
+                }
+            },
+
+            renderStats() {
+                const total = 30;
+                const verified = this.state.verifiedPresence;
+                const pending = this.state.pendingPresence;
+                const verifiedPerc = Math.round((verified / total) * 100);
+
+                // Attendance Labels
+                ui.set('stat-att-days-val', `${verified} Days`);
+                ui.set('stat-att-perc-label', `${verifiedPerc}%`);
+                ui.set('stat-pending-val', `${pending} Node pending`);
+                ui.set('stat-perc-display', `${verifiedPerc}%`);
+
+                const barVerified = document.getElementById('stat-att-bar');
+                if (barVerified) barVerified.style.width = `${verifiedPerc}%`;
+
+                const barPending = document.getElementById('stat-pending-bar');
+                if (barPending) barPending.style.width = `${Math.round((pending / total) * 100)}%`;
+
+                // Project Track Separate Stats
+                ui.set('stat-alpha-val', `${this.state.projectAlpha.verified}% Verified`);
+                ui.set('stat-alpha-pending', `Pending: ${this.state.projectAlpha.pending}% Sync`);
+                const barAlphaV = document.getElementById('bar-alpha-verified');
+                if (barAlphaV) barAlphaV.style.width = `${this.state.projectAlpha.verified}%`;
+                const barAlphaP = document.getElementById('bar-alpha-pending');
+                if (barAlphaP) barAlphaP.style.width = `${this.state.projectAlpha.pending}%`;
+
+                ui.set('stat-beta-val', `${this.state.projectBeta.verified}% Verified`);
+                ui.set('stat-beta-pending', `Pending: ${this.state.projectBeta.pending}% Sync`);
+                const barBetaV = document.getElementById('bar-beta-verified');
+                if (barBetaV) barBetaV.style.width = `${this.state.projectBeta.verified}%`;
+                const barBetaP = document.getElementById('bar-beta-pending');
+                if (barBetaP) barBetaP.style.width = `${this.state.projectBeta.pending}%`;
+
+                // Dashboard Matrix
+                const matrixGrid = document.getElementById('dashboard-att-matrix');
+                if (matrixGrid) {
+                    let matrixHtml = '';
+                    for (let i = 1; i <= 30; i++) {
+                        let statusClass = '';
+                        if (this.state.attendanceMap[i] === 'present') statusClass = 'verified';
+                        if (i === this.state.currentDay && this.state.attendanceStatus === 'pending') statusClass = 'pending';
+                        matrixHtml += `<div class="matrix-node ${statusClass}"></div>`;
+                    }
+                    matrixGrid.innerHTML = matrixHtml;
+                }
+
+                const ctx = document.getElementById('statChart');
+                if (ctx) {
+                    if (window.myChart) window.myChart.destroy();
+                    window.myChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: { datasets: [{ data: [verified, pending, total - verified - pending], backgroundColor: ['#4F46E5', '#F59E0B', '#E2E8F0'], borderWidth: 0 }] },
+                        options: { cutout: '80%', plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
+                    });
+                }
+            },
+
+            renderTeams() {
+                const render = (id) => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = this.state.teamMembers.map(m => `<div style="padding:10px; background:#fff; border-radius:12px; border:1px solid var(--border); font-size:11px; font-weight:700; display:flex; align-items:center; gap:8px;"><span style="width:6px; height:6px; background:var(--emerald); border-radius:50%;"></span> ${m.name}</div>`).join('');
+                };
+                render('team-alpha-list'); render('team-beta-list');
+            },
+
+            renderAttendanceTab() {
+                const calGrid = document.getElementById('att-calendar');
+                if (!calGrid) return;
+                let calHtml = `<div class="calendar-header">Sun</div><div class="calendar-header">Mon</div><div class="calendar-header">Tue</div><div class="calendar-header">Wed</div><div class="calendar-header">Thu</div><div class="calendar-header">Fri</div><div class="calendar-header">Sat</div>`;
+                for (let i = 1; i <= 28; i++) {
+                    const status = this.state.attendanceMap[i] || '';
+                    if (i === this.state.currentDay && this.state.attendanceStatus === 'pending') {
+                        calHtml += `<div class="calendar-cell today">${i}<span class="status-dot status-pending-dot"></span></div>`;
+                    } else {
+                        calHtml += `<div class="calendar-cell ${i === this.state.currentDay ? 'today' : ''}">${i}<span class="status-dot ${status ? 'status-' + status : ''}"></span></div>`;
+                    }
+                }
+                ui.html('att-calendar', calHtml);
+                ui.html('att-logs', this.state.logs.map(l => `<div class="attendance-log-item"><div><p style="font-size: 11px; font-weight: 900;">${l.date}</p><p style="font-size: 9px; color: var(--slate);">${l.method}</p></div><span class="badge badge-verified" style="font-size: 8px;">${l.time}</span></div>`).join(''));
+            },
+
+            renderTasks() {
+                ui.html('tasks-container', this.state.tasks.map(t => `
+                    <div class="task-card ${t.status}">
+                        <div style="display:flex; justify-content:space-between; align-items:start;"><h3 style="font-size:1.1rem; font-weight:900;">${t.title}</h3><span class="badge ${t.status === 'pending' ? 'badge-pending' : 'badge-verified'}">${t.status}</span></div>
+                        <p style="font-size:0.85rem; font-weight:600; color:var(--slate);">${t.desc}</p>
+                        <div class="task-section"><p class="task-section-title">Mentor Ref</p><a href="${t.mentorLink}" target="_blank" class="mentor-link-box"><i class="fas fa-link"></i> Access Reference Payload</a></div>
+                        <div class="task-section"><p class="task-section-title">Discussion</p><div class="discussion-box">${t.comments.map(c => `<div class="comment">${c}</div>`).join('') || '<p style="font-size: 10px;">Discussion empty.</p>'}</div><div style="display:flex; gap:10px;"><input type="text" id="task-comment-${t.id}" class="submission-portal" style="flex:1; padding:10px; border-radius:10px;" placeholder="Post reply..."><button onclick="App.addTaskComment(${t.id})" class="btn-task btn-submit" style="padding:0 15px;"><i class="fas fa-paper-plane"></i></button></div></div>
+                    </div>
+                `).join(''));
+            },
+
+            addTaskComment(id) { const inp = document.getElementById(`task-comment-${id}`); if (!inp.value.trim()) return; this.state.tasks.find(t => t.id === id).comments.push(`Student: ${inp.value}`); this.renderTasks(); inp.value = ''; },
+            logout() { sessionStorage.removeItem('smps_v18_final_session'); window.location.reload(); }
+        };
+
+        window.onload = () => App.init();
+    </script>
+</body>
+
+</html>
