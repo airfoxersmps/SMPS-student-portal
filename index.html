@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMPS Tech | Unified Portal</title>
+    <title>SMPS Tech | Unified Command Portal</title>
     <!-- Premium Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -124,10 +124,6 @@
             color: var(--primary);
         }
 
-        .logo b {
-            color: var(--primary);
-        }
-
         .btn-minimal {
             background: var(--dark);
             border: none;
@@ -148,34 +144,89 @@
             box-shadow: 0 10px 20px var(--primary-glow);
         }
 
-        /* Home Page Hero */
-        .hero {
+        /* Mobile Menu Toggle (Hidden by default) */
+        #mobile-menu-btn {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1001;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        /* HOME PAGE STYLING */
+        #view-home {
+            padding-top: 120px;
             height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero {
             display: grid;
             grid-template-columns: 1.2fr 1fr;
             align-items: center;
-            padding: 0 100px;
+            padding: 40px 100px;
             max-width: 1600px;
             margin: 0 auto;
-            width: 100%;
         }
 
         .hero-text h1 {
-            font-size: 5.5rem;
+            font-size: 5rem;
             font-weight: 900;
             line-height: 0.9;
             letter-spacing: -4px;
-            margin-bottom: 30px;
             color: var(--dark);
+            margin-bottom: 25px;
+        }
+
+        .hero-text span {
+            color: var(--primary);
         }
 
         .hero-text p {
             font-size: 1.1rem;
             color: var(--slate);
             line-height: 1.6;
-            margin-bottom: 45px;
+            margin-bottom: 40px;
             max-width: 500px;
-            font-weight: 500;
+        }
+
+        .wall-of-fame {
+            padding: 80px 100px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .wall-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .wall-card {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .wall-card i {
+            font-size: 2rem;
+            color: var(--amber);
+            margin-bottom: 15px;
         }
 
         /* PORTAL CORE LAYOUT */
@@ -191,7 +242,6 @@
             height: calc(100vh - 40px);
         }
 
-        /* Sidebar Styling */
         .sidebar {
             width: 280px;
             padding: 40px 20px;
@@ -204,6 +254,7 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
             height: 100%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar-link {
@@ -216,8 +267,8 @@
             gap: 14px;
             cursor: pointer;
             transition: 0.3s;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
         }
 
         .sidebar-link:hover {
@@ -261,9 +312,24 @@
             flex-shrink: 0;
         }
 
+        .profile-info h4 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--dark);
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-info p {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--slate);
+            text-transform: uppercase;
+        }
+
         .btn-terminate {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: #fff;
             border: 1px solid #fee2e2;
             border-radius: 16px;
@@ -280,11 +346,6 @@
             gap: 8px;
         }
 
-        .btn-terminate:hover {
-            background: #fee2e2;
-        }
-
-        /* Workspace Styling */
         .workspace {
             flex: 1;
             padding: 40px;
@@ -296,7 +357,6 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
         }
 
-        /* Bento Grid */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -308,7 +368,7 @@
             border-radius: var(--radius-lg);
             background: #fff;
             border: 1px solid var(--border);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
         }
 
@@ -318,7 +378,6 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
         }
 
-        /* Typography */
         .info-label {
             font-size: 9px;
             font-weight: 800;
@@ -330,10 +389,9 @@
         }
 
         .info-value {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 900;
             color: var(--dark);
-            line-height: 1.2;
         }
 
         .info-sub {
@@ -353,8 +411,8 @@
 
         .btn-claim {
             width: 100%;
-            padding: 18px;
-            border-radius: 16px;
+            padding: 14px;
+            border-radius: 12px;
             border: none;
             background: var(--dark);
             color: #fff;
@@ -362,14 +420,26 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
+            margin-bottom: 5px;
         }
 
         .btn-claim:hover {
             background: var(--primary);
         }
 
-        /* Metrics Visualization */
+        .btn-leave {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--slate);
+            font-weight: 800;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
         .stats-ring {
             width: 110px;
             height: 110px;
@@ -402,7 +472,6 @@
             transition: 1s ease-out;
         }
 
-        /* Matrix Container */
         .matrix-container {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
@@ -416,7 +485,6 @@
             border-radius: 4px;
             background: var(--panel-bg);
             border: 1px solid var(--border);
-            position: relative;
         }
 
         .matrix-node.verified {
@@ -431,20 +499,17 @@
         }
 
         @keyframes pulse-amber {
-            0% {
+
+            0%,
+            100% {
                 opacity: 1;
             }
 
             50% {
                 opacity: 0.6;
             }
-
-            100% {
-                opacity: 1;
-            }
         }
 
-        /* Attendance Ledger Styling */
         .att-calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -517,7 +582,7 @@
             margin-bottom: 12px;
         }
 
-        /* Task & Assignments Hub */
+        /* Project / Task / Notification Lists */
         .task-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -532,38 +597,48 @@
             border-left: 6px solid var(--slate);
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .task-card.pending {
-            border-left-color: var(--primary);
+            gap: 15px;
         }
 
         .discussion-box {
             background: var(--panel-bg);
             padding: 15px;
             border-radius: 16px;
-            max-height: 150px;
+            max-height: 180px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            border: 1px solid var(--border);
         }
 
-        .comment {
+        .msg-bubble {
             font-size: 0.8rem;
             font-weight: 600;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 12px;
+            position: relative;
         }
 
-        .submission-portal {
+        .msg-sender {
+            background: #fff;
+            align-self: flex-start;
+            border: 1px solid var(--border);
+        }
+
+        .msg-me {
+            background: var(--primary);
+            color: #fff;
+            align-self: flex-end;
+        }
+
+        .input-payload {
             display: flex;
             gap: 10px;
             margin-top: 15px;
         }
 
-        .submission-portal input {
+        .input-payload input {
             flex: 1;
             padding: 12px 16px;
             border-radius: 12px;
@@ -573,13 +648,16 @@
             background: var(--panel-bg);
         }
 
-        /* Notifications */
-        .notif-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 400px;
+        .notif-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .notif-feed {
+            height: 600px;
             overflow-y: auto;
+            padding-right: 15px;
         }
 
         .notif-item {
@@ -587,53 +665,108 @@
             border-radius: 20px;
             border: 1px solid var(--border);
             background: #fff;
-            position: relative;
-            border-left-width: 4px;
-            transition: 0.2s;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 15px;
         }
 
-        .notif-public {
-            border-left-color: var(--primary);
-        }
-
-        .notif-private {
+        .notif-item.private {
             border-left-color: var(--accent);
+            background: rgba(244, 63, 94, 0.02);
         }
 
-        /* Chat System */
-        .chat-layout {
+        /* Sync Hub */
+        .chat-hub {
+            display: grid;
+            grid-template-columns: 240px 1fr;
             height: calc(100vh - 180px);
+            background: #fff;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        }
+
+        .chat-nav {
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border);
+            padding: 25px 15px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border);
+        }
+
+        .chat-list-item {
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .chat-list-item:hover {
+            background: rgba(79, 70, 229, 0.05);
+            color: var(--primary);
+        }
+
+        .chat-list-item.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 8px 15px -5px var(--primary-glow);
+        }
+
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald);
+            border: 2px solid #fff;
+            position: absolute;
+            left: 8px;
+            top: 8px;
+        }
+
+        .chat-view {
+            display: flex;
+            flex-direction: column;
             background: #fff;
         }
 
-        .chat-header {
-            padding: 24px 40px;
+        .chat-header-node {
+            padding: 20px 30px;
             border-bottom: 1px solid var(--border);
-            background: #fff;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .chat-messages {
+        .chat-history {
             flex: 1;
-            overflow-y: auto;
             padding: 30px;
-            background: var(--panel-bg);
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 15px;
+            background-image: radial-gradient(var(--border) 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+        }
+
+        .chat-entry {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            background: #fff;
         }
 
         .badge {
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 100px;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 800;
             text-transform: uppercase;
             display: inline-flex;
@@ -649,10 +782,6 @@
         .badge-pending {
             background: #FEF3C7;
             color: #92400E;
-        }
-
-        .hidden {
-            display: none !important;
         }
 
         #loader {
@@ -680,6 +809,10 @@
             }
         }
 
+        .hidden {
+            display: none !important;
+        }
+
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -687,6 +820,154 @@
         ::-webkit-scrollbar-thumb {
             background: var(--border);
             border-radius: 10px;
+        }
+
+        /* --- MOBILE UI OVERRIDES --- */
+        @media screen and (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 40px 40px;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 3.5rem;
+                letter-spacing: -2px;
+            }
+
+            .hero-text p {
+                margin: 0 auto 40px;
+            }
+
+            .wall-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            #top-nav {
+                padding: 0 30px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+
+            /* Portal Responsive Layout */
+            #view-portal {
+                flex-direction: column;
+                padding: 15px;
+                margin-top: 40px;
+                height: calc(100vh - 40px);
+            }
+
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 40px;
+                height: calc(100vh - 40px);
+                z-index: 1000;
+                transform: translateX(-100%);
+                width: 85%;
+                max-width: 320px;
+            }
+
+            .sidebar.mobile-active {
+                transform: translateX(0);
+                box-shadow: 20px 0 60px rgba(0, 0, 0, 0.2);
+            }
+
+            .workspace {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .presence-card {
+                grid-template-columns: 1fr;
+                border-left: none;
+                border-top: 4px solid var(--primary);
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .stats-ring {
+                width: 90px;
+                height: 90px;
+                margin-top: 20px;
+            }
+
+            .stats-count {
+                font-size: 1.1rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+
+            .wall-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .wall-of-fame {
+                padding: 40px 20px;
+            }
+
+            #mobile-menu-btn {
+                display: block;
+            }
+
+            .notif-split {
+                grid-template-columns: 1fr;
+            }
+
+            .notif-feed {
+                height: 400px;
+            }
+
+            /* Sync Hub Mobile */
+            .chat-hub {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-nav {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+                flex-direction: row;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                white-space: nowrap;
+            }
+
+            .chat-list-item {
+                margin-bottom: 0;
+                margin-right: 10px;
+                padding: 10px 15px;
+            }
+
+            .chat-header-node {
+                padding: 15px 20px;
+            }
+
+            .chat-entry {
+                padding: 15px;
+            }
+
+            .chat-history {
+                padding: 20px;
+            }
+
+            .matrix-container {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -698,19 +979,21 @@
         <div class="spinner"></div>
     </div>
 
-    <!-- Ticker Bar -->
+    <button id="mobile-menu-btn" onclick="App.toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+    <!-- Live Ticker -->
     <div id="ticker-bar" class="ticker-wrap hidden">
         <div class="ticker-move">
-            <span>MORNING PHASE LOCKS AT 10:00 AM SHARP. ENSURE YOUR SYNC IS COMPLETE.</span>
-            <span>SYSTEM UPDATE: DUAL-TRACK LEDGER IS NOW OPERATING ON v6.0 PROTOCOLS.</span>
-            <span>R&D ADVISORY: PROJECT TRACK ALPHA DOCUMENTATION DUE FRIDAY.</span>
+            <span>ADMIN ALERT: PROJECT MILESTONE SUBMISSIONS FOR TRACK ALPHA DUE BY 23:59 HRS.</span>
+            <span>SYSTEM UPDATE: V6.0 DUAL-SYNC ARCHITECTURE NOW LIVE.</span>
+            <span>MENTOR ADVISORY: TEAM CHANNEL PERMISSIONS RE-INITIALIZED FOR ALL SEGMENTS.</span>
         </div>
     </div>
 
     <!-- Navigation (Landing) -->
     <nav id="top-nav" class="hidden">
-        <div class="logo"><i class="fas fa-graduation-cap"></i><span>SMPS <b>Tech</b></span></div>
-        <button onclick="App.showLogin()" class="btn-minimal">Portal Launch</button>
+        <div class="logo"><i class="fas fa-shield-halved"></i><span>SMPS <b>Tech</b></span></div>
+        <button onclick="App.showLogin()" class="btn-minimal">Launch Node</button>
     </nav>
 
     <!-- VIEW: HOME -->
@@ -722,13 +1005,36 @@
                     Ledger v6.0</span>
                 <h1 style="margin-top: 25px;">Manage Your <br /><span style="color: var(--primary);">Academic &
                         <br />Project Journey</span></h1>
-                <p>An integrated workspace for students to track dual-project technical lifecycles, verify presence, and
-                    sync with mentor nodes.</p>
+                <p>An integrated technical workspace for student nodes to coordinate dual projects, sync with mentors,
+                    and verify presence.</p>
                 <button onclick="App.showLogin()" class="btn-minimal"
                     style="padding:22px 50px; border-radius:20px; background:var(--primary);">Initialize Workspace <i
                         class="fas fa-arrow-right" style="margin-left:15px;"></i></button>
             </div>
             <div></div>
+        </section>
+
+        <section class="wall-of-fame">
+            <span class="info-label">Recognition Node</span>
+            <h2 style="font-size: 2.5rem; font-weight: 900; letter-spacing: -2px;">Wall of Fame</h2>
+            <div class="wall-grid">
+                <div class="wall-card"><i class="fas fa-trophy"></i>
+                    <h4 class="info-value">Aryan Singh</h4>
+                    <p class="info-sub">Innovation Lead</p>
+                </div>
+                <div class="wall-card"><i class="fas fa-medal"></i>
+                    <h4 class="info-value">Sanjana G M</h4>
+                    <p class="info-sub">Node Top Q1</p>
+                </div>
+                <div class="wall-card"><i class="fas fa-star"></i>
+                    <h4 class="info-value">Varshini A R</h4>
+                    <p class="info-sub">Technical Sync</p>
+                </div>
+                <div class="wall-card"><i class="fas fa-crown"></i>
+                    <h4 class="info-value">Megha V</h4>
+                    <p class="info-sub">Research Merit</p>
+                </div>
+            </div>
         </section>
     </div>
 
@@ -759,29 +1065,31 @@
                         style="width: 100%; padding: 18px; border-radius: 16px; border: 1px solid var(--border); font-weight: 800;"
                         placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn-claim" style="background: var(--primary);">Authorize Session</button>
-                <p
-                    style="text-align: center; margin-top: 30px; font-size: 10px; color: var(--slate); font-weight: 700; font-style: italic;">
-                    SRN001 / student123</p>
+                <button type="submit" class="btn-claim" style="background: var(--primary); height: 60px;">Authorize
+                    Session</button>
             </form>
         </div>
     </div>
 
     <!-- VIEW: PORTAL -->
     <div id="view-portal" class="hidden">
-        <aside class="sidebar">
-            <div class="logo"><i class="fas fa-graduation-cap"></i><span>SMPS <b>Core</b></span></div>
+        <aside class="sidebar" id="app-sidebar">
+            <div class="logo"><i class="fas fa-shield-halved"></i><span>SMPS <b>Core</b></span></div>
             <nav style="flex: 1; margin-top: 40px;">
                 <div onclick="App.switchTab('dashboard')" id="nav-dashboard" class="sidebar-link active"><i
                         class="fas fa-grid-2"></i> Dashboard</div>
                 <div onclick="App.switchTab('attendance-ledger')" id="nav-attendance-ledger" class="sidebar-link"><i
                         class="fas fa-calendar-check"></i> Attendance</div>
                 <div onclick="App.switchTab('projects')" id="nav-projects" class="sidebar-link"><i
-                        class="fas fa-microchip"></i> My Projects</div>
+                        class="fas fa-layer-group"></i> My Projects</div>
                 <div onclick="App.switchTab('tasks')" id="nav-tasks" class="sidebar-link"><i
                         class="fas fa-list-check"></i> Task Center</div>
-                <div onclick="App.switchTab('comms')" id="nav-comms" class="sidebar-link"><i
-                        class="fas fa-comment-dots"></i> Sync Hub</div>
+                <div onclick="App.switchTab('notifications')" id="nav-notifications" class="sidebar-link"><i
+                        class="fas fa-bell"></i> Notifications</div>
+                <div onclick="App.switchTab('sync')" id="nav-sync" class="sidebar-link"><i class="fas fa-message"></i>
+                    Sync Hub</div>
+                <div onclick="App.switchTab('requests')" id="nav-requests" class="sidebar-link"><i
+                        class="fas fa-paper-plane"></i> Requests</div>
             </nav>
             <div class="profile-stack">
                 <div class="profile-card">
@@ -802,20 +1110,19 @@
                     <div>
                         <h2 style="font-size: 2.5rem; font-weight: 900; letter-spacing: -2px;">Command Station</h2>
                         <div id="real-time-clock"
-                            style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-top: 5px;">Feb
-                            25, 2026 • 02:04:17 PM</div>
+                            style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-top: 5px;">-- --
+                            ---- • --:--:-- --</div>
                     </div>
                     <span class="badge badge-verified"
                         style="background:rgba(16,185,129,0.1); color:var(--emerald);">LIVE SYNC ACTIVE</span>
                 </div>
 
                 <div class="bento-grid">
-                    <!-- Column 1 Cards -->
                     <div class="card">
                         <span class="info-label">Identity Node</span>
                         <div style="margin-top: 10px;">
-                            <h3 class="info-value" id="disp-name">Sanjana G M</h3>
-                            <p class="info-sub">Electronics • SEM 5 • SRN001</p>
+                            <h3 class="info-value" id="disp-name">---</h3>
+                            <p class="info-sub" id="disp-details">---</p>
                         </div>
                     </div>
 
@@ -823,134 +1130,88 @@
                         <span class="info-label">Technical Mentor</span>
                         <div style="margin-top: 10px;">
                             <h3 class="info-value" style="color: var(--primary);">Dr. Rajesh Kumar</h3>
-                            <p class="info-sub">Technical Head</p>
+                            <p class="info-sub">Sr. Research Advisor</p>
                         </div>
                     </div>
 
                     <div class="card presence-card">
-                        <div style="flex: 1;">
+                        <div class="presence-actions" style="flex:1;">
                             <span class="info-label">Presence Protocol</span>
-                            <div style="margin-top: 10px;"><button onclick="App.markAttendance()" id="btn-mark-att"
-                                    class="btn-claim">CLAIM DAY ENTRY</button></div>
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="App.markAttendance('login')" id="btn-login" class="btn-claim">Mark
+                                    Login</button>
+                                <button onclick="App.markAttendance('logout')" id="btn-logout" class="btn-claim"
+                                    style="background:#334155;">Mark Logout</button>
+                            </div>
+                            <button onclick="App.switchTab('requests')" class="btn-leave">Apply Leave</button>
                         </div>
                         <div style="text-align: right; padding-left: 20px; border-left: 1px solid var(--border);">
-                            <span class="info-label">Status</span>
+                            <span class="info-label">Cycle Status</span>
                             <div id="att-status-badge" style="margin-top: 5px;"><span class="badge"
                                     style="background: #f1f5f9; color: var(--slate);">OFFLINE</span></div>
                         </div>
                     </div>
 
-                    <!-- Row 2: Attendance Analytics -->
-                    <div class="card" style="grid-column: span 2; display: flex; gap: 30px; align-items: center;">
-                        <div style="flex: 1;">
-                            <span class="info-label">Attendance Metrics Analysis</span>
+                    <div class="card"
+                        style="grid-column: span 2; display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <span class="info-label">Attendance Metrics</span>
                             <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 12px;">
                                 <div
                                     style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800;">
-                                    <span>Verified Presence</span>
-                                    <span id="stat-att-days-val">18 Days</span>
-                                </div>
+                                    <span>Presence Verified</span><span id="stat-att-days">18 Days</span></div>
                                 <div class="progress-track">
-                                    <div id="stat-att-bar" class="progress-fill"
+                                    <div id="bar-att" class="progress-fill"
                                         style="width: 60%; background: var(--emerald);"></div>
                                 </div>
-
                                 <div
-                                    style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; margin-top: 10px;">
-                                    <span>Attendance Percentage</span>
-                                    <span id="stat-att-perc-label" style="color: var(--primary);">60%</span>
-                                </div>
-
-                                <div
-                                    style="display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; margin-top: 4px;">
-                                    <span>Pending Recognition</span>
-                                    <span id="stat-pending-val" style="color: var(--amber);">0 Nodes</span>
-                                </div>
-                                <div class="progress-track">
-                                    <div id="stat-pending-bar" class="progress-fill"
-                                        style="width: 0%; background: var(--amber);"></div>
-                                </div>
-
-                                <div style="margin-top: 10px;">
-                                    <span class="info-label" style="font-size: 7px; letter-spacing: 1px;">Academic Cycle
-                                        Matrix</span>
-                                    <div id="dashboard-att-matrix" class="matrix-container"></div>
-                                </div>
+                                    style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; margin-top: 5px;">
+                                    <span>Yield %</span><span id="stat-att-perc">60%</span></div>
+                                <div id="dash-matrix" class="matrix-container"></div>
                             </div>
                         </div>
-                        <div class="stats-ring">
-                            <canvas id="statChart"></canvas>
-                            <div class="stats-count" id="stat-perc-display">60%</div>
+                        <div class="stats-ring"><canvas id="dashRing"></canvas>
+                            <div class="stats-count" id="ring-label">60%</div>
                         </div>
                     </div>
 
-                    <!-- Row 3: SEPARATE PROJECT STATS -->
                     <div class="card" style="grid-column: span 2;">
-                        <span class="info-label">Project Execution Sync (Separate Tracks)</span>
-                        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 25px;">
-                            <!-- Track Alpha Stats -->
+                        <span class="info-label">Dual-Track Project Performance</span>
+                        <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 20px;">
                             <div>
-                                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                                    <div>
-                                        <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--emerald);">Track
-                                            Alpha</h4>
-                                        <p style="font-size: 9px; font-weight: 600; color: var(--slate);">Drone
-                                            Detection Antenna</p>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <p style="font-size: 11px; font-weight: 900;" id="stat-alpha-val">72% Verified
-                                        </p>
-                                        <p style="font-size: 8px; font-weight: 800; color: var(--amber);"
-                                            id="stat-alpha-pending">Pending: 5% Sync</p>
-                                    </div>
-                                </div>
-                                <div class="progress-track" style="height: 8px; margin-top: 12px;">
-                                    <div id="bar-alpha-verified" class="progress-fill"
-                                        style="width: 72%; background: var(--emerald);"></div>
-                                </div>
-                                <div class="progress-track"
-                                    style="height: 4px; margin-top: 4px; background: transparent; border: none;">
-                                    <div id="bar-alpha-pending" class="progress-fill"
-                                        style="width: 5%; background: var(--amber); opacity: 0.5;"></div>
+                                <div
+                                    style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
+                                    <span>Track Alpha: Drone Detection</span><span>72%</span></div>
+                                <div class="progress-track">
+                                    <div style="width: 72%; height: 100%; background: var(--emerald);"></div>
                                 </div>
                             </div>
-
-                            <!-- Track Beta Stats -->
                             <div>
-                                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                                    <div>
-                                        <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--primary);">Track
-                                            Beta</h4>
-                                        <p style="font-size: 9px; font-weight: 600; color: var(--slate);">Antenna
-                                            Optimization</p>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <p style="font-size: 11px; font-weight: 900;" id="stat-beta-val">58% Verified
-                                        </p>
-                                        <p style="font-size: 8px; font-weight: 800; color: var(--amber);"
-                                            id="stat-beta-pending">Pending: 10% Sync</p>
-                                    </div>
-                                </div>
-                                <div class="progress-track" style="height: 8px; margin-top: 12px;">
-                                    <div id="bar-beta-verified" class="progress-fill"
-                                        style="width: 58%; background: var(--primary);"></div>
-                                </div>
-                                <div class="progress-track"
-                                    style="height: 4px; margin-top: 4px; background: transparent; border: none;">
-                                    <div id="bar-beta-pending" class="progress-fill"
-                                        style="width: 10%; background: var(--amber); opacity: 0.5;"></div>
+                                <div
+                                    style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
+                                    <span>Track Beta: Smart Grid</span><span>45%</span></div>
+                                <div class="progress-track">
+                                    <div style="width: 45%; height: 100%; background: var(--primary);"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Teams Row -->
                     <div class="card" style="grid-column: span 4;">
-                        <span class="info-label">Assigned Node Teams (Mentor Groups: 5-8 Members)</span>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 15px;">
-                            <div id="team-alpha-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <span class="info-label">Assigned Node Teams (Mentor Groups)</span>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 15px;">
+                            <div id="team-alpha-list-box">
+                                <div class="badge badge-verified" id="team-alpha-label" style="margin-bottom: 12px;">
+                                    ALPHA_TEAM</div>
+                                <div id="team-alpha-list"
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
                             </div>
-                            <div id="team-beta-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div id="team-beta-list-box">
+                                <div class="badge badge-pending" id="team-beta-label" style="margin-bottom: 12px;">
+                                    BETA_TEAM</div>
+                                <div id="team-beta-list"
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
                             </div>
                         </div>
                     </div>
@@ -959,52 +1220,119 @@
 
             <!-- TAB: Attendance Ledger -->
             <div id="tab-attendance-ledger" class="hidden">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                    <div>
-                        <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px;">Attendance Ledger</h2>
-                        <p class="info-sub">Presence history and regularization protocol.</p>
-                    </div>
-                    <div style="display: flex; gap: 12px;">
-                        <button class="btn-minimal" style="background: var(--dark);">Regularization</button>
-                        <button class="btn-minimal" style="background: var(--primary);"
-                            onclick="App.markAttendance()">Check-in</button>
-                    </div>
-                </div>
+                <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 40px;">Presence
+                    Ledger</h2>
                 <div class="bento-grid">
                     <div class="card" style="grid-column: span 3; padding: 30px;">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h3 class="info-value">Feb, 2026</h3>
-                            <div style="display: flex; gap: 20px; font-size: 1.2rem; color: var(--slate);"><i
-                                    class="fas fa-chevron-left cursor-pointer"></i><i
-                                    class="fas fa-chevron-right cursor-pointer"></i></div>
-                        </div>
+                        <h3 class="info-value">February 2026</h3>
                         <div class="att-calendar-grid" id="att-calendar"></div>
-                        <div
-                            style="display: flex; gap: 25px; margin-top: 35px; border-top: 1px solid var(--border); padding-top: 25px;">
-                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
-                                <span class="status-dot status-present" style="position:static;"></span> Present</div>
-                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
-                                <span class="status-dot status-pending-dot" style="position:static;"></span> Pending
-                                Approval</div>
-                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
-                                <span class="status-dot status-absent" style="position:static;"></span> Absent</div>
-                            <div style="display:flex; align-items:center; gap:10px; font-size:10px; font-weight:800;">
-                                <span class="status-dot status-holiday" style="position:static;"></span> Holiday</div>
-                        </div>
                     </div>
                     <div class="card" style="grid-column: span 1; padding: 30px;"><span class="info-label">Verified
                             Logs</span>
-                        <div id="att-logs" style="margin-top: 20px; display: flex; flex-direction: column;"></div>
+                        <div id="att-logs-node"
+                            style="margin-top: 20px; display: flex; flex-direction: column; gap:10px;"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB: Tasks Center -->
+            <!-- TAB: My Projects -->
+            <div id="tab-projects" class="hidden">
+                <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 40px;">Research
+                    Tracks</h2>
+                <div class="task-grid" id="project-portal-list"></div>
+            </div>
+
+            <!-- TAB: Task Center -->
             <div id="tab-tasks" class="hidden">
-                <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 40px;">Assignment
-                    Hub</h2>
-                <div id="tasks-container" class="task-grid"></div>
+                <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 40px;">Task
+                    Assignment Center</h2>
+                <div class="task-grid" id="task-portal-list"></div>
+            </div>
+
+            <!-- TAB: Notifications -->
+            <div id="tab-notifications" class="hidden">
+                <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 40px;">Technical
+                    Broadcasts</h2>
+                <div class="notif-split">
+                    <div class="notif-pane">
+                        <span class="info-label">Private Node Node</span>
+                        <div id="notif-private"></div>
+                    </div>
+                    <div class="notif-pane">
+                        <span class="info-label">Public System Feed</span>
+                        <div id="notif-public"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Sync Hub -->
+            <div id="tab-sync" class="hidden">
+                <div class="chat-hub">
+                    <aside class="chat-nav">
+                        <span class="info-label">Channels</span>
+                        <div style="margin-top: 15px;">
+                            <div onclick="App.openChat('team1')" id="chat-team1" class="chat-list-item active">
+                                <div class="chat-status-dot"></div><i class="fas fa-users"></i> Team Alpha
+                            </div>
+                            <div onclick="App.openChat('team2')" id="chat-team2" class="chat-list-item">
+                                <div class="chat-status-dot"></div><i class="fas fa-users"></i> Team Beta
+                            </div>
+                            <div onclick="App.openChat('admin')" id="chat-admin" class="chat-list-item"><i
+                                    class="fas fa-user-shield"></i> Admin Node</div>
+                            <div onclick="App.openChat('mentor')" id="chat-mentor" class="chat-list-item"><i
+                                    class="fas fa-user-tie"></i> Mentor Node</div>
+                            <div onclick="App.openChat('super')" id="chat-super" class="chat-list-item"><i
+                                    class="fas fa-crown"></i> Super Admin</div>
+                        </div>
+                    </aside>
+                    <main class="chat-view">
+                        <div class="chat-header-node" id="chat-header-display">
+                            <div>
+                                <h3 id="chat-title" style="font-weight: 800; color: var(--primary);">CHANNEL_ALPHA</h3>
+                                <p class="info-sub" style="font-size: 8px;">Synchronized AES-256 Tunnel</p>
+                            </div>
+                            <div id="chat-participants-list" style="display:flex; gap:10px;"></div>
+                        </div>
+                        <div id="chat-history" class="chat-history"></div>
+                        <form id="chat-form" class="chat-entry"><input type="text" id="chat-input"
+                                placeholder="Transmit technically segment..." required
+                                style="flex:1; padding:15px 25px; border-radius:14px; border:1px solid var(--border); font-weight:600; background:var(--panel-bg);"><button
+                                type="submit" class="btn-minimal" style="padding: 0 30px; background:var(--primary);"><i
+                                    class="fas fa-paper-plane"></i></button></form>
+                    </main>
+                </div>
+            </div>
+
+            <!-- TAB: Requests -->
+            <div id="tab-requests" class="hidden">
+                <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 40px;">Inquiries &
+                    Requests</h2>
+                <div class="bento-grid">
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="info-label">Log Technical Inquiry</span>
+                        <form onsubmit="event.preventDefault(); alert('Inquiry Logged.'); this.reset();"
+                            style="margin-top: 20px;">
+                            <div class="form-group" style="margin-bottom:20px;"><label class="info-label">Inquiry
+                                    Payload</label><textarea
+                                    style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); min-height:100px; font-family: inherit;"
+                                    placeholder="Describe your query or technical roadblock..." required></textarea>
+                            </div><button type="submit" class="btn-claim" style="background: var(--primary);">Post
+                                Inquiry</button>
+                        </form>
+                    </div>
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="info-label">Submit Formal Request</span>
+                        <form onsubmit="event.preventDefault(); alert('Request Broadcast.'); this.reset();"
+                            style="margin-top: 20px;">
+                            <div class="form-group" style="margin-bottom:20px;"><label class="info-label">Request Type &
+                                    Logic</label><textarea
+                                    style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); min-height:100px; font-family: inherit;"
+                                    placeholder="Details for Leave, Component procurement, or Node hardware..."
+                                    required></textarea></div><button type="submit" class="btn-claim">Submit
+                                Request</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -1016,207 +1344,282 @@
             toggle: (id, isVisible) => { const el = document.getElementById(id); if (el) el.classList.toggle('hidden', !isVisible); }
         };
 
-        let scene, camera, renderer, particles;
-        function init3D() {
-            const container = document.getElementById('canvas-container');
-            if (!container) return;
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            container.appendChild(renderer.domElement);
-            const positions = new Float32Array(1500 * 3);
-            for (let i = 0; i < 4500; i++) positions[i] = (Math.random() - 0.5) * 160;
-            const geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            particles = new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.12, color: 0x4F46E5, transparent: true, opacity: 0.15 }));
-            scene.add(particles);
-            camera.position.z = 70;
-            function animate() { requestAnimationFrame(animate); if (particles) particles.rotation.y += 0.0002; renderer.render(scene, camera); }
-            animate();
-        }
-
         const App = {
             state: {
-                profile: null,
-                verifiedPresence: 18,
-                pendingPresence: 0,
-                attendanceStatus: 'idle',
-                currentDay: 25,
-                logs: [{ time: '09:25 AM', method: 'Web Check-in', date: '24/02/2026' }, { time: '10:04 AM', method: 'Web Check-in', date: '23/02/2026' }],
+                portalTime: new Date(2026, 1, 25, 23, 4, 0),
+                attendanceStatus: 'offline',
+                currentChat: 'team1',
+                currentTab: 'dashboard',
+                logs: [{ t: '09:25 AM', d: '24/02/2026', type: 'Login' }],
                 attendanceMap: { 1: 'holiday', 8: 'holiday', 15: 'holiday', 22: 'holiday', 4: 'absent' },
-                // Project Track Data
-                projectAlpha: { verified: 72, pending: 5, name: 'Drone Detection Antenna' },
-                projectBeta: { verified: 58, pending: 10, name: 'Antenna Optimization' },
-                teamMembers: [
-                    { name: 'Sanjana G M', srn: 'SRN001' }, { name: 'Varshini A R', srn: 'SRN002' },
-                    { name: 'Aryan Singh', srn: 'SRN003' }, { name: 'Megha V', srn: 'SRN006' },
-                    { name: 'Rahul B', srn: 'SRN007' }, { name: 'Sneha J', srn: 'SRN008' },
-                    { name: 'Karthik R', srn: 'SRN005' }, { name: 'Ishita P', srn: 'SRN004' }
+                projects: [
+                    { id: 'p1', name: 'Alpha: Drone Detection Antenna', teamName: 'PHOENIX_WING', members: ['Sanjana (L)', 'Varshini', 'Aryan', 'Ishita', 'Rahul', 'Karthik'], driveLink: '', adminReport: 'Hardware schematics verified. Pending real-world range tests.' },
+                    { id: 'p2', name: 'Beta: Smart Power Systems', teamName: 'ENERGY_CORE', members: ['Sanjana (L)', 'Megha', 'Sneha', 'Rahul', 'Aryan', 'Varshini'], driveLink: '', adminReport: 'Simulation data for v2 rectifier approved. Prototyping start authorized.' }
                 ],
-                tasks: [{ id: 1, title: 'Antenna Logic v4', desc: 'Implement logic for Alpha Segment.', assignedBy: 'Dr. Rajesh Kumar', status: 'pending', submission: '', mentorLink: 'https://drive.google.com/ref', comments: [] }]
+                tasks: [
+                    { id: 101, title: 'Antenna Logic v4 Calibration', sender: 'Technical Mentor', refLink: 'https://ieee.org/ref', status: 'pending', comments: [{ s: 'Sender', m: 'Verify gain at 2.4GHz.' }], payload: '' },
+                    { id: 102, title: 'BOM Reconciliation', sender: 'Admin Node', refLink: '#', status: 'accepted', comments: [{ s: 'Admin', m: 'Inventory mismatch in component D12.' }], payload: '' }
+                ],
+                notifications: {
+                    private: [{ text: 'Admin: Your Track Alpha report is reviewed.', time: '10:45 AM' }, { text: 'Mentor: Simulation check-in scheduled.', time: '02:00 PM' }],
+                    public: [{ text: 'System Update: Node maintenance at 02:00 AM.', time: '09:00 AM' }]
+                },
+                chats: {
+                    team1: [{ s: 'Varshini', m: 'Did the team update the hardware BOM?', t: '09:12 AM' }],
+                    admin: [{ s: 'Admin', m: 'Please anchor the report link.', t: '10:30 PM' }],
+                    mentor: [], super: [], team2: []
+                },
+                teamMembers: [
+                    { name: 'Sanjana G M', srn: 'SRN001', role: 'Lead' }, { name: 'Varshini A R', srn: 'SRN002' },
+                    { name: 'Aryan Singh', srn: 'SRN003' }, { name: 'Megha V', srn: 'SRN006' },
+                    { name: 'Rahul B', srn: 'SRN007' }, { name: 'Sneha J', srn: 'SRN008' }
+                ]
             },
 
             init() {
                 const loader = document.getElementById('loader');
                 if (loader) loader.classList.add('hidden');
-                document.getElementById('login-form').onsubmit = (e) => this.handleLogin(e);
-                const session = sessionStorage.getItem('smps_v18_final_session');
-                if (session) { try { this.state.profile = JSON.parse(session); this.showPortal(); } catch (e) { this.showHome(); } } else { this.showHome(); }
-                for (let i = 2; i < 25; i++) if (!this.state.attendanceMap[i]) this.state.attendanceMap[i] = 'present';
-                init3D();
+                document.getElementById('login-form').onsubmit = (e) => { e.preventDefault(); this.showPortal(); };
+                document.getElementById('chat-form').onsubmit = (e) => this.sendChat(e);
+                this.showHome();
                 this.startClock();
+                this.init3D();
+                for (let i = 2; i < 25; i++) if (!this.state.attendanceMap[i]) this.state.attendanceMap[i] = 'present';
             },
 
             startClock() {
-                let baseDate = new Date(2026, 1, 25, 14, 4, 17);
                 setInterval(() => {
-                    baseDate.setSeconds(baseDate.getSeconds() + 1);
+                    this.state.portalTime.setSeconds(this.state.portalTime.getSeconds() + 1);
                     const clockEl = document.getElementById('real-time-clock');
-                    if (clockEl) clockEl.innerText = `${baseDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })} • ${baseDate.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+                    if (clockEl) {
+                        const dateStr = this.state.portalTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+                        const timeStr = this.state.portalTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                        clockEl.innerText = `${dateStr} • ${timeStr}`;
+                    }
                 }, 1000);
             },
 
-            handleLogin(e) {
-                e.preventDefault();
-                const srn = document.getElementById('login-srn').value.trim().toUpperCase();
-                if (srn === 'SRN001') { this.state.profile = this.state.teamMembers[0]; sessionStorage.setItem('smps_v18_final_session', JSON.stringify(this.state.profile)); this.showPortal(); } else { alert("Verification Failed."); }
+            init3D() {
+                const container = document.getElementById('canvas-container');
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(renderer.domElement);
+
+                const bubbleCount = 40;
+                const bubbles = [];
+                const sphereGeo = new THREE.SphereGeometry(1, 32, 32);
+                for (let i = 0; i < bubbleCount; i++) {
+                    const material = new THREE.MeshPhongMaterial({ color: 0x4F46E5, transparent: true, opacity: 0.1, shininess: 100 });
+                    const sphere = new THREE.Mesh(sphereGeo, material);
+                    sphere.position.set((Math.random() - 0.5) * 150, (Math.random() - 0.5) * 150, (Math.random() - 0.5) * 150);
+                    sphere.scale.setScalar(Math.random() * 2 + 1);
+                    sphere.userData = { vel: new THREE.Vector3((Math.random() - 0.5) * 0.04, (Math.random() - 0.5) * 0.04, (Math.random() - 0.5) * 0.04) };
+                    scene.add(sphere);
+                    bubbles.push(sphere);
+                }
+
+                scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+                const light = new THREE.DirectionalLight(0xffffff, 0.5); light.position.set(10, 10, 10); scene.add(light);
+                camera.position.z = 80;
+
+                const animate = () => {
+                    requestAnimationFrame(animate);
+                    bubbles.forEach(b => {
+                        b.position.add(b.userData.vel);
+                        if (Math.abs(b.position.x) > 80) b.userData.vel.x *= -1;
+                        if (Math.abs(b.position.y) > 80) b.userData.vel.y *= -1;
+                        if (Math.abs(b.position.z) > 80) b.userData.vel.z *= -1;
+                    });
+                    renderer.render(scene, camera);
+                };
+                animate();
             },
 
             showHome() { this.hideAll(); ui.toggle('view-home', true); ui.toggle('top-nav', true); ui.toggle('ticker-bar', true); },
             showLogin() { this.hideAll(); ui.toggle('view-login', true); },
             showPortal() {
                 this.hideAll(); ui.toggle('view-portal', true);
-                const p = this.state.profile;
+                const p = { name: 'Sanjana G M', srn: 'SRN001' };
                 ui.set('disp-name', p.name); ui.set('disp-name-side', p.name); ui.set('disp-srn-side', p.srn);
-                ui.set('usr-avatar-side', p.name.charAt(0));
-                this.renderAll();
+                ui.set('disp-details', `Electronics • SEM 5 • ${p.srn}`);
+                this.renderDashboard();
             },
 
             hideAll() { ['view-home', 'view-login', 'view-portal', 'top-nav', 'ticker-bar'].forEach(id => ui.toggle(id, false)); },
 
             switchTab(tabId) {
-                ['dashboard', 'attendance-ledger', 'projects', 'tasks', 'comms'].forEach(t => { ui.toggle(`tab-${t}`, false); const nav = document.getElementById(`nav-${t}`); if (nav) nav.classList.remove('active'); });
+                ['dashboard', 'attendance-ledger', 'projects', 'tasks', 'notifications', 'sync', 'requests'].forEach(t => { ui.toggle(`tab-${t}`, false); const nav = document.getElementById(`nav-${t}`); if (nav) nav.classList.remove('active'); });
                 ui.toggle(`tab-${tabId}`, true); const nav = document.getElementById(`nav-${tabId}`); if (nav) nav.classList.add('active');
-                if (tabId === 'attendance-ledger') this.renderAttendanceTab();
+                if (tabId === 'projects') this.renderProjects();
                 if (tabId === 'tasks') this.renderTasks();
+                if (tabId === 'notifications') this.renderNotifications();
+                if (tabId === 'attendance-ledger') this.renderAttendanceTab();
+                if (tabId === 'sync') this.openChat(this.state.currentChat);
+                // Auto close sidebar on mobile when tab changes
+                document.getElementById('app-sidebar').classList.remove('mobile-active');
             },
 
-            renderAll() { this.renderStats(); this.renderTeams(); this.updateAttUI(); },
-
-            markAttendance() {
-                if (this.state.attendanceStatus !== 'idle') return;
-                this.state.attendanceStatus = 'pending';
-                this.state.pendingPresence = 1;
-                this.updateAttUI();
-                this.renderStats();
+            toggleSidebar() {
+                document.getElementById('app-sidebar').classList.toggle('mobile-active');
             },
 
-            updateAttUI() {
-                const btn = document.getElementById('btn-mark-att');
-                const badgeBox = document.getElementById('att-status-badge');
-                if (!btn || !badgeBox) return;
-                if (this.state.attendanceStatus === 'pending') {
-                    btn.disabled = true; btn.innerText = "PENDING APPROVAL";
-                    badgeBox.innerHTML = `<span class="badge badge-pending">PENDING</span>`;
-                }
-            },
-
-            renderStats() {
-                const total = 30;
-                const verified = this.state.verifiedPresence;
-                const pending = this.state.pendingPresence;
-                const verifiedPerc = Math.round((verified / total) * 100);
-
-                // Attendance Labels
-                ui.set('stat-att-days-val', `${verified} Days`);
-                ui.set('stat-att-perc-label', `${verifiedPerc}%`);
-                ui.set('stat-pending-val', `${pending} Node pending`);
-                ui.set('stat-perc-display', `${verifiedPerc}%`);
-
-                const barVerified = document.getElementById('stat-att-bar');
-                if (barVerified) barVerified.style.width = `${verifiedPerc}%`;
-
-                const barPending = document.getElementById('stat-pending-bar');
-                if (barPending) barPending.style.width = `${Math.round((pending / total) * 100)}%`;
-
-                // Project Track Separate Stats
-                ui.set('stat-alpha-val', `${this.state.projectAlpha.verified}% Verified`);
-                ui.set('stat-alpha-pending', `Pending: ${this.state.projectAlpha.pending}% Sync`);
-                const barAlphaV = document.getElementById('bar-alpha-verified');
-                if (barAlphaV) barAlphaV.style.width = `${this.state.projectAlpha.verified}%`;
-                const barAlphaP = document.getElementById('bar-alpha-pending');
-                if (barAlphaP) barAlphaP.style.width = `${this.state.projectAlpha.pending}%`;
-
-                ui.set('stat-beta-val', `${this.state.projectBeta.verified}% Verified`);
-                ui.set('stat-beta-pending', `Pending: ${this.state.projectBeta.pending}% Sync`);
-                const barBetaV = document.getElementById('bar-beta-verified');
-                if (barBetaV) barBetaV.style.width = `${this.state.projectBeta.verified}%`;
-                const barBetaP = document.getElementById('bar-beta-pending');
-                if (barBetaP) barBetaP.style.width = `${this.state.projectBeta.pending}%`;
-
-                // Dashboard Matrix
-                const matrixGrid = document.getElementById('dashboard-att-matrix');
-                if (matrixGrid) {
-                    let matrixHtml = '';
-                    for (let i = 1; i <= 30; i++) {
-                        let statusClass = '';
-                        if (this.state.attendanceMap[i] === 'present') statusClass = 'verified';
-                        if (i === this.state.currentDay && this.state.attendanceStatus === 'pending') statusClass = 'pending';
-                        matrixHtml += `<div class="matrix-node ${statusClass}"></div>`;
-                    }
-                    matrixGrid.innerHTML = matrixHtml;
-                }
-
-                const ctx = document.getElementById('statChart');
+            renderDashboard() {
+                const ctx = document.getElementById('dashRing');
                 if (ctx) {
                     if (window.myChart) window.myChart.destroy();
-                    window.myChart = new Chart(ctx, {
-                        type: 'doughnut',
-                        data: { datasets: [{ data: [verified, pending, total - verified - pending], backgroundColor: ['#4F46E5', '#F59E0B', '#E2E8F0'], borderWidth: 0 }] },
-                        options: { cutout: '80%', plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
-                    });
+                    window.myChart = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: [60, 40], backgroundColor: ['#4F46E5', '#E2E8F0'], borderWidth: 0 }] }, options: { cutout: '80%', plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false } });
                 }
-            },
-
-            renderTeams() {
-                const render = (id) => {
-                    const el = document.getElementById(id);
-                    if (el) el.innerHTML = this.state.teamMembers.map(m => `<div style="padding:10px; background:#fff; border-radius:12px; border:1px solid var(--border); font-size:11px; font-weight:700; display:flex; align-items:center; gap:8px;"><span style="width:6px; height:6px; background:var(--emerald); border-radius:50%;"></span> ${m.name}</div>`).join('');
-                };
-                render('team-alpha-list'); render('team-beta-list');
-            },
-
-            renderAttendanceTab() {
-                const calGrid = document.getElementById('att-calendar');
-                if (!calGrid) return;
-                let calHtml = `<div class="calendar-header">Sun</div><div class="calendar-header">Mon</div><div class="calendar-header">Tue</div><div class="calendar-header">Wed</div><div class="calendar-header">Thu</div><div class="calendar-header">Fri</div><div class="calendar-header">Sat</div>`;
-                for (let i = 1; i <= 28; i++) {
-                    const status = this.state.attendanceMap[i] || '';
-                    if (i === this.state.currentDay && this.state.attendanceStatus === 'pending') {
-                        calHtml += `<div class="calendar-cell today">${i}<span class="status-dot status-pending-dot"></span></div>`;
-                    } else {
-                        calHtml += `<div class="calendar-cell ${i === this.state.currentDay ? 'today' : ''}">${i}<span class="status-dot ${status ? 'status-' + status : ''}"></span></div>`;
-                    }
+                let matrixHtml = '';
+                for (let i = 1; i <= 30; i++) {
+                    let cls = this.state.attendanceMap[i] === 'present' ? 'verified' : '';
+                    if (i === 25 && this.state.attendanceStatus !== 'offline') cls = 'pending';
+                    matrixHtml += `<div class="matrix-node ${cls}"></div>`;
                 }
-                ui.html('att-calendar', calHtml);
-                ui.html('att-logs', this.state.logs.map(l => `<div class="attendance-log-item"><div><p style="font-size: 11px; font-weight: 900;">${l.date}</p><p style="font-size: 9px; color: var(--slate);">${l.method}</p></div><span class="badge badge-verified" style="font-size: 8px;">${l.time}</span></div>`).join(''));
+                ui.html('dash-matrix', matrixHtml);
+                const renderTeam = (id, members) => ui.html(id, members.map(m => `<div style="padding:10px; background:#fff; border-radius:12px; border:1px solid var(--border); font-size:11px; font-weight:800; display:flex; align-items:center; gap:8px;"><span style="width:6px; height:6px; background:var(--emerald); border-radius:50%;"></span> ${m.name}</div>`).join(''));
+                renderTeam('team-alpha-list', this.state.teamMembers);
+                renderTeam('team-beta-list', this.state.teamMembers);
+                ui.set('team-alpha-label', this.state.projects[0].teamName);
+                ui.set('team-beta-label', this.state.projects[1].teamName);
             },
 
-            renderTasks() {
-                ui.html('tasks-container', this.state.tasks.map(t => `
-                    <div class="task-card ${t.status}">
-                        <div style="display:flex; justify-content:space-between; align-items:start;"><h3 style="font-size:1.1rem; font-weight:900;">${t.title}</h3><span class="badge ${t.status === 'pending' ? 'badge-pending' : 'badge-verified'}">${t.status}</span></div>
-                        <p style="font-size:0.85rem; font-weight:600; color:var(--slate);">${t.desc}</p>
-                        <div class="task-section"><p class="task-section-title">Mentor Ref</p><a href="${t.mentorLink}" target="_blank" class="mentor-link-box"><i class="fas fa-link"></i> Access Reference Payload</a></div>
-                        <div class="task-section"><p class="task-section-title">Discussion</p><div class="discussion-box">${t.comments.map(c => `<div class="comment">${c}</div>`).join('') || '<p style="font-size: 10px;">Discussion empty.</p>'}</div><div style="display:flex; gap:10px;"><input type="text" id="task-comment-${t.id}" class="submission-portal" style="flex:1; padding:10px; border-radius:10px;" placeholder="Post reply..."><button onclick="App.addTaskComment(${t.id})" class="btn-task btn-submit" style="padding:0 15px;"><i class="fas fa-paper-plane"></i></button></div></div>
+            markAttendance(type) {
+                this.state.attendanceStatus = type === 'login' ? 'active' : 'offline';
+                const syncTime = this.state.portalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+                const syncDate = this.state.portalTime.toLocaleDateString('en-GB');
+                this.state.logs.unshift({ t: syncTime, d: syncDate, type: type.charAt(0).toUpperCase() + type.slice(1) });
+                ui.html('att-status-badge', `<span class="badge" style="background: ${type === 'login' ? 'rgba(16,185,129,0.1)' : '#f1f5f9'}; color: ${type === 'login' ? 'var(--emerald)' : 'var(--slate)'};">${type.toUpperCase()}</span>`);
+                alert(`Protocol: ${type.toUpperCase()} recorded at ${syncTime} portal time.`);
+                this.renderDashboard();
+            },
+
+            renderProjects() {
+                ui.html('project-portal-list', this.state.projects.map(p => `
+                    <div class="task-card">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <div><h3 class="info-value">${p.name}</h3><span class="badge badge-verified" style="margin-top:5px;">${p.teamName}</span></div>
+                        </div>
+                        <span class="info-label">Admin Assessment Report</span>
+                        <div class="discussion-box"><div class="msg-bubble msg-sender">${p.adminReport}</div></div>
+                        <div class="input-payload">
+                            <input type="text" id="drive-${p.id}" placeholder="Anchor Drive Link..." value="${p.driveLink}">
+                            <button onclick="App.submitProject('${p.id}')" class="btn-minimal">Submit Link</button>
+                        </div>
                     </div>
                 `).join(''));
             },
 
-            addTaskComment(id) { const inp = document.getElementById(`task-comment-${id}`); if (!inp.value.trim()) return; this.state.tasks.find(t => t.id === id).comments.push(`Student: ${inp.value}`); this.renderTasks(); inp.value = ''; },
-            logout() { sessionStorage.removeItem('smps_v18_final_session'); window.location.reload(); }
+            submitProject(id) {
+                const link = document.getElementById(`drive-${id}`).value;
+                this.state.projects.find(p => p.id === id).driveLink = link;
+                alert(`Track ${id.toUpperCase()} payload anchored.`);
+            },
+
+            renderTasks() {
+                ui.html('task-portal-list', this.state.tasks.map(t => `
+                    <div class="task-card" style="border-left-color: var(--primary);">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <div><h3 class="info-value">${t.title}</h3><p class="info-sub">Sender: ${t.sender}</p></div>
+                            <span class="badge ${t.status === 'pending' ? 'badge-pending' : 'badge-verified'}">${t.status}</span>
+                        </div>
+                        <span class="info-label">Provided Resource</span>
+                        <a href="${t.refLink}" target="_blank" class="btn-minimal" style="padding:10px; font-size:9px; text-align:center;">Access Reference Link</a>
+                        
+                        <span class="info-label">Thread with Sender</span>
+                        <div class="discussion-box">${t.comments.map(c => `<div class="msg-bubble ${c.s === 'Sender' ? 'msg-sender' : 'msg-me'}">${c.m}</div>`).join('')}</div>
+                        <div class="input-payload">
+                            <input type="text" id="rep-${t.id}" placeholder="Reply to sender...">
+                            <button onclick="App.replyTask(${t.id})" class="btn-minimal">Send</button>
+                        </div>
+                        
+                        <div class="input-payload" style="border-top:1px solid var(--border); padding-top:15px;">
+                            <input type="text" id="tpay-${t.id}" placeholder="Anchor Submission Link..." value="${t.payload}">
+                            <button onclick="App.submitTask(${t.id})" class="btn-minimal" style="background:var(--primary);">Submit Payload</button>
+                        </div>
+
+                        ${t.status === 'pending' ? `
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <button onclick="App.taskAct(${t.id},'Accepted')" class="btn-claim" style="flex:1;">Accept</button>
+                            <button onclick="App.taskAct(${t.id},'Rejected')" class="btn-claim" style="background:var(--accent); flex:1;">Reject</button>
+                        </div>` : ''}
+                    </div>
+                `).join(''));
+            },
+
+            replyTask(id) {
+                const inp = document.getElementById(`rep-${id}`);
+                if (!inp.value) return;
+                this.state.tasks.find(t => t.id === id).comments.push({ s: 'Me', m: inp.value });
+                this.renderTasks();
+            },
+
+            submitTask(id) {
+                const link = document.getElementById(`tpay-${id}`).value;
+                this.state.tasks.find(t => t.id === id).payload = link;
+                alert("Payload anchored to technical ledger.");
+            },
+
+            taskAct(id, act) { this.state.tasks.find(t => t.id === id).status = act; this.renderTasks(); },
+
+            renderNotifications() {
+                const render = (id, list) => ui.html(id, list.map(n => `<div class="notif-item ${id === 'notif-private' ? 'private' : ''}"><p class="info-sub" style="font-size:8px;">${n.time}</p><p style="font-size:0.85rem; font-weight:700; margin-top:5px;">${n.text}</p></div>`).join(''));
+                render('notif-private', this.state.notifications.private);
+                render('notif-public', this.state.notifications.public);
+            },
+
+            openChat(id) {
+                this.state.currentChat = id;
+                document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
+                const el = document.getElementById(`chat-${id}`);
+                if (el) el.classList.add('active');
+                ui.set('chat-title', id.toUpperCase() + '_SYNC_CHANNEL');
+                this.renderChatWindow();
+            },
+
+            renderChatWindow() {
+                const msgs = this.state.chats[this.state.currentChat] || [];
+                ui.html('chat-history', msgs.map(m => `
+                    <div style="display:flex; flex-direction:column; align-items: ${m.s === 'Me' ? 'flex-end' : 'flex-start'};">
+                        <div class="msg-bubble ${m.s === 'Me' ? 'msg-me' : 'msg-sender'}" style="max-width:85%;">${m.m}</div>
+                        <span style="font-size:7px; margin-top:4px; font-weight:800; color:var(--slate);">${m.s} • ${m.t}</span>
+                    </div>
+                `).join(''));
+
+                // Participant display
+                const chatID = this.state.currentChat;
+                if (chatID.startsWith('team')) {
+                    const team = chatID === 'team1' ? this.state.projects[0] : this.state.projects[1];
+                    ui.html('chat-participants-list', team.members.slice(0, 3).map(m => `<span class="badge" style="background:#fff; border:1px solid var(--border);">${m}</span>`).join('') + `<span class="badge">+${team.members.length - 3}</span>`);
+                } else {
+                    ui.html('chat-participants-list', `<span class="badge badge-verified">Secure Direct</span>`);
+                }
+
+                const area = document.getElementById('chat-history');
+                area.scrollTop = area.scrollHeight;
+            },
+
+            sendChat(e) {
+                e.preventDefault();
+                const inp = document.getElementById('chat-input');
+                if (!inp.value) return;
+                if (!this.state.chats[this.state.currentChat]) this.state.chats[this.state.currentChat] = [];
+                this.state.chats[this.state.currentChat].push({ s: 'Me', m: inp.value, t: this.state.portalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) });
+                inp.value = ''; this.renderChatWindow();
+            },
+
+            renderAttendanceTab() {
+                let calHtml = `<div class="calendar-header">Sun</div><div class="calendar-header">Mon</div><div class="calendar-header">Tue</div><div class="calendar-header">Wed</div><div class="calendar-header">Thu</div><div class="calendar-header">Fri</div><div class="calendar-header">Sat</div>`;
+                for (let i = 1; i <= 28; i++) {
+                    const status = this.state.attendanceMap[i] || '';
+                    calHtml += `<div class="calendar-cell ${i === 25 ? 'today' : ''}">${i}<span class="status-dot ${status ? 'status-' + status : ''}"></span></div>`;
+                }
+                ui.html('att-calendar', calHtml);
+                ui.html('att-logs-node', this.state.logs.map(l => `<div class="attendance-log-item"><div><p style="font-size: 11px; font-weight: 900;">${l.d}</p><p style="font-size: 9px; color: var(--slate);">${l.type}</p></div><span class="badge badge-verified" style="font-size: 8px;">${l.t}</span></div>`).join(''));
+            },
+
+            logout() { sessionStorage.clear(); window.location.reload(); }
         };
 
         window.onload = () => App.init();
