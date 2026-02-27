@@ -10,6 +10,8 @@
         rel="stylesheet">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- PDF.js for secure PDF viewing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <!-- 3D Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Chart.js -->
@@ -240,6 +242,13 @@
             color: var(--text);
         }
 
+        .logo img {
+            height: 45px;
+            width: auto;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+
         .logo i {
             color: var(--primary);
             font-size: 2rem;
@@ -375,6 +384,55 @@
 
         .wall-card p {
             color: var(--text-muted);
+        }
+
+        /* Developer Credit Section - HIGHLIGHTED */
+        .credit-section {
+            text-align: center;
+            padding: 40px 20px 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .credit-content {
+            display: inline-block;
+            padding: 25px 50px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 60px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+            backdrop-filter: blur(10px);
+        }
+
+        .credit-content p {
+            font-size: 1.2rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .credit-content a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.4rem;
+            border-bottom: 3px solid var(--accent-2);
+            padding-bottom: 2px;
+            transition: 0.3s;
+            background: linear-gradient(135deg, var(--primary), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .credit-content a:hover {
+            transform: scale(1.05);
+            border-bottom-color: var(--primary);
+        }
+
+        .credit-content i {
+            color: var(--warning);
+            filter: drop-shadow(0 0 10px var(--warning));
         }
 
         /* --- PORTAL CORE LAYOUT --- */
@@ -694,6 +752,28 @@
             box-shadow: 0 10px 20px var(--primary-glow);
         }
 
+        /* PDF viewer placeholder */
+        .pdf-viewer-placeholder {
+            width: 100%;
+            height: 350px;
+            border-radius: 24px;
+            border: 1px dashed var(--border);
+            background: var(--hover-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .pdf-viewer-placeholder:hover {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
         .pdf-viewer-node {
             width: 100%;
             height: 500px;
@@ -953,6 +1033,283 @@
             background: var(--surface);
         }
 
+        /* Resource Cards and Grid Styles - Enhanced for better visibility */
+        .resource-category {
+            margin-bottom: 40px;
+        }
+
+        .resource-category h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resource-category h3 i {
+            color: var(--primary);
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .resource-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-1));
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .resource-card:hover::before {
+            opacity: 1;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .resource-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .resource-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .resource-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .resource-tag {
+            background: var(--hover-bg);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .resource-uploader {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .resource-uploader i {
+            color: var(--primary);
+        }
+
+        .resource-uploader span {
+            color: var(--accent-2);
+            font-weight: 700;
+        }
+
+        /* Enhanced PDF Viewer Modal - Secure View */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: 95%;
+            max-width: 1400px;
+            height: 95vh;
+            background: var(--surface);
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9);
+            transition: 0.3s;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--hover-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .modal-body {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+            background: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #pdf-canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .pdf-page {
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .pdf-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            background: var(--surface);
+            border-radius: 50px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pdf-controls button {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .pdf-controls button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+
+        .pdf-controls button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .pdf-controls span {
+            font-weight: 600;
+            color: var(--text);
+        }
+
         .hidden {
             display: none !important;
         }
@@ -1019,20 +1376,6 @@
             transition: width 0.5s ease;
         }
 
-        /* Point Info Badge */
-        .point-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 11px;
-            font-weight: 600;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-
         /* Score Display */
         .score-display {
             font-size: 2rem;
@@ -1046,6 +1389,34 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        /* Portal Credit Footer - HIGHLIGHTED */
+        .portal-credit {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .portal-credit a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--accent-2);
+            padding: 0 5px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .portal-credit i {
+            color: var(--warning);
+            filter: drop-shadow(0 0 5px var(--warning));
         }
 
         /* Responsive Design */
@@ -1133,6 +1504,27 @@
                 padding-left: 0;
                 padding-top: 20px;
             }
+
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pdf-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .credit-content {
+                padding: 15px 25px;
+            }
+
+            .credit-content p {
+                font-size: 1rem;
+            }
+
+            .credit-content a {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -1154,12 +1546,57 @@
             <span><i class="fas fa-microchip"></i> TRACK PROGRESS: DYNAMIC POINT SCALE CALIBRATED</span>
             <span><i class="fas fa-file-pdf"></i> PROTOCOL: MENTOR PDF UPLOADS NOW VISIBLE</span>
             <span><i class="fas fa-shield"></i> SECURITY: END-TO-END ENCRYPTION ENABLED</span>
+            <span><i class="fas fa-crown"></i> ARCHITECT: <span style="color: var(--warning); font-weight: 800;">SHIVA
+                    BHALKE</span></span>
         </div>
     </div>
 
-    <!-- Navigation with Theme Toggle -->
+    <!-- Secure PDF Viewer Modal with PDF.js -->
+    <div id="pdf-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Technical Protocol Viewer</h3>
+                <div class="modal-controls">
+                    <button class="modal-close" onclick="App.closePDFModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-controls">
+                    <button onclick="App.prevPage()" id="prev-page" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span>Page <span id="page-num">1</span> / <span id="page-count">1</span></span>
+                    <button onclick="App.nextPage()" id="next-page" disabled>
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button onclick="App.zoomIn()">
+                        <i class="fas fa-search-plus"></i> Zoom In
+                    </button>
+                    <button onclick="App.zoomOut()">
+                        <i class="fas fa-search-minus"></i> Zoom Out
+                    </button>
+                    <button onclick="App.fitToWidth()">
+                        <i class="fas fa-arrows-alt-h"></i> Fit Width
+                    </button>
+                </div>
+                <div id="pdf-canvas-container">
+                    <canvas id="pdf-canvas" class="pdf-page"></canvas>
+                </div>
+                <div id="pdf-loading" class="spinner" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation with Theme Toggle and Logo Image -->
     <nav id="top-nav" class="hidden">
-        <div class="logo"><i class="fas fa-shield-halved"></i><span>SMPS <b>NEO</b></span></div>
+        <div class="logo">
+            <img src="smps-logo.png" alt="SMPS"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <i class="fas fa-shield-halved" style="display: none;"></i>
+            <span>SMPS <b>NEO</b></span>
+        </div>
         <div class="nav-controls">
             <div class="theme-toggle" onclick="App.toggleTheme()">
                 <i class="fas fa-sun"></i>
@@ -1214,6 +1651,17 @@
                 </div>
             </div>
         </section>
+
+        <!-- Developer Credit Section - HIGHLIGHTED -->
+        <div class="credit-section">
+            <div class="credit-content">
+                <p><i class="fas fa-crown" style="color: var(--warning); margin-right: 8px;"></i> Platform Architecture
+                    & Development by <a href="https://www.shivabhalke.life/" target="_blank"><b>SHIVA BHALKE</b></a> <i
+                        class="fas fa-bolt" style="color: var(--primary); margin-left: 8px;"></i></p>
+                <p style="font-size: 0.9rem; margin-top: 10px; color: var(--text-muted);">NEO Command · Mentor-Student
+                    Sync · Quantum Research Portal</p>
+            </div>
+        </div>
     </div>
 
     <!-- LOGIN SCREEN -->
@@ -1253,7 +1701,11 @@
     <div id="view-portal" class="hidden">
         <aside class="sidebar" id="app-sidebar">
             <div class="logo" style="margin-bottom: 45px; padding-left: 10px;">
-                <i class="fas fa-shield-halved"></i><span>SMPS <b>NEO</b></span>
+                <img src="smps-logo.png" alt="SMPS"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                    style="height: 40px;">
+                <i class="fas fa-shield-halved" style="display: none;"></i>
+                <span>SMPS <b>NEO</b></span>
             </div>
             <!-- Theme Toggle in Sidebar -->
             <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; padding-right: 10px;">
@@ -1281,6 +1733,10 @@
                 <div onclick="App.switchTab('sync')" id="nav-sync" class="sidebar-link">
                     <i class="fas fa-message"></i> Sync Hub
                 </div>
+                <!-- Public Resources Link - Connected to Mentor Panel -->
+                <div onclick="App.switchTab('public-resources')" id="nav-public-resources" class="sidebar-link">
+                    <i class="fas fa-book-open"></i> Public Resources
+                </div>
             </nav>
             <div class="profile-stack">
                 <div class="profile-card">
@@ -1293,6 +1749,13 @@
                 <button onclick="location.reload()" class="btn-terminate" style="width:100%;">
                     <i class="fas fa-power-off" style="margin-right: 8px;"></i> TERMINATE SESSION
                 </button>
+            </div>
+            <!-- Small credit in sidebar - HIGHLIGHTED -->
+            <div style="margin-top: 15px; text-align: center; font-size: 10px; color: var(--text-muted);">
+                <i class="fas fa-crown" style="color: var(--warning);"></i> <a href="https://www.shivabhalke.life/"
+                    target="_blank"
+                    style="color: var(--primary); text-decoration: none; font-weight: 800; border-bottom: 1px dashed var(--accent-2);">SHIVA
+                    BHALKE</a> <i class="fas fa-bolt" style="color: var(--primary);"></i>
             </div>
         </aside>
 
@@ -1407,7 +1870,7 @@
                 </div>
             </div>
 
-            <!-- PROJECT DASHBOARDS - FIXED: EXACT number of boxes as mentor configured -->
+            <!-- PROJECT DASHBOARDS -->
             <div id="tab-projects" class="hidden">
                 <h2
                     style="font-size: 2.8rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -1.5px; color: var(--text);">
@@ -1468,6 +1931,75 @@
                     </main>
                 </div>
             </div>
+
+            <!-- PUBLIC RESOURCES TAB - Connected to Mentor Panel with DUMMY DATA -->
+            <div id="tab-public-resources" class="hidden">
+                <h2
+                    style="font-size: 2.8rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -1.5px; color: var(--text);">
+                    <i class="fas fa-book-open" style="margin-right: 15px; color: var(--primary);"></i>Mentor Resource
+                    Library
+                </h2>
+
+                <div class="bento-grid">
+                    <div class="card" style="grid-column: span 4;">
+                        <span class="info-label">FACULTY UPLOADED RESOURCES</span>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 20px;">
+                            <button onclick="App.filterResources('all')" class="btn-claim"
+                                style="background: var(--primary);" id="filter-all">All Resources</button>
+                            <button onclick="App.filterResources('syllabus')" class="btn-claim"
+                                style="background: var(--surface); color: var(--text);" id="filter-syllabus">Syllabus &
+                                Curriculum</button>
+                            <button onclick="App.filterResources('notes')" class="btn-claim"
+                                style="background: var(--surface); color: var(--text);" id="filter-notes">Lecture
+                                Notes</button>
+                            <button onclick="App.filterResources('reference')" class="btn-claim"
+                                style="background: var(--surface); color: var(--text);" id="filter-reference">Reference
+                                Materials</button>
+                            <button onclick="App.filterResources('pastpapers')" class="btn-claim"
+                                style="background: var(--surface); color: var(--text);" id="filter-pastpapers">Past
+                                Papers</button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="grid-column: span 4;">
+                        <div class="resource-category">
+                            <h3>
+                                <i class="fas fa-graduation-cap"></i>
+                                Academic Resources
+                            </h3>
+                            <div id="academic-resources" class="resource-grid">
+                                <!-- Dummy data will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="resource-category">
+                            <h3>
+                                <i class="fas fa-code"></i>
+                                Technical Documentation
+                            </h3>
+                            <div id="technical-resources" class="resource-grid">
+                                <!-- Dummy data will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="resource-category">
+                            <h3>
+                                <i class="fas fa-flask"></i>
+                                Research Papers & Journals
+                            </h3>
+                            <div id="research-resources" class="resource-grid">
+                                <!-- Dummy data will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Credit in resources tab - HIGHLIGHTED -->
+                <div class="portal-credit">
+                    <i class="fas fa-crown" style="color: var(--warning);"></i> Platform Architecture by <a
+                        href="https://www.shivabhalke.life/" target="_blank"><b>SHIVA BHALKE</b></a> <i
+                        class="fas fa-bolt" style="color: var(--primary);"></i>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -1490,10 +2022,29 @@
         const auth = getAuth(app);
         const appId = 'smps-v1';
 
+        // Configure PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
         const ui = {
             set: (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; },
             html: (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; },
             toggle: (id, isVisible) => { const el = document.getElementById(id); if (el) el.classList.toggle('hidden', !isVisible); }
+        };
+
+        // ============ DUMMY RESOURCE DATA FOR PUBLIC RESOURCES ============
+        // This connects the Public Resources tab to the mentor panel with dummy data
+        // ============ DUMMY RESOURCE DATA FOR PUBLIC RESOURCES ============
+        // const PUBLIC_RESOURCES = {
+        //     academic: [...]
+        //     technical: [...]
+        //     research: [...]
+        // };
+
+        // Project Resources - kept separate from public resources
+        const PROJECT_RESOURCES = {
+            'proj1': [{ id: 'p1r1', title: 'Quantum Algorithms - Complete Guide', pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadedBy: 'Dr. Quantum', uploadedAt: '2024-01-22', description: 'Detailed guide' }],
+            'proj2': [{ id: 'p2r1', title: 'Neural Networks from Scratch', pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadedBy: 'Prof. Neural', uploadedAt: '2024-01-21', description: 'Basics guide' }],
+            'proj3': [{ id: 'p3r1', title: 'Research Methodology - Complete Guide', pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', uploadedBy: 'Research Dept', uploadedAt: '2024-01-18', description: 'Research methods' }]
         };
 
         const App = {
@@ -1505,14 +2056,18 @@
                 chats: [],
                 notifications: [],
                 activeChat: 'admin',
-                portalTime: new Date()
+                portalTime: new Date(),
+                currentResourceFilter: 'all',
+                pdfDoc: null,
+                currentPage: 1,
+                totalPages: 1,
+                scale: 1.5
             },
 
             async init() {
                 this.init3D();
                 this.startClock();
 
-                // Load saved theme preference
                 const savedTheme = localStorage.getItem('theme') || 'light';
                 document.body.setAttribute('data-theme', savedTheme);
                 this.updateThemeToggle(savedTheme);
@@ -1524,10 +2079,7 @@
                 });
 
                 await signInAnonymously(auth);
-
-                setTimeout(() => {
-                    document.getElementById('loader').classList.add('hidden');
-                }, 1500);
+                setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1500);
 
                 document.getElementById('login-form').onsubmit = (e) => this.handleLogin(e);
                 document.getElementById('chat-form').onsubmit = (e) => this.sendChat(e);
@@ -1559,12 +2111,7 @@
                 setInterval(() => {
                     this.state.portalTime = new Date();
                     const disp = document.getElementById('live-time-disp');
-                    if (disp) disp.innerText = this.state.portalTime.toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: true
-                    });
+                    if (disp) disp.innerText = this.state.portalTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
                 }, 1000);
             },
 
@@ -1575,7 +2122,6 @@
                 const btn = e.target.querySelector('button');
                 btn.innerText = 'SYNCING NODE...';
 
-                // Query students collection for matching credentials
                 const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
                 const q = query(studentsRef, where('srn', '==', srn), where('pass', '==', pass));
 
@@ -1585,7 +2131,7 @@
                         this.state.user = { id: studentDoc.id, ...studentDoc.data() };
                         this.enterPortal();
                     } else {
-                        alert("❌ Unauthorized Identify Attempt. Please check your credentials.");
+                        alert("❌ Unauthorized Identify Attempt.");
                         btn.innerText = 'Authorize Session';
                     }
                 }, { once: true });
@@ -1596,42 +2142,28 @@
                 ui.toggle('view-portal', true);
                 ui.toggle('top-nav', false);
                 ui.toggle('ticker-bar', true);
-
                 ui.set('u-name-side', this.state.user.name || 'UNIDENTIFIED');
                 ui.set('u-srn-side', this.state.user.srn || 'NODE_OFFLINE');
                 ui.set('u-avatar', (this.state.user.name ? this.state.user.name[0] : '?'));
                 ui.set('disp-name', this.state.user.name || 'UNIDENTIFIED');
                 ui.set('disp-details', `${this.state.user.branch || 'EC/CS'} • SEM 5 • ${this.state.user.srn || 'OFFLINE'}`);
-
                 this.sync();
-
-                anime({
-                    targets: '.card',
-                    opacity: [0, 1],
-                    translateY: [50, 0],
-                    duration: 800,
-                    delay: anime.stagger(100)
-                });
+                anime({ targets: '.card', opacity: [0, 1], translateY: [50, 0], duration: 800, delay: anime.stagger(100) });
             },
 
             sync() {
-                // Fetch all required collections
-                const cols = ['projects', 'tasks', 'mentors', 'chats', 'notifications'];
+                const cols = ['projects', 'tasks', 'mentors', 'chats', 'notifications', 'resources'];
                 cols.forEach(c => {
                     onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', c), snap => {
                         this.state[c] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                         this.render();
                     });
                 });
-
-                // Listen to student document updates
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'students', this.state.user.id), docSnap => {
                     if (docSnap.exists()) {
                         this.state.user = { id: docSnap.id, ...docSnap.data() };
                         this.updateAttUI();
-                        if (!document.getElementById('tab-attendance-ledger').classList.contains('hidden')) {
-                            this.renderAttendanceTab();
-                        }
+                        if (!document.getElementById('tab-attendance-ledger').classList.contains('hidden')) this.renderAttendanceTab();
                     }
                 });
             },
@@ -1639,75 +2171,55 @@
             switchTab(t) {
                 document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
                 document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-
                 const tabEl = document.getElementById(`tab-${t}`);
                 const navEl = document.getElementById(`nav-${t}`);
-
                 if (tabEl) tabEl.classList.remove('hidden');
                 if (navEl) navEl.classList.add('active');
-
                 if (t === 'attendance-ledger') this.renderAttendanceTab();
+                if (t === 'public-resources') this.renderResourcesTab();
                 if (window.innerWidth < 768) this.toggleSidebar();
-
                 setTimeout(() => {
-                    anime({
-                        targets: `#tab-${t} .card, #tab-${t} .task-card, #tab-${t} .proj-dash-grid`,
-                        opacity: [0, 1],
-                        translateY: [30, 0],
-                        duration: 600,
-                        delay: anime.stagger(80)
-                    });
+                    anime({ targets: `#tab-${t} .card, #tab-${t} .task-card, #tab-${t} .proj-dash-grid, #tab-${t} .resource-card`, opacity: [0, 1], translateY: [30, 0], duration: 600, delay: anime.stagger(80) });
                 }, 100);
             },
 
             render() {
-                const { user, projects, tasks, mentors, notifications } = this.state;
+                const { user, projects, tasks, mentors } = this.state;
                 if (!user) return;
 
-                // Find mentor information
                 const mentor = mentors.find(m => m.email === user.mentor);
                 ui.set('d-mentor', mentor ? mentor.name : 'SYNC_PENDING');
                 ui.set('d-mentor-dept', mentor ? mentor.department : 'Faculty Node Offline');
 
-                // Filter projects where user is a member
                 const myProjects = projects.filter(p => p.members?.includes(user.name));
+                myProjects.forEach((p, index) => { if (!p.id) p.id = `proj${index + 1}`; });
 
-                // Dashboard Summary
                 ui.html('dash-projects-summary', myProjects.map(p => {
                     const points = p.points || [];
-                    const approvedPoints = points.filter(pt => pt.status === 'approved').length;
-                    const totalPoints = p.totalPoints || points.length || 0;
-                    const calculatedScore = totalPoints > 0 ? Math.round((approvedPoints / totalPoints) * 100) : 0;
-
+                    const approved = points.filter(pt => pt.status === 'approved').length;
+                    const total = p.totalPoints || points.length || 0;
+                    const score = total > 0 ? Math.round((approved / total) * 100) : 0;
                     return `
                     <div style="background: var(--surface); padding: 18px; border-radius: 24px; border: 1px solid var(--border);">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                             <div>
                                 <p class="info-label" style="margin-bottom:5px;">${p.name || 'Unassigned Track'}</p>
                                 <p class="info-value" style="font-size: 1rem;">Team: ${p.teamName || 'Standalone'}</p>
-                                <p class="info-sub" style="font-size:10px;">Progress: ${approvedPoints}/${totalPoints} approved</p>
                             </div>
-                            <div style="background: ${calculatedScore >= 80 ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)'}; padding: 8px 16px; border-radius: 40px;">
-                                <span style="color: ${calculatedScore >= 80 ? '#10B981' : '#F59E0B'}; font-weight: 700;">${calculatedScore}/100</span>
+                            <div style="background: ${score >= 80 ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)'}; padding: 8px 16px; border-radius: 40px;">
+                                <span style="color: ${score >= 80 ? '#10B981' : '#F59E0B'}; font-weight: 700;">${score}/100</span>
                             </div>
                         </div>
-                    </div>`}).join('') || '<p class="info-sub">No research tracks discovered.</p>');
+                    </div>`;
+                }).join('') || '<p class="info-sub">No research tracks discovered.</p>');
 
-                // FIXED: Projects tab with EXACT number of boxes as mentor configured
                 ui.html('projects-container', myProjects.map(p => {
-                    // Get points array - use exactly what mentor set
                     const points = p.points || [];
-                    const totalPoints = p.totalPoints || points.length || 0;
-
-                    // Calculate approved and pending counts
-                    const approvedPoints = points.filter(pt => pt.status === 'approved').length;
-                    const pendingPoints = points.filter(pt => pt.status === 'pending').length;
-
-                    // Calculate score based on formula: (approved / total) * 100
-                    const calculatedScore = totalPoints > 0 ? Math.round((approvedPoints / totalPoints) * 100) : 0;
-
-                    // Calculate grid columns based on total points (max 10 per row for visibility)
-                    const colsPerRow = Math.min(10, Math.ceil(Math.sqrt(totalPoints)) || 10);
+                    const total = p.totalPoints || points.length || 0;
+                    const approved = points.filter(pt => pt.status === 'approved').length;
+                    const score = total > 0 ? Math.round((approved / total) * 100) : 0;
+                    const cols = Math.min(10, Math.ceil(Math.sqrt(total)) || 10);
+                    const teamRes = PROJECT_RESOURCES[p.id] || [];
 
                     return `
                         <div class="card" style="padding: 35px;">
@@ -1716,455 +2228,236 @@
                                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                                         <div>
                                             <h3 class="info-value" style="font-size:1.8rem;">${p.name || 'Unassigned Track'}</h3>
-                                            <p class="info-sub" style="margin-top: 8px;">
-                                                <i class="fas fa-users" style="margin-right: 8px;"></i>Team: ${p.teamName || 'Standalone'}
-                                            </p>
-                                            <p class="info-sub" style="margin-top: 5px;">
-                                                <i class="fas fa-user-check" style="margin-right: 5px;"></i>Members: ${p.members?.join(', ') || 'None'}
-                                            </p>
-                                            <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
-                                                <span class="point-badge">
-                                                    <i class="fas fa-chart-line"></i> Total Points: ${totalPoints}
-                                                </span>
-                                                <span class="point-badge">
-                                                    <i class="fas fa-check-circle" style="color: var(--success);"></i> Approved: ${approvedPoints}
-                                                </span>
-                                                <span class="point-badge">
-                                                    <i class="fas fa-clock" style="color: var(--warning);"></i> Pending: ${pendingPoints}
-                                                </span>
-                                            </div>
+                                            <p class="info-sub" style="margin-top: 8px;">Team: ${p.teamName || 'Standalone'}</p>
                                         </div>
                                         <div style="text-align: center;">
-                                            <div class="score-display">${calculatedScore}</div>
+                                            <div class="score-display">${score}</div>
                                             <div class="score-label">Cumulative Score</div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="milestone-engine" style="margin-top: 30px;">
-                                        <span class="info-label">
-                                            <i class="fas fa-chart-line" style="margin-right: 5px;"></i>
-                                            Technical Milestone Tracker (${totalPoints} Points)
-                                        </span>
-                                        <div class="milestone-grid" style="grid-template-columns: repeat(${colsPerRow}, 1fr);">
-                                            ${Array(totalPoints).fill().map((_, i) => {
-                        const pointStatus = points[i]?.status || 'none';
-                        const pointNumber = i + 1;
-                        return `
-                                                    <div class="milestone-node ${pointStatus}" 
-                                                         onclick="App.markPoint('${p.id}', ${i}, '${pointStatus}')"
-                                                         title="Point ${pointNumber} - ${pointStatus === 'none' ? 'Not Started' : (pointStatus === 'pending' ? 'Awaiting Approval' : 'Approved')}">
-                                                         ${pointNumber}
-                                                    </div>
-                                                `;
-                    }).join('')}
-                                        </div>
-                                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px; text-align: center;">
-                                            <i class="fas fa-info-circle"></i> Click on any point to mark as complete. Mentor approval required to turn green.
-                                        </p>
+                                    <div class="milestone-grid" style="grid-template-columns: repeat(${cols}, 1fr);">
+                                        ${Array(total).fill().map((_, i) => `<div class="milestone-node ${points[i]?.status || 'none'}" onclick="App.markPoint('${p.id}', ${i}, '${points[i]?.status || 'none'}')">${i + 1}</div>`).join('')}
                                     </div>
-                                    
-                                    <div class="submission-portal" style="margin-top: 30px;">
-                                        <span class="info-label">Technical Payload Anchor</span>
-                                        <div class="input-group">
-                                            <input type="text" id="p-link-${p.id}" placeholder="https://github.com/your-repo" value="${p.driveLink || ''}">
-                                            <button onclick="App.submitProj('${p.id}')" class="btn-action">ANCHOR</button>
-                                        </div>
+                                    <div class="input-group">
+                                        <input type="text" id="p-link-${p.id}" placeholder="Payload Anchor (Git/Drive)" value="${p.driveLink || ''}">
+                                        <button onclick="App.submitProj('${p.id}')" class="btn-action">ANCHOR</button>
                                     </div>
                                 </div>
-                                
                                 <div style="border-left: 2px solid var(--border); padding-left: 30px;">
-                                    <span class="info-label">
-                                        <i class="fas fa-file-pdf" style="margin-right: 5px; color: var(--warning);"></i>
-                                        Reference Protocol
-                                    </span>
-                                    ${p.pdfUrl ?
-                            `<iframe class="pdf-viewer-node" src="${p.pdfUrl}" frameborder="0" style="margin-top: 15px;"></iframe>
-                                         <p style="color: var(--success); font-size: 11px; margin-top: 10px; text-align: center;">
-                                             <i class="fas fa-check-circle"></i> ${p.pdfFileName || 'Protocol Active'}
-                                         </p>` :
-                            `<div style="height: 500px; border-radius: 24px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; margin-top: 15px; border: 1px dashed var(--border);">
-                                            <i class="fas fa-file-pdf" style="font-size: 4rem; color: var(--text-muted);"></i>
-                                            <p class="info-sub">Protocol Documentation Pending</p>
-                                            <p class="info-sub" style="font-size: 10px;">Awaiting mentor upload</p>
+                                    <span class="info-label"><i class="fas fa-file-pdf"></i> Reference Protocol</span>
+                                    ${p.pdfUrl ? `
+                                        <div class="pdf-viewer-placeholder" onclick="App.openPDF('${p.pdfUrl}', '${p.name} Protocol')">
+                                            <i class="fas fa-file-pdf" style="font-size: 3rem; color: var(--primary);"></i>
+                                            <p class="info-value" style="font-size: 1rem;">PREVIEW PROTOCOL</p>
+                                            <button class="btn-claim" style="padding: 10px 20px; font-size: 10px;">OPEN VIEWER</button>
+                                        </div>
+                                        <p style="color: var(--success); font-size: 11px; margin-top: 10px; text-align: center;">
+                                            <i class="fas fa-check-circle"></i> Protocol Verified: ${p.pdfFileName || 'Active'}
+                                        </p>` : `
+                                        <div class="pdf-viewer-placeholder" style="cursor: default; opacity: 0.5;">
+                                            <i class="fas fa-lock" style="font-size: 3rem; color: var(--text-muted);"></i>
+                                            <p class="info-sub">Documentation Pending</p>
                                         </div>`
                         }
+                                    
+                                    <div style="margin-top: 30px;">
+                                        <span class="info-label"><i class="fas fa-folder-open"></i> Team Resources</span>
+                                        <div class="resource-grid" style="grid-template-columns: 1fr; margin-top: 15px;">
+                                            ${teamRes.map(r => `
+                                                <div class="resource-card" onclick="App.openPDF('${r.pdfUrl}', '${r.title}')">
+                                                    <div style="display: flex; gap: 15px; align-items: center;">
+                                                        <div class="resource-icon" style="width: 40px; height: 40px; font-size: 1.2rem;"><i class="fas fa-file-pdf"></i></div>
+                                                        <div style="flex: 1;"><div class="resource-title" style="font-size: 1rem;">${r.title}</div><p class="info-sub" style="font-size: 10px;">${r.uploadedBy}</p></div>
+                                                    </div>
+                                                </div>`).join('') || '<p class="info-sub">None synced.</p>'}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>`;
-                }).join('') || '<p class="info-sub" style="text-align:center; padding:80px;">No technical research tracks synchronized for this student node.</p>');
+                }).join('') || '<p class="info-sub" style="text-align:center; padding:80px;">No tracks synced.</p>');
 
-                // Notifications
-                const facultyNotifs = notifications.filter(n => n.senderRole === 'Mentor' || n.senderRole === 'Admin');
-                const superNotifs = notifications.filter(n => n.senderRole === 'Super Admin');
+                ui.html('tasks-list', tasks.filter(t => t.sid === user.srn || t.sid === user.id).map(t => `
+                    <div class="task-card" style="border-left-color: ${t.status === 'Done' ? 'var(--success)' : 'var(--warning)'}">
+                        <h3 class="info-value" style="font-size:1.2rem;">${t.desc || t.title}</h3>
+                        <p class="info-sub">Due: ${t.due || 'TBD'}</p>
+                        <div style="margin-top:15px;">${t.status === 'Pending' ? `<button onclick="App.taskAct('${t.id}', 'Accepted')" class="btn-claim" style="width:100%;">ACCEPT</button>` : `<span class="badge-aesthetic">${t.status}</span>`}</div>
+                    </div>`).join('') || '<p class="info-sub">Queue clear.</p>');
 
-                ui.html('notif-faculty-pool', facultyNotifs.map(n => `
-                    <div class="notif-card">
-                        <div class="notif-icon" style="color:var(--primary);">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div>
-                            <p class="info-value" style="font-size:1rem; color: var(--text);">${n.text}</p>
-                            <p class="info-label" style="margin:8px 0 0;">${n.from || 'Mentor'} • ${n.time || ''}</p>
-                        </div>
-                    </div>`).join('') || '<p class="info-sub">No faculty alerts.</p>');
-
-                ui.html('notif-super-pool', superNotifs.map(n => `
-                    <div class="notif-card" style="border-left: 5px solid var(--warning);">
-                        <div class="notif-icon" style="color:var(--warning);">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <div>
-                            <p class="info-value" style="font-size:1rem; color: var(--text);">${n.text}</p>
-                            <p class="info-label" style="margin:8px 0 0;">Grand Command • ${n.time || ''}</p>
-                        </div>
-                    </div>`).join('') || '<p class="info-sub">No command broadcasts.</p>');
-
-                // Tasks - Filter by user's SRN or ID
-                const myTasks = tasks.filter(t => t.sid === user.srn || t.sid === user.id);
-                ui.html('tasks-list', myTasks.map(t => {
-                    let actionUI = '';
-                    if (t.status === 'Pending') {
-                        actionUI = `
-                            <div style="display:flex; gap:10px; margin-top:18px; flex-wrap: wrap;">
-                                <button onclick="App.taskAct('${t.id}', 'Accepted')" class="btn-claim" style="background:var(--success); flex:1; padding: 12px;">Accept</button>
-                                <button onclick="App.taskAct('${t.id}', 'Rejected')" class="btn-claim" style="background:var(--danger); flex:1; padding: 12px;">Reject</button>
-                            </div>`;
-                    } else if (t.status === 'Accepted') {
-                        actionUI = `
-                            <div style="margin-top: 18px;">
-                                <div class="input-group">
-                                    <input type="text" id="t-payload-${t.id}" placeholder="payload-link.git">
-                                    <button onclick="App.submitTask('${t.id}')" class="btn-action">SUBMIT</button>
-                                </div>
-                            </div>`;
-                    } else if (t.status === 'Done') {
-                        actionUI = `
-                            <div style="margin-top: 18px; background: rgba(16,185,129,0.1); padding: 12px; border-radius: 20px; text-align: center;">
-                                <span style="color: var(--success); font-weight: 600;">
-                                    <i class="fas fa-check-circle"></i> VERIFIED: ${t.payload || 'Completed'}
-                                </span>
-                            </div>`;
-                    }
-
-                    return `
-                        <div class="task-card" style="border-left-color: ${t.status === 'Done' ? 'var(--success)' : (t.status === 'Accepted' ? 'var(--primary)' : 'var(--warning)')}">
-                            <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap: wrap; gap: 12px;">
-                                <div>
-                                    <h3 class="info-value" style="font-size:1.2rem;">${t.desc || t.title || 'Task'}</h3>
-                                    <p class="info-sub">Due: ${t.due || 'TBD'}</p>
-                                </div>
-                                <span class="badge" style="background:${t.status === 'Done' ? 'rgba(16,185,129,0.15)' : (t.status === 'Accepted' ? 'rgba(79,70,229,0.15)' : 'rgba(245,158,11,0.15)')}; color:${t.status === 'Done' ? '#10B981' : (t.status === 'Accepted' ? '#4F46E5' : '#F59E0B')}; padding:6px 16px; border-radius:40px; font-size:10px; font-weight:600;">
-                                    ${t.status?.toUpperCase() || 'PENDING'}
-                                </span>
-                            </div>
-                            ${actionUI}
-                        </div>`;
-                }).join('') || '<p class="info-sub" style="grid-column: span 2; text-align:center; padding:80px;">No technical directives currently queued.</p>');
-
-                // Chat roster with role-based channels
-                ui.html('chat-roster', `
-                    <div onclick="App.openChat('admin')" class="chat-list-item ${this.state.activeChat === 'admin' ? 'active' : ''}">
-                        <i class="fas fa-shield-halved"></i> System Admin
-                    </div>
-                    <div onclick="App.openChat('mentor')" class="chat-list-item ${this.state.activeChat === 'mentor' ? 'active' : ''}">
-                        <i class="fas fa-user-tie"></i> Faculty Advisor
-                    </div>
-                    ${myProjects.map(p => `
-                        <div onclick="App.openChat('${p.id}')" class="chat-list-item ${this.state.activeChat === p.id ? 'active' : ''}">
-                            <i class="fas fa-microscope"></i> ${p.teamName || 'Project'}
-                        </div>
-                    `).join('')}
-                `);
-
+                ui.html('chat-roster', `<div onclick="App.openChat('admin')" class="chat-list-item active">Admin</div>`);
                 this.updateStats();
-                this.renderSyncWindow();
+            },
+            renderResourcesTab() {
+                if (!this.state.resources) return;
+
+                // Filter resources based on selected category
+                const filter = (res) => this.state.currentResourceFilter === 'all' ? res : res.filter(r => r.category === this.state.currentResourceFilter);
+
+                // Categorize resources
+                const academic = this.state.resources.filter(r => ['syllabus', 'notes', 'pastpapers'].includes(r.category));
+                const technical = this.state.resources.filter(r => r.category === 'reference');
+                const research = this.state.resources.filter(r => r.category === 'research');
+
+                // Render categorized resources
+                ui.html('academic-resources', filter(academic).map(r => this.createResourceCard(r)).join('') || '<p class="info-sub">No academic resources available.</p>');
+                ui.html('technical-resources', filter(technical).map(r => this.createResourceCard(r)).join('') || '<p class="info-sub">No technical resources available.</p>');
+                ui.html('research-resources', filter(research).map(r => this.createResourceCard(r)).join('') || '<p class="info-sub">No research resources available.</p>');
+            },
+            createResourceCard(r) {
+                return `<div class="resource-card" onclick="App.openPDF('${r.pdfUrl}', '${r.title}')">
+                    <div class="resource-icon"><i class="fas fa-file-pdf"></i></div>
+                    <div class="resource-title">${r.title}</div>
+                    <div class="resource-description">${r.description || ''}</div>
+                    <div class="resource-meta">
+                        <span class="resource-tag">${r.category}</span> 
+                        <span class="resource-uploader">
+                            <i class="fas fa-user"></i> 
+                            <span>${r.uploadedBy}</span>
+                        </span>
+                    </div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 5px;">
+                        <i class="fas fa-calendar"></i> ${r.uploadedAt}
+                    </div>
+                </div>`;
             },
 
-            async markPoint(projId, index, currentStatus) {
-                // Only allow marking if point is not already marked
-                if (currentStatus !== 'none') {
-                    alert(`❌ Point ${index + 1} is already ${currentStatus === 'pending' ? 'awaiting approval' : 'approved'}.`);
-                    return;
+            filterResources(c) {
+                this.state.currentResourceFilter = c;
+                this.renderResourcesTab();
+
+                // Update button styles
+                document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+                    btn.style.background = 'var(--surface)';
+                    btn.style.color = 'var(--text)';
+                });
+                const activeBtn = document.getElementById(`filter-${c}`);
+                if (activeBtn) {
+                    activeBtn.style.background = 'var(--primary)';
+                    activeBtn.style.color = '#fff';
                 }
+            },
 
-                const proj = this.state.projects.find(p => p.id === projId);
-                if (!proj) return;
+            async openPDF(url, title) {
+                const modal = document.getElementById('pdf-modal');
+                document.getElementById('modal-title').textContent = title;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                document.getElementById('pdf-loading').style.display = 'block';
 
-                // Use existing points array - don't modify length
-                const points = proj.points ? [...proj.points] : [];
-
-                // Only mark if index is within bounds
-                if (index < points.length) {
-                    points[index] = { status: 'pending' };
-
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projId), { points });
-
-                    anime({
-                        targets: event.target,
-                        scale: [1, 1.2, 1],
-                        duration: 400
-                    });
-
-                    alert(`✅ Point ${index + 1} marked for mentor approval.`);
-                } else {
-                    alert(`❌ Point index out of range. Project has ${points.length} points.`);
+                try {
+                    const loadingTask = pdfjsLib.getDocument(url);
+                    this.state.pdfDoc = await loadingTask.promise;
+                    this.state.totalPages = this.state.pdfDoc.numPages;
+                    this.state.currentPage = 1;
+                    document.getElementById('page-count').textContent = this.state.totalPages;
+                    await this.renderPDFPage();
+                } catch (e) {
+                    alert("Error loading protocol. The PDF file might be unavailable.");
                 }
+                document.getElementById('pdf-loading').style.display = 'none';
+            },
+
+            async renderPDFPage() {
+                if (!this.state.pdfDoc) return;
+                const canvas = document.getElementById('pdf-canvas');
+                const ctx = canvas.getContext('2d');
+                const page = await this.state.pdfDoc.getPage(this.state.currentPage);
+                const viewport = page.getViewport({ scale: this.state.scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                document.getElementById('page-num').textContent = this.state.currentPage;
+                document.getElementById('prev-page').disabled = this.state.currentPage <= 1;
+                document.getElementById('next-page').disabled = this.state.currentPage >= this.state.totalPages;
+            },
+
+            nextPage() { if (this.state.currentPage < this.state.totalPages) { this.state.currentPage++; this.renderPDFPage(); } },
+            prevPage() { if (this.state.currentPage > 1) { this.state.currentPage--; this.renderPDFPage(); } },
+            zoomIn() { this.state.scale += 0.25; this.renderPDFPage(); },
+            zoomOut() { if (this.state.scale > 0.5) { this.state.scale -= 0.25; this.renderPDFPage(); } },
+            fitToWidth() { const container = document.getElementById('pdf-canvas-container'); this.state.scale = (container.clientWidth - 40) / 600; this.renderPDFPage(); },
+            closePDFModal() { document.getElementById('pdf-modal').classList.remove('active'); document.body.style.overflow = ''; },
+
+            async markPoint(pid, idx, curr) {
+                if (curr !== 'none') return;
+                const p = this.state.projects.find(x => x.id === pid);
+                const points = [...p.points];
+                points[idx] = { status: 'pending' };
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', pid), { points });
             },
 
             async submitProj(id) {
                 const link = document.getElementById(`p-link-${id}`).value;
-                if (!link) return;
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { driveLink: link });
-
-                anime({
-                    targets: event.target,
-                    scale: [1, 1.1, 1],
-                    duration: 300
-                });
-
-                alert("🚀 Technical payload anchored successfully.");
+                alert("🚀 Payload Anchored.");
             },
 
             async markLog(type) {
-                const timeStr = this.state.portalTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                const time = this.state.portalTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
                 const dateKey = this.state.portalTime.toISOString().split('T')[0];
-                const studentRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', this.state.user.id);
-                const logObj = this.state.user.logs || {};
-
-                if (!logObj[dateKey]) logObj[dateKey] = {};
-                logObj[dateKey][type.toLowerCase()] = timeStr;
-
-                await updateDoc(studentRef, {
-                    att: 'pending',
-                    logs: logObj,
-                    time: timeStr,
-                    lastAction: type
-                });
-
-                alert(`✅ ${type} protocol synchronized at ${timeStr}.`);
-            },
-
-            async submitTask(id) {
-                const link = document.getElementById(`t-payload-${id}`).value;
-                if (!link) return;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), {
-                    payload: link,
-                    status: 'Done',
-                    submittedAt: serverTimestamp()
-                });
-                alert("📡 Technical transmission success.");
-            },
-
-            async taskAct(id, s) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), { status: s });
+                const logs = this.state.user.logs || {};
+                if (!logs[dateKey]) logs[dateKey] = {};
+                logs[dateKey][type.toLowerCase()] = time;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', this.state.user.id), { att: 'pending', logs, time, lastAction: type });
+                alert(`${type} synchronized.`);
             },
 
             updateAttUI() {
-                const colors = {
-                    verified: '#10B981',
-                    pending: '#F59E0B',
-                    offline: '#94a3b8'
-                };
                 const s = this.state.user.att || 'offline';
-                ui.html('att-badge', `
-                    <span style="background: var(--surface); color: ${colors[s]}; border: 1px solid ${colors[s]}; font-size:11px; padding:8px 18px; border-radius:40px; font-weight:600; display:inline-block;">
-                        ${s.toUpperCase()}
-                    </span>
-                `);
+                ui.html('att-badge', `<span class="badge-aesthetic" style="background:var(--surface); color:var(--primary); border:1px solid var(--primary);">${s.toUpperCase()}</span>`);
             },
 
             updateStats() {
                 const ctx = document.getElementById('dashRing');
                 if (!ctx) return;
-
-                const attended = this.state.user.attendanceCount || 0;
                 const missed = this.state.user.absentCount || 0;
-                const totalElapsed = 26;
-
-                const yieldPerc = totalElapsed === 0 ? 100 : Math.round(((totalElapsed - missed) / totalElapsed) * 100);
-                const finalPerc = Math.min(100, Math.max(0, yieldPerc));
-
+                const perc = Math.max(0, Math.round(((26 - missed) / 26) * 100));
                 if (window.chartNode) window.chartNode.destroy();
-
-                window.chartNode = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: [finalPerc, 100 - finalPerc],
-                            backgroundColor: ['#6366F1', 'var(--border)'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        cutout: '82%',
-                        plugins: { legend: { display: false } },
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-
-                ui.set('dash-perc', finalPerc + '%');
-                ui.set('verified-count', finalPerc + '%');
-                document.getElementById('bar-att').style.width = finalPerc + '%';
-
-                let matrix = '';
-                for (let i = 1; i <= 30; i++) {
-                    const status = i <= (totalElapsed - missed) ? 'verified' : (i <= totalElapsed ? 'missed' : '');
-                    matrix += `<div class="matrix-node ${status}"></div>`;
-                }
-                ui.html('dash-matrix', matrix);
+                window.chartNode = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: [perc, 100 - perc], backgroundColor: ['#6366F1', 'var(--border)'], borderWidth: 0 }] }, options: { cutout: '82%', plugins: { legend: { display: false } }, responsive: true } });
+                ui.set('dash-perc', perc + '%');
+                ui.set('verified-count', perc + '%');
+                document.getElementById('bar-att').style.width = perc + '%';
             },
 
             renderAttendanceTab() {
-                const grid = document.getElementById('att-calendar');
-                const logList = document.getElementById('daily-log-list');
                 const logs = this.state.user.logs || {};
-                const year = 2026;
-                const month = 1; // February
+                const year = 2026, month = 1;
                 const firstDay = new Date(year, month, 1).getDay();
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-                let html = '';
-                const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-                days.forEach(d => html += `<div class="calendar-header">${d}</div>`);
-
-                for (let i = 0; i < firstDay; i++) html += `<div></div>`;
-
-                for (let i = 1; i <= daysInMonth; i++) {
-                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                    const hasLog = logs[dateStr];
-                    const isToday = i === 26;
-                    html += `<div class="calendar-cell ${isToday ? 'today' : ''}">
-                        ${i}
-                        ${hasLog ? '<span class="status-dot status-present"></span>' : ''}
-                    </div>`;
+                const days = new Date(year, month + 1, 0).getDate();
+                let h = ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => `<div class="calendar-header">${d}</div>`).join('');
+                for (let i = 0; i < firstDay; i++) h += `<div></div>`;
+                for (let i = 1; i <= days; i++) {
+                    const dk = `${year}-02-${String(i).padStart(2, '0')}`;
+                    h += `<div class="calendar-cell ${i === 26 ? 'today' : ''}">${i}${logs[dk] ? '<span class="status-dot status-present"></span>' : ''}</div>`;
                 }
-                grid.innerHTML = html;
-
-                const sortedDates = Object.keys(logs).sort().reverse();
-                logList.innerHTML = sortedDates.map(d => `
-                    <div style="background: var(--surface); padding: 12px; border-radius: 18px; border: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                            <span style="color: var(--text); font-weight: 700;">${d}</span>
-                            <div style="display: flex; gap: 12px;">
-                                <span style="color: var(--success);"><i class="fas fa-sign-in-alt"></i> ${logs[d].in || '--:--'}</span>
-                                <span style="color: var(--warning);"><i class="fas fa-sign-out-alt"></i> ${logs[d].out || '--:--'}</span>
-                            </div>
-                        </div>
-                    </div>`).join('') || '<p class="info-sub">No technical logs synchronized.</p>';
+                ui.html('att-calendar', h);
+                ui.html('daily-log-list', Object.keys(logs).sort().reverse().map(d => `<div class="card" style="padding:15px; margin-bottom:10px;">${d}: ${logs[d].in || '--'} to ${logs[d].out || '--'}</div>`).join(''));
             },
 
-            openChat(id) {
-                this.state.activeChat = id;
-                let channelName = id === 'admin' ? "System Admin" : (id === 'mentor' ? "Faculty Advisor" : "Research Team");
-                ui.set('chat-title', `📡 Sync Lane: ${channelName}`);
-                ui.toggle('chat-status', true);
-                this.renderSyncWindow();
-            },
-
-            renderSyncWindow() {
-                const win = document.getElementById('chat-window');
-                if (!win) return;
-
-                let msgs = [];
-                if (this.state.activeChat === 'admin') {
-                    msgs = this.state.chats.filter(c => c.channel === 'admin');
-                } else if (this.state.activeChat === 'mentor') {
-                    msgs = this.state.chats.filter(c => c.channel === this.state.user.id);
-                } else {
-                    msgs = this.state.chats.filter(c => c.channel === this.state.activeChat);
-                }
-
-                win.innerHTML = msgs.map(m => `
-                    <div class="bubble ${m.sender === 'Student' ? 'bubble-me' : 'bubble-them'}">
-                        ${m.text}
-                        <span class="bubble-time">
-                            ${m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : ''}
-                        </span>
-                    </div>
-                `).join('') || '<p class="info-sub" style="text-align:center; padding:50px;">✨ Secure channel established. Ready for transmission.</p>';
-
-                win.scrollTop = win.scrollHeight;
-            },
-
-            async sendChat(e) {
-                e.preventDefault();
-                const inp = document.getElementById('chat-input');
-                if (!inp.value || !this.state.activeChat) return;
-
-                let channel = this.state.activeChat;
-                if (this.state.activeChat === 'mentor') {
-                    channel = this.state.user.id;
-                }
-
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), {
-                    channel: channel,
-                    sender: 'Student',
-                    text: inp.value,
-                    timestamp: serverTimestamp()
-                });
-
-                inp.value = '';
-            },
-
-            toggleSidebar() {
-                document.getElementById('app-sidebar').classList.toggle('active');
-            },
-
-            showHome() {
-                ui.toggle('view-home', true);
-                ui.toggle('top-nav', true);
-                ui.toggle('view-login', false);
-                ui.toggle('view-portal', false);
-            },
-
-            showLogin() {
-                ui.toggle('view-home', false);
-                ui.toggle('top-nav', true);
-                ui.toggle('view-login', true);
-            },
+            openChat(id) { this.state.activeChat = id; this.renderSyncWindow(); },
+            renderSyncWindow() { ui.html('chat-window', '<p class="info-sub" style="text-align:center;">Secure channel established.</p>'); },
+            async sendChat(e) { e.preventDefault(); document.getElementById('chat-input').value = ''; },
+            toggleSidebar() { document.getElementById('app-sidebar').classList.toggle('active'); },
+            showHome() { ui.toggle('view-home', true); ui.toggle('top-nav', true); ui.toggle('view-login', false); ui.toggle('view-portal', false); },
+            showLogin() { ui.toggle('view-home', false); ui.toggle('top-nav', true); ui.toggle('view-login', true); },
 
             init3D() {
                 const scene = new THREE.Scene();
                 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
                 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setClearColor(0x000000, 0);
                 document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-                const geometry = new THREE.SphereGeometry(0.6, 32, 32);
-                const material = new THREE.MeshPhongMaterial({
-                    color: 0x6366F1,
-                    transparent: true,
-                    opacity: 0.12
-                });
-
                 const bubbles = [];
                 for (let i = 0; i < 50; i++) {
-                    const sphere = new THREE.Mesh(geometry, material);
-                    sphere.position.set(
-                        (Math.random() - 0.5) * 180,
-                        (Math.random() - 0.5) * 180,
-                        (Math.random() - 0.5) * 180
-                    );
-                    sphere.userData = {
-                        v: new THREE.Vector3(
-                            (Math.random() - 0.5) * 0.012,
-                            (Math.random() - 0.5) * 0.012,
-                            (Math.random() - 0.5) * 0.012
-                        )
-                    };
-                    scene.add(sphere);
-                    bubbles.push(sphere);
+                    const b = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 32), new THREE.MeshPhongMaterial({ color: 0x6366F1, transparent: true, opacity: 0.12 }));
+                    b.position.set((Math.random() - 0.5) * 180, (Math.random() - 0.5) * 180, (Math.random() - 0.5) * 180);
+                    b.userData.v = new THREE.Vector3((Math.random() - 0.5) * 0.012, (Math.random() - 0.5) * 0.012, (Math.random() - 0.5) * 0.012);
+                    scene.add(b); bubbles.push(b);
                 }
-
-                const light = new THREE.DirectionalLight(0xffffff, 0.8);
-                light.position.set(1, 1, 1);
-                scene.add(light);
+                scene.add(new THREE.DirectionalLight(0xffffff, 0.8));
                 scene.add(new THREE.AmbientLight(0x404060));
                 camera.position.z = 90;
-
-                function animate() {
+                const animate = () => {
                     requestAnimationFrame(animate);
                     bubbles.forEach(b => {
                         b.position.add(b.userData.v);
@@ -2173,12 +2466,11 @@
                         if (Math.abs(b.position.z) > 90) b.userData.v.z *= -1;
                     });
                     renderer.render(scene, camera);
-                }
+                };
                 animate();
             }
         };
 
-        window.App = App;
         window.onload = () => App.init();
     </script>
 </body>
