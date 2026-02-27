@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMPS Tech | Unified Command Portal</title>
+    <title>SMPS Tech | NEO Command Portal</title>
     <!-- Premium Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -14,24 +14,75 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Anime.js for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <style>
+        /* Theme Variables - Light & Dark Modes - Aesthetic Theme */
         :root {
-            --primary: #4F46E5;
-            --primary-glow: rgba(79, 70, 229, 0.2);
-            --dark: #0F172A;
-            --slate: #64748B;
-            --bg: #FFFFFF;
-            --surface: rgba(255, 255, 255, 0.7);
-            --border: rgba(226, 232, 240, 0.8);
-            --radius-lg: 24px;
-            --radius-xl: 32px;
-            --accent: #F43F5E;
-            --emerald: #10B981;
-            --amber: #F59E0B;
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-border: rgba(226, 232, 240, 0.8);
-            --panel-bg: #F8FAFC;
+            /* Light Mode - Bright & Clean */
+            --primary-light: #6366F1;
+            --primary-dark: #4F46E5;
+            --primary-soft: #818CF8;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --bg-light: #F9FAFB;
+            --bg-dark: #111827;
+            --surface-light: #FFFFFF;
+            --surface-dark: #1F2937;
+            --text-light: #1F2937;
+            --text-dark: #F3F4F6;
+            --text-muted-light: #6B7280;
+            --text-muted-dark: #9CA3AF;
+            --border-light: #E5E7EB;
+            --border-dark: #374151;
+            --card-bg-light: #FFFFFF;
+            --card-bg-dark: #1F2937;
+            --sidebar-bg-light: rgba(255, 255, 255, 0.95);
+            --sidebar-bg-dark: rgba(17, 24, 39, 0.98);
+            --hover-light: #F3F4F6;
+            --hover-dark: #374151;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --accent-1: #8B5CF6;
+            --accent-2: #EC4899;
+
+            /* Current theme (default light) */
+            --primary: var(--primary-light);
+            --bg: var(--bg-light);
+            --surface: var(--surface-light);
+            --text: var(--text-light);
+            --text-muted: var(--text-muted-light);
+            --border: var(--border-light);
+            --card-bg: var(--card-bg-light);
+            --sidebar-bg: var(--sidebar-bg-light);
+            --hover-bg: var(--hover-light);
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --primary: var(--primary-light);
+            --bg: #111827;
+            --surface: #1F2937;
+            --text: #F3F4F6;
+            --text-muted: #9CA3AF;
+            --border: #374151;
+            --card-bg: #1F2937;
+            --sidebar-bg: rgba(17, 24, 39, 0.98);
+            --hover-bg: #374151;
+
+            /* Shadows for dark mode */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5);
         }
 
         * {
@@ -43,10 +94,12 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--dark);
+            background: var(--bg);
+            color: var(--text);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* 3D Visual Layer */
@@ -54,31 +107,85 @@
             position: fixed;
             inset: 0;
             z-index: -1;
-            background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
+            background: radial-gradient(circle at 30% 40%, var(--bg), var(--surface));
+            opacity: 0.6;
         }
 
-        /* Top Status Ticker */
+        /* Theme Toggle Button - Aesthetic */
+        .theme-toggle {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            padding: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text);
+            transition: 0.3s;
+            margin-left: 15px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle i {
+            font-size: 1.2rem;
+            padding: 6px 10px;
+            border-radius: 40px;
+            transition: 0.3s;
+        }
+
+        .theme-toggle .fa-sun {
+            color: #F59E0B;
+        }
+
+        .theme-toggle .fa-moon {
+            color: #6366F1;
+        }
+
+        [data-theme="light"] .theme-toggle .fa-sun {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        [data-theme="dark"] .theme-toggle .fa-moon {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        /* Status Ticker */
         .ticker-wrap {
             position: fixed;
             top: 0;
             width: 100%;
-            height: 40px;
-            background: var(--dark);
-            color: #fff;
-            z-index: 1000;
+            height: 44px;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            color: var(--text);
+            z-index: 1100;
             display: flex;
             align-items: center;
             overflow: hidden;
-            font-size: 10px;
-            font-weight: 800;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 11px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-md);
         }
 
         .ticker-move {
             display: flex;
             white-space: nowrap;
-            animation: ticker-scroll 50s linear infinite;
-            gap: 6rem;
+            animation: ticker-scroll 60s linear infinite;
+            gap: 4rem;
+        }
+
+        .ticker-move span i {
+            color: var(--primary);
+            margin-right: 8px;
         }
 
         @keyframes ticker-scroll {
@@ -91,76 +198,103 @@
             }
         }
 
-        /* Navigation */
+        /* Floating Navigation bar - Aesthetic */
         #top-nav {
             position: fixed;
-            top: 40px;
-            width: 100%;
+            top: 44px;
+            width: 92%;
+            left: 4%;
             height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 60px;
-            z-index: 900;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            z-index: 1000;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            margin-top: 10px;
+            box-shadow: var(--shadow-xl);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #top-nav.scrolled {
+            margin-top: 0;
+            width: 100%;
+            left: 0;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            box-shadow: var(--shadow-lg);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             font-weight: 800;
-            font-size: 1.4rem;
-            letter-spacing: -1.5px;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            color: var(--text);
         }
 
         .logo i {
             color: var(--primary);
+            font-size: 2rem;
+            filter: drop-shadow(0 4px 6px var(--primary-glow));
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
         .btn-minimal {
-            background: var(--dark);
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
             border: none;
-            padding: 12px 28px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 11px;
+            padding: 14px 40px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 13px;
             color: #fff;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 1px;
             transition: 0.3s;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px var(--primary-glow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn-minimal:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px var(--primary-glow);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 30px var(--primary-glow);
         }
 
         #mobile-menu-btn {
             display: none;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
             color: white;
             border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            font-size: 1.2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            font-size: 1.4rem;
             cursor: pointer;
             z-index: 2000;
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            box-shadow: 0 10px 20px var(--primary-glow);
+            bottom: 25px;
+            right: 25px;
+            box-shadow: 0 10px 25px var(--primary-glow);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* HOME PAGE STYLING */
+        /* --- HOME PAGE --- */
         #view-home {
-            padding-top: 120px;
-            height: 100vh;
+            padding-top: 150px;
+            min-height: 100vh;
             overflow-y: auto;
             position: relative;
             z-index: 10;
@@ -170,114 +304,129 @@
             display: grid;
             grid-template-columns: 1.2fr 1fr;
             align-items: center;
-            padding: 40px 100px;
+            padding: 60px 120px;
             max-width: 1600px;
             margin: 0 auto;
         }
 
         .hero-text h1 {
-            font-size: 5rem;
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -4px;
-            color: var(--dark);
-            margin-bottom: 25px;
-        }
-
-        .hero-text span {
-            color: var(--primary);
+            font-size: 6rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -3px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--text), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-text p {
-            font-size: 1.1rem;
-            color: var(--slate);
-            line-height: 1.6;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            line-height: 1.8;
             margin-bottom: 40px;
-            max-width: 500px;
+            max-width: 600px;
+            font-weight: 500;
         }
 
         .wall-of-fame {
-            padding: 80px 100px;
+            padding: 60px 120px 120px;
             max-width: 1600px;
             margin: 0 auto;
         }
 
         .wall-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
         }
 
         .wall-card {
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
+            padding: 50px 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 40px;
             text-align: center;
-            transition: 0.3s;
+            transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: var(--shadow-lg);
         }
 
         .wall-card:hover {
             border-color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 30px 50px var(--primary-glow);
         }
 
         .wall-card i {
-            font-size: 2rem;
-            color: var(--border);
-            margin-bottom: 15px;
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--warning), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
         }
 
-        /* PORTAL CORE LAYOUT */
+        .wall-card h4 {
+            color: var(--text);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .wall-card p {
+            color: var(--text-muted);
+        }
+
+        /* --- PORTAL CORE LAYOUT --- */
         #view-portal {
             display: flex;
             height: 100vh;
-            margin-top: 40px;
-            height: calc(100vh - 40px);
+            margin-top: 44px;
+            height: calc(100vh - 44px);
             position: relative;
             z-index: 100;
             overflow: hidden;
         }
 
         .sidebar {
-            width: 280px;
-            padding: 40px 20px;
-            background: var(--glass-bg);
+            width: 300px;
+            padding: 40px 25px;
+            background: var(--sidebar-bg);
             backdrop-filter: blur(30px);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
             height: 100%;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
         }
 
         .sidebar-link {
             padding: 16px 20px;
-            border-radius: 18px;
-            color: var(--slate);
-            font-weight: 700;
+            border-radius: 16px;
+            color: var(--text-muted);
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
+            transition: 0.3s;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
         }
 
         .sidebar-link:hover {
-            color: var(--primary);
-            background: rgba(79, 70, 229, 0.05);
+            color: var(--text);
+            background: var(--hover-bg);
+            border-color: var(--border);
         }
 
         .sidebar-link.active {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
             color: #fff;
-            box-shadow: 0 12px 25px -5px var(--primary-glow);
+            box-shadow: 0 10px 20px var(--primary-glow);
         }
 
         .profile-stack {
@@ -288,98 +437,113 @@
         }
 
         .profile-card {
-            padding: 16px;
-            background: #fff;
-            border-radius: 20px;
+            padding: 20px;
+            background: var(--surface);
+            border-radius: 24px;
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            gap: 15px;
         }
 
         .avatar-circle {
-            width: 44px;
-            height: 44px;
-            background: var(--primary);
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
             color: #fff;
-            border-radius: 14px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
+            font-weight: 700;
             flex-shrink: 0;
+            font-size: 1.4rem;
+            box-shadow: 0 10px 20px var(--primary-glow);
         }
 
         .profile-info h4 {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--dark);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            color: var(--text);
+            font-size: 1.1rem;
+            margin-bottom: 5px;
         }
 
         .profile-info p {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--slate);
-            text-transform: uppercase;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-terminate {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2) !important;
+            color: #EF4444 !important;
+            padding: 16px !important;
+            border-radius: 24px !important;
+            font-weight: 700 !important;
+            font-size: 11px !important;
+            transition: 0.3s !important;
+        }
+
+        .btn-terminate:hover {
+            background: rgba(239, 68, 68, 0.15) !important;
+            border-color: #EF4444 !important;
         }
 
         .workspace {
             flex: 1;
             padding: 40px;
             overflow-y: auto;
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--bg);
         }
 
+        /* Grid Layouts - Aesthetic */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 24px;
+            margin-bottom: 30px;
         }
 
         .card {
-            padding: 24px;
-            border-radius: var(--radius-lg);
-            background: #fff;
+            padding: 28px;
+            border-radius: 32px;
+            background: var(--card-bg);
             border: 1px solid var(--border);
-            transition: 0.3s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
         }
 
         .card:hover {
+            transform: translateY(-6px);
             border-color: var(--primary);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            box-shadow: var(--shadow-xl);
         }
 
         .info-label {
-            font-size: 9px;
-            font-weight: 800;
-            color: var(--slate);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             margin-bottom: 12px;
             display: block;
         }
 
         .info-value {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: var(--dark);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
             line-height: 1.2;
+            letter-spacing: -0.5px;
         }
 
         .info-sub {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--slate);
-            margin-top: 4px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
         }
 
-        /* Presence Action Controls */
+        /* Attendance Card */
         .presence-card {
             grid-column: span 2;
             display: flex;
@@ -388,91 +552,29 @@
             border-left: 6px solid var(--primary);
         }
 
-        .presence-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex: 1;
-        }
-
         .btn-claim {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 14px 28px;
+            border-radius: 40px;
             border: none;
-            background: var(--dark);
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
             color: #fff;
-            font-weight: 800;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
             cursor: pointer;
-            font-size: 10px;
-            transition: 0.2s;
+            font-size: 11px;
+            transition: 0.3s;
+            box-shadow: 0 8px 16px var(--primary-glow);
+            letter-spacing: 0.5px;
         }
 
         .btn-claim:hover {
-            background: var(--primary);
-            transform: scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px var(--primary-glow);
         }
 
-        /* Attendance Calendar Styles */
-        .att-calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .calendar-header {
-            font-size: 10px;
-            font-weight: 900;
-            text-align: center;
-            color: var(--slate);
-            text-transform: uppercase;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .calendar-cell {
-            aspect-ratio: 1;
-            background: #fff;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 800;
-            position: relative;
-            border: 1px solid var(--border);
-            transition: 0.2s;
-        }
-
-        .calendar-cell.today {
-            border: 2px solid var(--primary);
-            background: var(--primary-glow);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 8px;
-        }
-
-        .status-present {
-            background: var(--emerald);
-            box-shadow: 0 0 8px var(--emerald);
-        }
-
-        .status-absent {
-            background: var(--accent);
-        }
-
-        /* Stats Visualization */
         .stats-ring {
-            width: 110px;
-            height: 110px;
+            width: 130px;
+            height: 130px;
             margin: 0 auto;
             position: relative;
         }
@@ -482,30 +584,15 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-weight: 900;
-            font-size: 1.4rem;
-            color: var(--dark);
-        }
-
-        .progress-track {
-            height: 6px;
-            background: var(--panel-bg);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            margin-top: 8px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: 1s ease-out;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--text);
         }
 
         .matrix-container {
             display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 6px;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 4px;
             margin-top: 15px;
         }
 
@@ -513,173 +600,187 @@
             width: 100%;
             aspect-ratio: 1;
             border-radius: 4px;
-            background: var(--panel-bg);
+            background: var(--hover-bg);
             border: 1px solid var(--border);
+            transition: 0.3s;
         }
 
         .matrix-node.verified {
-            background: var(--emerald);
-            border-color: var(--emerald);
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
         }
 
-        /* Projects & Tasks Sections */
-        .task-grid {
+        .matrix-node.missed {
+            background: var(--danger);
+            border-color: var(--danger);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Project Dashboard - Dynamic Points - EXACT number of boxes */
+        .proj-dash-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .proj-dash-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
         }
 
-        .task-card {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-            border-left: 6px solid var(--slate);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        @media (max-width: 1200px) {
+            .proj-dash-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .discussion-box {
-            background: var(--panel-bg);
-            padding: 15px;
-            border-radius: 16px;
-            max-height: 250px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border: 1px solid var(--border);
+        /* Dynamic milestone grid - adapts to point count */
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            margin-top: 20px;
         }
 
-        .bubble {
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 10px 14px;
+        .milestone-node {
+            aspect-ratio: 1;
             border-radius: 12px;
-            position: relative;
-            max-width: 85%;
-            line-height: 1.4;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text);
         }
 
-        .bubble-me {
-            align-self: flex-end;
-            background: var(--primary);
-            color: #fff;
-            border-bottom-right-radius: 2px;
+        .milestone-node.pending {
+            background: var(--warning);
+            border-color: var(--warning);
+            color: white;
+            animation: pulse 1.5s infinite;
         }
 
-        .bubble-them {
-            align-self: flex-start;
-            background: #fff;
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .milestone-node.approved {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .milestone-node:hover {
+            border-color: var(--primary);
+            transform: scale(1.1) rotate(2deg);
+            z-index: 10;
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        .pdf-viewer-node {
+            width: 100%;
+            height: 500px;
+            border-radius: 24px;
             border: 1px solid var(--border);
-            border-bottom-left-radius: 2px;
-        }
-
-        .submission-portal {
-            background: var(--panel-bg);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            margin-top: 10px;
+            background: var(--surface);
         }
 
         .input-group {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 15px;
         }
 
         .input-group input {
             flex: 1;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            font-size: 0.85rem;
-            font-weight: 600;
-            background: #fff;
+            padding: 16px 22px;
+            border-radius: 40px;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
 
         .btn-action {
-            padding: 12px 20px;
-            border-radius: 10px;
+            padding: 16px 32px;
+            border-radius: 40px;
             border: none;
-            background: var(--primary);
-            color: #fff;
-            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
+            color: white;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
             cursor: pointer;
-            font-size: 10px;
-            transition: 0.2s;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 16px var(--primary-glow);
         }
 
-        .btn-action:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .btn-action:disabled {
-            background: var(--border);
-            cursor: not-allowed;
-        }
-
-        /* Sync Hub Layout */
+        /* Chat Hub */
         .chat-hub {
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 280px 1fr;
             height: calc(100vh - 180px);
-            background: #fff;
-            border-radius: var(--radius-xl);
+            background: var(--card-bg);
+            border-radius: 40px;
             overflow: hidden;
             border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow-xl);
         }
 
         .chat-nav {
-            background: var(--panel-bg);
+            background: var(--surface);
             border-right: 1px solid var(--border);
             padding: 25px 15px;
-            display: flex;
-            flex-direction: column;
             overflow-y: auto;
         }
 
         .chat-list-item {
-            padding: 16px;
-            border-radius: 14px;
+            padding: 16px 18px;
+            border-radius: 20px;
             margin-bottom: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
-            position: relative;
+            gap: 12px;
+            transition: 0.3s;
+            color: var(--text-muted);
+            border: 1px solid transparent;
         }
 
         .chat-list-item:hover {
-            background: rgba(79, 70, 229, 0.05);
-            color: var(--primary);
+            background: var(--hover-bg);
+            color: var(--text);
+            border-color: var(--border);
         }
 
         .chat-list-item.active {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 8px 15px -5px var(--primary-glow);
-        }
-
-        .chat-view {
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-        }
-
-        .chat-header-node {
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
+            color: white;
         }
 
         .chat-history {
@@ -688,40 +789,168 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            background-image: radial-gradient(var(--border) 0.5px, transparent 0.5px);
-            background-size: 20px 20px;
+            gap: 20px;
+            background: var(--bg);
         }
 
-        .chat-entry {
-            padding: 20px 30px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            background: #fff;
+        .bubble {
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 16px 22px;
+            border-radius: 24px;
+            max-width: 70%;
+            line-height: 1.6;
+            animation: bubble-entry 0.3s ease-out forwards;
         }
 
-        .badge {
-            padding: 4px 10px;
-            border-radius: 6px;
+        @keyframes bubble-entry {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bubble-me {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
+            color: #fff;
+            border-bottom-right-radius: 8px;
+        }
+
+        .bubble-them {
+            align-self: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 8px;
+            color: var(--text);
+        }
+
+        .bubble-time {
             font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
+            margin-top: 8px;
+            opacity: 0.7;
+            display: block;
+            text-align: right;
         }
 
-        .bg-e {
-            background: #d1fae5;
-            color: #10b981;
+        .chat-input-pill {
+            flex: 1;
+            padding: 18px 28px;
+            border-radius: 50px;
+            border: 2px solid var(--border);
+            font-weight: 500;
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: 0.3s;
         }
 
-        .bg-a {
-            background: #fef3c7;
-            color: #f59e0b;
+        .chat-input-pill:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
 
-        .bg-p {
-            background: #eef2ff;
-            color: #4f46e5;
+        /* Calendar */
+        .att-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-top: 20px;
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 11px;
+            padding: 8px;
+        }
+
+        .calendar-cell {
+            aspect-ratio: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            position: relative;
+        }
+
+        .calendar-cell.today {
+            border: 2px solid var(--primary);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 4px;
+        }
+
+        .status-dot.status-present {
+            background: var(--success);
+        }
+
+        .status-dot.status-absent {
+            background: var(--danger);
+        }
+
+        /* Task Cards */
+        .task-card {
+            padding: 28px;
+            border-radius: 32px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-left-width: 6px;
+            transition: 0.3s;
+            box-shadow: var(--shadow-md);
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Notifications */
+        .notif-card {
+            padding: 22px;
+            border-radius: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            transition: 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .notif-card:hover {
+            transform: translateX(6px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .notif-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.4rem;
+            background: var(--surface);
         }
 
         .hidden {
@@ -731,20 +960,30 @@
         #loader {
             position: fixed;
             inset: 0;
-            background: #fff;
+            background: var(--bg);
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loader-text {
+            color: var(--text);
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-top: 20px;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f1f5f9;
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
             border-top-color: var(--primary);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
         @keyframes spin {
@@ -753,18 +992,75 @@
             }
         }
 
+        /* Aesthetic Badges */
+        .badge-aesthetic {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary), var(--accent-1));
+            color: white;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            height: 10px;
+            background: var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #34D399);
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+
+        /* Point Info Badge */
+        .point-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        /* Score Display */
+        .score-display {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design */
         @media screen and (max-width: 768px) {
             #view-portal {
                 flex-direction: column;
-                margin-top: 40px;
-                height: calc(100vh - 40px);
+                margin-top: 44px;
+                height: calc(100vh - 44px);
             }
 
             .sidebar {
                 position: fixed;
                 left: 0;
-                top: 40px;
-                height: calc(100vh - 40px);
+                top: 44px;
+                height: calc(100vh - 44px);
                 z-index: 1000;
                 transform: translateX(-100%);
                 width: 85%;
@@ -772,16 +1068,13 @@
 
             .sidebar.active {
                 transform: translateX(0);
-                box-shadow: 20px 0 60px rgba(0, 0, 0, 0.1);
             }
 
             .workspace {
-                padding: 20px;
+                padding: 25px;
             }
 
-            .bento-grid,
-            .task-grid,
-            .notif-split {
+            .bento-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -791,88 +1084,133 @@
 
             .chat-nav {
                 display: flex;
-                overflow-x: auto;
-                padding: 10px;
                 flex-direction: row;
+                height: 80px;
                 border-right: none;
                 border-bottom: 1px solid var(--border);
+                padding: 10px;
                 white-space: nowrap;
-            }
-
-            .chat-list-item {
-                margin-bottom: 0;
-                margin-right: 10px;
-                padding: 10px 15px;
+                overflow-x: auto;
+                gap: 10px;
             }
 
             #mobile-menu-btn {
                 display: block;
             }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 40px 25px;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 4rem;
+                letter-spacing: -2px;
+            }
+
+            .hero-text p {
+                margin: 0 auto 40px;
+            }
+
+            .wall-of-fame {
+                padding: 40px 25px;
+            }
+
+            .wall-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .presence-card {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .presence-card>div:last-child {
+                border-left: none;
+                border-top: 1px solid var(--border);
+                padding-left: 0;
+                padding-top: 20px;
+            }
         }
     </style>
 </head>
 
-<body>
+<body data-theme="light">
 
     <div id="canvas-container"></div>
+
     <div id="loader">
         <div class="spinner"></div>
+        <div class="loader-text">INITIALIZING NEO COMMAND</div>
     </div>
 
     <button id="mobile-menu-btn" onclick="App.toggleSidebar()"><i class="fas fa-bars"></i></button>
 
-    <!-- Ticker -->
     <div id="ticker-bar" class="ticker-wrap hidden">
         <div class="ticker-move">
-            <span>ADMIN ALERT: RESEARCH NODE SYNC FOR TRACK ALPHA NOW OPERATIONAL.</span>
-            <span>SYSTEM UPDATE: V6.0 DUAL-SYNC ARCHITECTURE NOW LIVE.</span>
-            <span>MENTOR ADVISORY: ENSURE LOGIN/LOGOUT PROTOCOLS ARE FOLLOWED FOR LEDGER INTEGRITY.</span>
+            <span><i class="fas fa-bolt"></i> NEO SYSTEM: QUANTUM NODE SYNC ACTIVE</span>
+            <span><i class="fas fa-microchip"></i> TRACK PROGRESS: DYNAMIC POINT SCALE CALIBRATED</span>
+            <span><i class="fas fa-file-pdf"></i> PROTOCOL: MENTOR PDF UPLOADS NOW VISIBLE</span>
+            <span><i class="fas fa-shield"></i> SECURITY: END-TO-END ENCRYPTION ENABLED</span>
         </div>
     </div>
 
-    <!-- Navigation -->
+    <!-- Navigation with Theme Toggle -->
     <nav id="top-nav" class="hidden">
-        <div class="logo"><i class="fas fa-shield-halved"></i><span>SMPS <b>Tech</b></span></div>
-        <button onclick="App.showLogin()" class="btn-minimal">Launch Portal</button>
+        <div class="logo"><i class="fas fa-shield-halved"></i><span>SMPS <b>NEO</b></span></div>
+        <div class="nav-controls">
+            <div class="theme-toggle" onclick="App.toggleTheme()">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </div>
+            <button onclick="App.showLogin()" class="btn-minimal">Launch Portal <i class="fas fa-arrow-right"
+                    style="margin-left: 10px;"></i></button>
+        </div>
     </nav>
 
-    <!-- LANDING PAGE -->
+    <!-- LANDING VIEW -->
     <div id="view-home" class="hidden">
         <section class="hero">
             <div class="hero-text">
-                <span class="info-label"
-                    style="color:var(--primary); background:var(--primary-glow); padding:5px 12px; border-radius:20px;">V6.0
-                    Unified Node</span>
-                <h1>Manage Your <br><span>Research & <br>Academic Path</span></h1>
-                <p>An enterprise workstation for students to track dual projects, verify presence, and sync with mentor
-                    nodes in real-time.</p>
+                <span class="badge-aesthetic" style="margin-bottom: 30px; display: inline-block;">
+                    <i class="fas fa-crown" style="margin-right: 8px;"></i> V6.0 NEO NODE DEPLOYED
+                </span>
+                <h1>Command Your <br><span>Academic <br>Destiny</span></h1>
+                <p>Quantum-powered research portal for elite students. Track projects, sync with mentors, and visualize
+                    your technical journey in real-time.</p>
                 <button onclick="App.showLogin()" class="btn-minimal"
-                    style="padding:18px 40px; border-radius:15px; background:var(--primary);">Initialize Workspace <i
-                        class="fas fa-arrow-right"></i></button>
+                    style="padding: 22px 60px; border-radius: 60px; font-size: 14px;">
+                    INITIALIZE WORKSPACE <i class="fas fa-arrow-right" style="margin-left: 12px;"></i>
+                </button>
             </div>
             <div></div>
         </section>
 
         <section class="wall-of-fame">
-            <span class="info-label">Recognition Node</span>
-            <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 30px;">Wall of Fame
+            <h2
+                style="font-size: 3.5rem; font-weight: 700; letter-spacing: -2px; margin-bottom: 40px; color: var(--text);">
+                <i class="fas fa-trophy" style="color: var(--warning); margin-right: 15px;"></i>Technical Honors
             </h2>
             <div class="wall-grid">
-                <div class="wall-card"><i class="fas fa-award"></i>
+                <div class="wall-card">
+                    <i class="fas fa-crown"></i>
                     <h4 class="info-value">Aryan Singh</h4>
-                    <p class="info-sub">Innovation Lead</p>
+                    <p class="info-sub">Quantum Computing Lead</p>
+                    <div style="margin-top: 20px; color: var(--success); font-weight: 700;">⚡ 98/100</div>
                 </div>
-                <div class="wall-card"><i class="fas fa-award"></i>
+                <div class="wall-card">
+                    <i class="fas fa-microchip"></i>
                     <h4 class="info-value">Sanjana G M</h4>
-                    <p class="info-sub">Research Pro</p>
+                    <p class="info-sub">Neural Network Architect</p>
+                    <div style="margin-top: 20px; color: var(--success); font-weight: 700;">⚡ 96/100</div>
                 </div>
-                <div class="wall-card"><i class="fas fa-award"></i>
+                <div class="wall-card">
+                    <i class="fas fa-flask"></i>
                     <h4 class="info-value">Varshini A R</h4>
-                    <p class="info-sub">Node Merit</p>
-                </div>
-                <div class="wall-card"><i class="fas fa-award"></i>
-                    <h4 class="info-value">Megha V</h4>
-                    <p class="info-sub">Technical Lead</p>
+                    <p class="info-sub">Research Excellence</p>
+                    <div style="margin-top: 20px; color: var(--success); font-weight: 700;">⚡ 95/100</div>
                 </div>
             </div>
         </section>
@@ -881,55 +1219,68 @@
     <!-- LOGIN SCREEN -->
     <div id="view-login" class="hidden"
         style="height: 100vh; display: flex; align-items: center; justify-content: center;">
-        <div class="card" style="max-width: 440px; width: 100%; padding: 60px; border-radius: 40px;">
+        <div class="card" style="max-width: 500px; width: 92%; padding: 50px; border-radius: 50px;">
             <button onclick="App.showHome()"
-                style="background:none; border:none; color: var(--slate); cursor:pointer; margin-bottom: 30px;"><i
-                    class="fas fa-arrow-left"></i></button>
+                style="background:none; border:none; color: var(--text-muted); cursor:pointer; margin-bottom: 35px; font-weight:600; font-size:12px; letter-spacing:1px; display:flex; align-items:center; gap:8px;">
+                <i class="fas fa-arrow-left"></i> RETURN TO TERMINAL
+            </button>
             <div style="text-align: center; margin-bottom: 40px;">
-                <h2 style="font-weight: 900; letter-spacing: -1px; font-size: 2rem;">Identify</h2>
-                <p
-                    style="font-size: 11px; font-weight: 800; color: var(--slate); text-transform: uppercase; letter-spacing: 2px;">
-                    Access Authorized Ledger</p>
+                <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"><i
+                        class="fas fa-fingerprint"></i></div>
+                <h2 style="font-weight: 700; letter-spacing: -1px; font-size: 2.8rem; color: var(--text);">Identify</h2>
+                <p class="info-label">Authorized Academic Access Required</p>
             </div>
             <form id="login-form">
                 <div style="margin-bottom: 20px;">
-                    <label class="info-label">Student ID (SRN)</label>
+                    <label class="info-label">Identity Token (SRN)</label>
                     <input type="text" id="l-srn"
-                        style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;"
+                        style="width:100%; padding: 18px; border-radius: 40px; border: 2px solid var(--border); background:var(--surface); color:var(--text); font-weight:500; font-size:1rem; transition:0.3s;"
                         placeholder="SRN..." required>
                 </div>
-                <div style="margin-bottom: 25px;">
-                    <label class="info-label">Access Key</label>
+                <div style="margin-bottom: 35px;">
+                    <label class="info-label">Authorization Key</label>
                     <input type="password" id="l-pass"
-                        style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:700;"
+                        style="width:100%; padding: 18px; border-radius: 40px; border: 2px solid var(--border); background:var(--surface); color:var(--text); font-weight:500; font-size:1rem; transition:0.3s;"
                         placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn-claim"
-                    style="width:100%; height:55px; background:var(--primary);">Authorize Session</button>
+                <button type="submit" class="btn-claim" style="width:100%; height: 65px; font-size: 13px;">Authorize
+                    Session</button>
             </form>
         </div>
     </div>
 
-    <!-- PORTAL CORE -->
+    <!-- PORTAL SHELL -->
     <div id="view-portal" class="hidden">
         <aside class="sidebar" id="app-sidebar">
-            <div class="logo" style="margin-bottom: 30px; padding-left: 10px;"><i
-                    class="fas fa-shield-halved"></i><span>SMPS <b>Core</b></span></div>
+            <div class="logo" style="margin-bottom: 45px; padding-left: 10px;">
+                <i class="fas fa-shield-halved"></i><span>SMPS <b>NEO</b></span>
+            </div>
+            <!-- Theme Toggle in Sidebar -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; padding-right: 10px;">
+                <div class="theme-toggle" onclick="App.toggleTheme()">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
             <nav style="flex: 1;">
-                <div onclick="App.switchTab('dashboard')" id="nav-dashboard" class="sidebar-link active"><i
-                        class="fas fa-grid-2"></i> Dashboard</div>
-                <div onclick="App.switchTab('attendance-ledger')" id="nav-attendance-ledger" class="sidebar-link"><i
-                        class="fas fa-calendar-check"></i> Attendance</div>
-                <div onclick="App.switchTab('projects')" id="nav-projects" class="sidebar-link"><i
-                        class="fas fa-layer-group"></i> My Projects</div>
-                <div onclick="App.switchTab('tasks')" id="nav-tasks" class="sidebar-link"><i
-                        class="fas fa-list-check"></i> Task Center</div>
-                <div onclick="App.switchTab('notifications')" id="nav-notifications" class="sidebar-link"><i
-                        class="fas fa-bell"></i> Notifications</div>
-                <div onclick="App.switchTab('sync')" id="nav-sync" class="sidebar-link"><i class="fas fa-message"></i>
-                    Sync Hub</div>
-                <div onclick="App.switchTab('requests')" id="nav-requests" class="sidebar-link"><i
-                        class="fas fa-paper-plane"></i> Inquiries</div>
+                <div onclick="App.switchTab('dashboard')" id="nav-dashboard" class="sidebar-link active">
+                    <i class="fas fa-grid-2"></i> Dashboard
+                </div>
+                <div onclick="App.switchTab('attendance-ledger')" id="nav-attendance-ledger" class="sidebar-link">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </div>
+                <div onclick="App.switchTab('projects')" id="nav-projects" class="sidebar-link">
+                    <i class="fas fa-layer-group"></i> Project Dash
+                </div>
+                <div onclick="App.switchTab('tasks')" id="nav-tasks" class="sidebar-link">
+                    <i class="fas fa-list-check"></i> Task Center
+                </div>
+                <div onclick="App.switchTab('notifications')" id="nav-notifications" class="sidebar-link">
+                    <i class="fas fa-bell"></i> Notifications
+                </div>
+                <div onclick="App.switchTab('sync')" id="nav-sync" class="sidebar-link">
+                    <i class="fas fa-message"></i> Sync Hub
+                </div>
             </nav>
             <div class="profile-stack">
                 <div class="profile-card">
@@ -939,197 +1290,182 @@
                         <p id="u-srn-side">SRN...</p>
                     </div>
                 </div>
-                <button onclick="location.reload()" class="btn-terminate"
-                    style="width:100%; margin-top:10px; padding:10px; background:none; border:1px solid var(--border); font-size:10px; font-weight:800; cursor:pointer; border-radius:10px;">Terminate
-                    Session</button>
+                <button onclick="location.reload()" class="btn-terminate" style="width:100%;">
+                    <i class="fas fa-power-off" style="margin-right: 8px;"></i> TERMINATE SESSION
+                </button>
             </div>
         </aside>
 
         <main class="workspace">
+            <!-- DASHBOARD TAB -->
             <div id="tab-dashboard">
                 <div
-                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
+                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
                     <div>
-                        <h2 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -1px;">Command Station</h2>
+                        <h2 style="font-size: 2.8rem; font-weight: 700; letter-spacing: -1.5px; color: var(--text);">
+                            Command Station</h2>
                         <div id="live-time-disp"
-                            style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-top: 5px;">
-                            00:00:00 AM</div>
+                            style="font-size: 1.2rem; font-weight: 600; color: var(--primary); margin-top: 8px;">
+                            00:00:00 AM
+                        </div>
                     </div>
-                    <span class="badge bg-e">NODE_SYNC_ACTIVE</span>
+                    <div class="badge-aesthetic">
+                        <i class="fas fa-shield"></i> QUANTUM NODE ACTIVE
+                    </div>
                 </div>
 
                 <div class="bento-grid">
-                    <!-- Dashboard Student Info -->
                     <div class="card">
                         <span class="info-label">Identity Node</span>
-                        <div style="margin-top: 10px;">
-                            <h3 class="info-value" id="disp-name">---</h3>
-                            <p class="info-sub" id="disp-details">---</p>
-                        </div>
+                        <h3 class="info-value" id="disp-name">---</h3>
+                        <p class="info-sub" id="disp-details">---</p>
                     </div>
-
-                    <div class="card"><span class="info-label">Faculty Advisor</span>
+                    <div class="card">
+                        <span class="info-label">Faculty Advisor</span>
                         <h3 id="d-mentor" class="info-value">---</h3>
-                        <p id="d-mentor-email" class="info-sub">---</p>
+                        <p id="d-mentor-dept" class="info-sub">---</p>
                     </div>
 
                     <div class="card presence-card">
                         <div class="presence-actions">
                             <span class="info-label">Presence Protocol</span>
-                            <div style="display: flex; gap: 8px;">
-                                <button onclick="App.markAtt('login')" id="btn-login" class="btn-claim">Mark
+                            <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+                                <button onclick="App.markLog('IN')" class="btn-claim" style="padding: 12px 22px;">Mark
                                     Entry</button>
-                                <button onclick="App.markAtt('logout')" id="btn-logout" class="btn-claim"
-                                    style="background:#334155;">Mark Exit</button>
+                                <button onclick="App.markLog('OUT')" class="btn-claim"
+                                    style="background: var(--surface); color: var(--text); padding: 12px 22px;">Mark
+                                    Exit</button>
                             </div>
                         </div>
-                        <div style="text-align: right; border-left: 1px solid var(--border); padding-left: 20px;">
-                            <span class="info-label">Cycle Status</span>
-                            <div id="att-badge" style="margin-top: 5px;"><span class="badge"
-                                    style="background: #f1f5f9; color: var(--slate);">OFFLINE</span></div>
-                        </div>
-                    </div>
-
-                    <div class="card"
-                        style="grid-column: span 2; display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 180px;">
-                            <span class="info-label">Attendance Metrics</span>
-                            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 12px;">
-                                <div
-                                    style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800;">
-                                    <span>Verified Days</span><span id="verified-count">18 Days</span></div>
-                                <div class="progress-track">
-                                    <div id="bar-att" class="progress-fill"
-                                        style="width: 60%; background: var(--emerald);"></div>
-                                </div>
-                                <div id="dash-matrix" class="matrix-container"></div>
-                            </div>
-                        </div>
-                        <div class="stats-ring"><canvas id="dashRing"></canvas>
-                            <div class="stats-count" id="dash-perc">60%</div>
+                        <div style="text-align: right; border-left: 2px solid var(--border); padding-left: 25px;">
+                            <span class="info-label">Status</span>
+                            <div id="att-badge" style="margin-top: 8px;"></div>
                         </div>
                     </div>
 
                     <div class="card" style="grid-column: span 2;">
-                        <span class="info-label">Research Track Sync</span>
-                        <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 20px;">
-                            <div>
-                                <div
-                                    style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
-                                    <span>Track Alpha</span><span id="alpha-perc">0%</span></div>
-                                <div class="progress-track">
-                                    <div id="alpha-bar" class="progress-fill"
-                                        style="width: 0%; background: var(--emerald);"></div>
+                        <div style="display: flex; gap: 35px; align-items: center; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 220px;">
+                                <span class="info-label">Attendance Metrics</span>
+                                <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 12px;">
+                                    <div
+                                        style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--text);">
+                                        <span>Cycle Yield</span>
+                                        <span id="verified-count">100%</span>
+                                    </div>
+                                    <div class="progress-track">
+                                        <div id="bar-att" class="progress-fill" style="width: 100%;">
+                                        </div>
+                                    </div>
+                                    <div id="dash-matrix" class="matrix-container"></div>
                                 </div>
                             </div>
-                            <div>
-                                <div
-                                    style="display:flex; justify-content:space-between; font-size:11px; font-weight:800;">
-                                    <span>Track Beta</span><span id="beta-perc">0%</span></div>
-                                <div class="progress-track">
-                                    <div id="beta-bar" class="progress-fill"
-                                        style="width: 0%; background: var(--primary);"></div>
-                                </div>
+                            <div class="stats-ring">
+                                <canvas id="dashRing" width="130" height="130"></canvas>
+                                <div class="stats-count" id="dash-perc">100%</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card" style="grid-column: span 4;">
-                        <span class="info-label">Faculty Teams</span>
-                        <div id="dash-teams"
-                            style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 15px;">
-                        </div>
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="info-label">Track Research Overview</span>
+                        <div id="dash-projects-summary"
+                            style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- ATTENDANCE LEDGER -->
+            <!-- ATTENDANCE HISTORY -->
             <div id="tab-attendance-ledger" class="hidden">
-                <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 35px; letter-spacing: -1px;">Technical
-                    Presence Ledger</h2>
-                <div class="card">
-                    <h3 class="info-value">February 2026</h3>
-                    <div class="att-calendar-grid" id="att-calendar"></div>
-                    <div style="margin-top: 25px; display: flex; gap: 20px;">
-                        <div style="display:flex; align-items:center; gap:8px;"><span class="status-dot status-present"
-                                style="position:relative; bottom:0;"></span> <span
-                                style="font-size:11px; font-weight:800;">VERIFIED</span></div>
-                        <div style="display:flex; align-items:center; gap:8px;"><span class="status-dot status-absent"
-                                style="position:relative; bottom:0;"></span> <span
-                                style="font-size:11px; font-weight:800;">ABSENT</span></div>
+                <h2
+                    style="font-size: 2.8rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -1.5px; color: var(--text);">
+                    <i class="fas fa-calendar-check" style="margin-right: 15px; color: var(--primary);"></i>Technical
+                    Presence Ledger
+                </h2>
+                <div style="display: grid; grid-template-columns: 320px 1fr; gap: 30px; align-items: start;">
+                    <div class="card" style="padding: 30px; height: 600px; overflow-y: auto;">
+                        <span class="info-label">Daily Node Logs</span>
+                        <div id="daily-log-list"
+                            style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px;"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="info-value" id="cal-month-year" style="font-size: 1.8rem;">February 2026</h3>
+                        <div class="att-calendar-grid" id="att-calendar"></div>
+                        <div
+                            style="margin-top: 40px; display: flex; gap: 30px; border-top: 1px solid var(--border); padding-top: 20px; flex-wrap: wrap;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span class="status-dot status-present" style="width: 10px; height: 10px;"></span>
+                                <span style="font-size:12px; font-weight:600; color: var(--text);">VERIFIED NODE</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span class="status-dot status-absent" style="width: 10px; height: 10px;"></span>
+                                <span style="font-size:12px; font-weight:600; color: var(--text);">ABSENT /
+                                    OFFLINE</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- PROJECTS -->
+            <!-- PROJECT DASHBOARDS - FIXED: EXACT number of boxes as mentor configured -->
             <div id="tab-projects" class="hidden">
-                <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 35px; letter-spacing: -1px;">Research
-                    Tracks</h2>
-                <div id="projects-list" class="task-grid"></div>
+                <h2
+                    style="font-size: 2.8rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -1.5px; color: var(--text);">
+                    <i class="fas fa-microscope" style="margin-right: 15px; color: var(--primary);"></i>Technical Node
+                    Dashboards
+                </h2>
+                <div id="projects-container" class="proj-dash-container"></div>
             </div>
 
-            <!-- TASKS -->
+            <!-- NOTIFICATIONS -->
+            <div id="tab-notifications" class="hidden">
+                <h2
+                    style="font-size: 2.8rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -1.5px; color: var(--text);">
+                    <i class="fas fa-broadcast-tower"
+                        style="margin-right: 15px; color: var(--primary);"></i>Transmission Broadcasts
+                </h2>
+                <div class="bento-grid">
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="info-label">Mentor & Admin Alerts</span>
+                        <div id="notif-faculty-pool" class="notif-lane"></div>
+                    </div>
+                    <div class="card" style="grid-column: span 2;">
+                        <span class="info-label">Grand Command (Super Admin)</span>
+                        <div id="notif-super-pool" class="notif-lane"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TASK CENTER -->
             <div id="tab-tasks" class="hidden">
-                <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 35px; letter-spacing: -1px;">Directive
-                    Hub</h2>
-                <div id="tasks-list" class="task-grid"></div>
+                <h2
+                    style="font-size: 2.8rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -1.5px; color: var(--text);">
+                    <i class="fas fa-clipboard-list" style="margin-right: 15px; color: var(--primary);"></i>Directive
+                    Hub
+                </h2>
+                <div id="tasks-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;"></div>
             </div>
 
             <!-- SYNC HUB -->
             <div id="tab-sync" class="hidden">
                 <div class="chat-hub">
                     <aside class="chat-nav" id="chat-roster"></aside>
-                    <main class="chat-view">
+                    <main class="chat-view" style="display: flex; flex-direction: column;">
                         <div id="chat-h"
-                            style="padding: 20px 30px; border-bottom: 1px solid var(--border); font-weight: 800; color: var(--primary);">
-                            Select Support Channel</div>
+                            style="padding: 20px 30px; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text); font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span id="chat-title">Select Sync Lane</span>
+                            <span class="badge-aesthetic" id="chat-status" style="display:none; font-size: 10px;">SECURE
+                                NODE ACTIVE</span>
+                        </div>
                         <div id="chat-window" class="chat-history"></div>
-                        <form id="chat-form" class="chat-entry">
-                            <input type="text" id="chat-input" placeholder="Transmit technically segment..." required
-                                style="flex:1; padding:14px; border-radius:12px; border:1px solid var(--border); font-weight:600; background:var(--panel-bg);">
-                            <button type="submit" class="btn-minimal"
-                                style="padding:0 30px; background:var(--primary);"><i
+                        <form id="chat-form"
+                            style="padding: 20px 30px; border-top: 1px solid var(--border); display: flex; gap: 12px; background: var(--surface); align-items: center;">
+                            <input type="text" id="chat-input" placeholder="Transmit technical segment..." required
+                                class="chat-input-pill">
+                            <button type="submit" class="btn-minimal" style="padding:0 30px; height: 55px;"><i
                                     class="fas fa-paper-plane"></i></button>
                         </form>
                     </main>
-                </div>
-            </div>
-
-            <!-- NOTIFICATIONS -->
-            <div id="tab-notifications" class="hidden">
-                <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 35px;">Technical Broadcasts</h2>
-                <div class="notif-split">
-                    <div><span class="info-label">Private Alerts</span>
-                        <div id="n-private" style="margin-top:15px; display: flex; flex-direction: column; gap: 15px;">
-                        </div>
-                    </div>
-                    <div><span class="info-label">Global Feed</span>
-                        <div id="n-public" style="margin-top:15px; display: flex; flex-direction: column; gap: 15px;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- INQUIRIES -->
-            <div id="tab-requests" class="hidden">
-                <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 35px;">Inquiries & Requests</h2>
-                <div class="bento-grid">
-                    <div class="card" style="grid-column: span 2;">
-                        <span class="info-label">New Technical Inquiry</span>
-                        <textarea id="inq-txt"
-                            style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); margin-top:15px; min-height:120px; font-family:inherit; font-weight:600;"
-                            placeholder="Describe your query..."></textarea>
-                        <button onclick="App.submitInq()" class="btn-claim"
-                            style="margin-top:15px; background:var(--primary);">Post Inquiry</button>
-                    </div>
-                    <div class="card" style="grid-column: span 2;">
-                        <span class="info-label">Resource / Leave Request</span>
-                        <textarea id="req-txt"
-                            style="width:100%; padding:15px; border-radius:12px; border:1px solid var(--border); margin-top:15px; min-height:120px; font-family:inherit; font-weight:600;"
-                            placeholder="Details for procurement or Leave..."></textarea>
-                        <button onclick="App.submitReq()" class="btn-claim" style="margin-top:15px;">Transmit
-                            Request</button>
-                    </div>
                 </div>
             </div>
         </main>
@@ -1138,7 +1474,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, onSnapshot, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, collection, onSnapshot, updateDoc, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBN4o8oj-6DhJb51sGGrcyS8d9SDX7HKWk",
@@ -1161,24 +1497,74 @@
         };
 
         const App = {
-            state: { user: null, projects: [], tasks: [], notifications: [], chats: [], activeChat: 'admin', portalTime: new Date() },
+            state: {
+                user: null,
+                projects: [],
+                tasks: [],
+                mentors: [],
+                chats: [],
+                notifications: [],
+                activeChat: 'admin',
+                portalTime: new Date()
+            },
 
             async init() {
                 this.init3D();
                 this.startClock();
+
+                // Load saved theme preference
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.body.setAttribute('data-theme', savedTheme);
+                this.updateThemeToggle(savedTheme);
+
+                window.addEventListener('scroll', () => {
+                    const nav = document.getElementById('top-nav');
+                    if (window.scrollY > 20) nav.classList.add('scrolled');
+                    else nav.classList.remove('scrolled');
+                });
+
                 await signInAnonymously(auth);
-                document.getElementById('loader').classList.add('hidden');
+
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                }, 1500);
+
                 document.getElementById('login-form').onsubmit = (e) => this.handleLogin(e);
                 document.getElementById('chat-form').onsubmit = (e) => this.sendChat(e);
                 this.showHome();
-                window.App = App;
+                window.App = this;
+            },
+
+            toggleTheme() {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                this.updateThemeToggle(newTheme);
+            },
+
+            updateThemeToggle(theme) {
+                const sunIcon = document.querySelector('.theme-toggle .fa-sun');
+                const moonIcon = document.querySelector('.theme-toggle .fa-moon');
+                if (theme === 'light') {
+                    sunIcon.style.opacity = '1';
+                    moonIcon.style.opacity = '0.5';
+                } else {
+                    sunIcon.style.opacity = '0.5';
+                    moonIcon.style.opacity = '1';
+                }
             },
 
             startClock() {
                 setInterval(() => {
                     this.state.portalTime = new Date();
                     const disp = document.getElementById('live-time-disp');
-                    if (disp) disp.innerText = this.state.portalTime.toLocaleTimeString('en-US', { hour12: true });
+                    if (disp) disp.innerText = this.state.portalTime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true
+                    });
                 }, 1000);
             },
 
@@ -1187,245 +1573,608 @@
                 const srn = document.getElementById('l-srn').value.toUpperCase();
                 const pass = document.getElementById('l-pass').value;
                 const btn = e.target.querySelector('button');
-                btn.innerText = 'Syncing Node...';
+                btn.innerText = 'SYNCING NODE...';
 
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'students'), snap => {
-                    const studentDoc = snap.docs.find(d => d.data().srn === srn && d.data().pass === pass);
-                    if (studentDoc) {
+                // Query students collection for matching credentials
+                const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+                const q = query(studentsRef, where('srn', '==', srn), where('pass', '==', pass));
+
+                onSnapshot(q, (snap) => {
+                    if (!snap.empty) {
+                        const studentDoc = snap.docs[0];
                         this.state.user = { id: studentDoc.id, ...studentDoc.data() };
                         this.enterPortal();
                     } else {
-                        alert("Access Denied: Node mismatch.");
+                        alert("❌ Unauthorized Identify Attempt. Please check your credentials.");
                         btn.innerText = 'Authorize Session';
                     }
                 }, { once: true });
             },
 
             enterPortal() {
-                ui.toggle('view-login', false); ui.toggle('view-portal', true); ui.toggle('top-nav', false); ui.toggle('ticker-bar', true);
+                ui.toggle('view-login', false);
+                ui.toggle('view-portal', true);
+                ui.toggle('top-nav', false);
+                ui.toggle('ticker-bar', true);
 
-                // Set identity info everywhere
-                ui.set('u-name-side', this.state.user.name);
-                ui.set('u-srn-side', this.state.user.srn);
-                ui.set('u-avatar', this.state.user.name[0]);
-                ui.set('disp-name', this.state.user.name);
-                ui.set('disp-details', `${this.state.user.branch || 'Electronics'} • SEM 5 • ${this.state.user.srn}`);
-                ui.set('d-mentor', this.state.user.mentor?.split('@')[0] || 'Awaiting Faculty');
-                ui.set('d-mentor-email', this.state.user.mentor || '---');
+                ui.set('u-name-side', this.state.user.name || 'UNIDENTIFIED');
+                ui.set('u-srn-side', this.state.user.srn || 'NODE_OFFLINE');
+                ui.set('u-avatar', (this.state.user.name ? this.state.user.name[0] : '?'));
+                ui.set('disp-name', this.state.user.name || 'UNIDENTIFIED');
+                ui.set('disp-details', `${this.state.user.branch || 'EC/CS'} • SEM 5 • ${this.state.user.srn || 'OFFLINE'}`);
 
                 this.sync();
+
+                anime({
+                    targets: '.card',
+                    opacity: [0, 1],
+                    translateY: [50, 0],
+                    duration: 800,
+                    delay: anime.stagger(100)
+                });
             },
 
             sync() {
-                const cols = ['projects', 'tasks', 'notifications', 'chats'];
+                // Fetch all required collections
+                const cols = ['projects', 'tasks', 'mentors', 'chats', 'notifications'];
                 cols.forEach(c => {
                     onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', c), snap => {
                         this.state[c] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                         this.render();
                     });
                 });
+
+                // Listen to student document updates
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'students', this.state.user.id), docSnap => {
-                    this.state.user = { id: docSnap.id, ...docSnap.data() };
-                    this.updateAttUI();
+                    if (docSnap.exists()) {
+                        this.state.user = { id: docSnap.id, ...docSnap.data() };
+                        this.updateAttUI();
+                        if (!document.getElementById('tab-attendance-ledger').classList.contains('hidden')) {
+                            this.renderAttendanceTab();
+                        }
+                    }
                 });
             },
 
             switchTab(t) {
                 document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
                 document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+
                 const tabEl = document.getElementById(`tab-${t}`);
                 const navEl = document.getElementById(`nav-${t}`);
+
                 if (tabEl) tabEl.classList.remove('hidden');
                 if (navEl) navEl.classList.add('active');
-                if (window.innerWidth < 768) this.toggleSidebar();
+
                 if (t === 'attendance-ledger') this.renderAttendanceTab();
+                if (window.innerWidth < 768) this.toggleSidebar();
+
+                setTimeout(() => {
+                    anime({
+                        targets: `#tab-${t} .card, #tab-${t} .task-card, #tab-${t} .proj-dash-grid`,
+                        opacity: [0, 1],
+                        translateY: [30, 0],
+                        duration: 600,
+                        delay: anime.stagger(80)
+                    });
+                }, 100);
             },
 
             render() {
-                const { user, projects, tasks, notifications } = this.state;
+                const { user, projects, tasks, mentors, notifications } = this.state;
                 if (!user) return;
 
+                // Find mentor information
+                const mentor = mentors.find(m => m.email === user.mentor);
+                ui.set('d-mentor', mentor ? mentor.name : 'SYNC_PENDING');
+                ui.set('d-mentor-dept', mentor ? mentor.department : 'Faculty Node Offline');
+
+                // Filter projects where user is a member
                 const myProjects = projects.filter(p => p.members?.includes(user.name));
 
-                ui.html('dash-teams', myProjects.map(p => `
-                    <div class="card" style="padding:15px; margin:0;">
-                        <span class="badge bg-p" style="color:#fff;">${p.teamName}</span>
-                        <h4 style="margin-top:8px;">${p.name}</h4>
-                        <p class="info-sub">Faculty: ${p.mentor?.split('@')[0] || '---'}</p>
-                    </div>`).join('') || '<p class="info-sub">No faculty teams assigned.</p>');
+                // Dashboard Summary
+                ui.html('dash-projects-summary', myProjects.map(p => {
+                    const points = p.points || [];
+                    const approvedPoints = points.filter(pt => pt.status === 'approved').length;
+                    const totalPoints = p.totalPoints || points.length || 0;
+                    const calculatedScore = totalPoints > 0 ? Math.round((approvedPoints / totalPoints) * 100) : 0;
 
-                ui.html('projects-list', myProjects.map(p => `
-                    <div class="task-card">
-                        <div style="display:flex; justify-content:space-between; align-items:start;">
-                            <div><h3 class="info-value">${p.name}</h3><span class="badge bg-p" style="color:#fff; margin-top:5px;">${p.teamName}</span></div>
+                    return `
+                    <div style="background: var(--surface); padding: 18px; border-radius: 24px; border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <p class="info-label" style="margin-bottom:5px;">${p.name || 'Unassigned Track'}</p>
+                                <p class="info-value" style="font-size: 1rem;">Team: ${p.teamName || 'Standalone'}</p>
+                                <p class="info-sub" style="font-size:10px;">Progress: ${approvedPoints}/${totalPoints} approved</p>
+                            </div>
+                            <div style="background: ${calculatedScore >= 80 ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)'}; padding: 8px 16px; border-radius: 40px;">
+                                <span style="color: ${calculatedScore >= 80 ? '#10B981' : '#F59E0B'}; font-weight: 700;">${calculatedScore}/100</span>
+                            </div>
                         </div>
-                        <div class="discussion">
-                            <span class="info-label">Mentor/Admin Feedback Loop</span>
-                            <div class="bubble bubble-them">${p.adminReport || 'Node status: Active. Awaiting reporting.'}</div>
-                        </div>
-                        <div class="input-payload">
-                            <input type="text" id="p-link-${p.id}" placeholder="Anchor Drive Link..." value="${p.driveLink || ''}">
-                            <button onclick="App.submitProj('${p.id}')" class="btn-action">Anchor</button>
-                        </div>
-                    </div>`).join('') || '<p class="info-sub">No research tracks found.</p>');
+                    </div>`}).join('') || '<p class="info-sub">No research tracks discovered.</p>');
 
-                const myTasks = tasks.filter(t => t.sid === user.id || t.sid === user.srn);
+                // FIXED: Projects tab with EXACT number of boxes as mentor configured
+                ui.html('projects-container', myProjects.map(p => {
+                    // Get points array - use exactly what mentor set
+                    const points = p.points || [];
+                    const totalPoints = p.totalPoints || points.length || 0;
+
+                    // Calculate approved and pending counts
+                    const approvedPoints = points.filter(pt => pt.status === 'approved').length;
+                    const pendingPoints = points.filter(pt => pt.status === 'pending').length;
+
+                    // Calculate score based on formula: (approved / total) * 100
+                    const calculatedScore = totalPoints > 0 ? Math.round((approvedPoints / totalPoints) * 100) : 0;
+
+                    // Calculate grid columns based on total points (max 10 per row for visibility)
+                    const colsPerRow = Math.min(10, Math.ceil(Math.sqrt(totalPoints)) || 10);
+
+                    return `
+                        <div class="card" style="padding: 35px;">
+                            <div class="proj-dash-grid">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                                        <div>
+                                            <h3 class="info-value" style="font-size:1.8rem;">${p.name || 'Unassigned Track'}</h3>
+                                            <p class="info-sub" style="margin-top: 8px;">
+                                                <i class="fas fa-users" style="margin-right: 8px;"></i>Team: ${p.teamName || 'Standalone'}
+                                            </p>
+                                            <p class="info-sub" style="margin-top: 5px;">
+                                                <i class="fas fa-user-check" style="margin-right: 5px;"></i>Members: ${p.members?.join(', ') || 'None'}
+                                            </p>
+                                            <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                                                <span class="point-badge">
+                                                    <i class="fas fa-chart-line"></i> Total Points: ${totalPoints}
+                                                </span>
+                                                <span class="point-badge">
+                                                    <i class="fas fa-check-circle" style="color: var(--success);"></i> Approved: ${approvedPoints}
+                                                </span>
+                                                <span class="point-badge">
+                                                    <i class="fas fa-clock" style="color: var(--warning);"></i> Pending: ${pendingPoints}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: center;">
+                                            <div class="score-display">${calculatedScore}</div>
+                                            <div class="score-label">Cumulative Score</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="milestone-engine" style="margin-top: 30px;">
+                                        <span class="info-label">
+                                            <i class="fas fa-chart-line" style="margin-right: 5px;"></i>
+                                            Technical Milestone Tracker (${totalPoints} Points)
+                                        </span>
+                                        <div class="milestone-grid" style="grid-template-columns: repeat(${colsPerRow}, 1fr);">
+                                            ${Array(totalPoints).fill().map((_, i) => {
+                        const pointStatus = points[i]?.status || 'none';
+                        const pointNumber = i + 1;
+                        return `
+                                                    <div class="milestone-node ${pointStatus}" 
+                                                         onclick="App.markPoint('${p.id}', ${i}, '${pointStatus}')"
+                                                         title="Point ${pointNumber} - ${pointStatus === 'none' ? 'Not Started' : (pointStatus === 'pending' ? 'Awaiting Approval' : 'Approved')}">
+                                                         ${pointNumber}
+                                                    </div>
+                                                `;
+                    }).join('')}
+                                        </div>
+                                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px; text-align: center;">
+                                            <i class="fas fa-info-circle"></i> Click on any point to mark as complete. Mentor approval required to turn green.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="submission-portal" style="margin-top: 30px;">
+                                        <span class="info-label">Technical Payload Anchor</span>
+                                        <div class="input-group">
+                                            <input type="text" id="p-link-${p.id}" placeholder="https://github.com/your-repo" value="${p.driveLink || ''}">
+                                            <button onclick="App.submitProj('${p.id}')" class="btn-action">ANCHOR</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="border-left: 2px solid var(--border); padding-left: 30px;">
+                                    <span class="info-label">
+                                        <i class="fas fa-file-pdf" style="margin-right: 5px; color: var(--warning);"></i>
+                                        Reference Protocol
+                                    </span>
+                                    ${p.pdfUrl ?
+                            `<iframe class="pdf-viewer-node" src="${p.pdfUrl}" frameborder="0" style="margin-top: 15px;"></iframe>
+                                         <p style="color: var(--success); font-size: 11px; margin-top: 10px; text-align: center;">
+                                             <i class="fas fa-check-circle"></i> ${p.pdfFileName || 'Protocol Active'}
+                                         </p>` :
+                            `<div style="height: 500px; border-radius: 24px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; margin-top: 15px; border: 1px dashed var(--border);">
+                                            <i class="fas fa-file-pdf" style="font-size: 4rem; color: var(--text-muted);"></i>
+                                            <p class="info-sub">Protocol Documentation Pending</p>
+                                            <p class="info-sub" style="font-size: 10px;">Awaiting mentor upload</p>
+                                        </div>`
+                        }
+                                </div>
+                            </div>
+                        </div>`;
+                }).join('') || '<p class="info-sub" style="text-align:center; padding:80px;">No technical research tracks synchronized for this student node.</p>');
+
+                // Notifications
+                const facultyNotifs = notifications.filter(n => n.senderRole === 'Mentor' || n.senderRole === 'Admin');
+                const superNotifs = notifications.filter(n => n.senderRole === 'Super Admin');
+
+                ui.html('notif-faculty-pool', facultyNotifs.map(n => `
+                    <div class="notif-card">
+                        <div class="notif-icon" style="color:var(--primary);">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <p class="info-value" style="font-size:1rem; color: var(--text);">${n.text}</p>
+                            <p class="info-label" style="margin:8px 0 0;">${n.from || 'Mentor'} • ${n.time || ''}</p>
+                        </div>
+                    </div>`).join('') || '<p class="info-sub">No faculty alerts.</p>');
+
+                ui.html('notif-super-pool', superNotifs.map(n => `
+                    <div class="notif-card" style="border-left: 5px solid var(--warning);">
+                        <div class="notif-icon" style="color:var(--warning);">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div>
+                            <p class="info-value" style="font-size:1rem; color: var(--text);">${n.text}</p>
+                            <p class="info-label" style="margin:8px 0 0;">Grand Command • ${n.time || ''}</p>
+                        </div>
+                    </div>`).join('') || '<p class="info-sub">No command broadcasts.</p>');
+
+                // Tasks - Filter by user's SRN or ID
+                const myTasks = tasks.filter(t => t.sid === user.srn || t.sid === user.id);
                 ui.html('tasks-list', myTasks.map(t => {
-                    let statusUI = '';
+                    let actionUI = '';
                     if (t.status === 'Pending') {
-                        statusUI = `
-                            <div style="display:flex; gap:10px; margin-top:10px;">
-                                <button onclick="App.taskAct('${t.id}', 'Accepted')" class="btn-claim" style="background:var(--emerald); flex:1;">Accept Task</button>
-                                <button onclick="App.taskAct('${t.id}', 'Rejected')" class="btn-claim" style="background:var(--accent); flex:1;">Reject</button>
+                        actionUI = `
+                            <div style="display:flex; gap:10px; margin-top:18px; flex-wrap: wrap;">
+                                <button onclick="App.taskAct('${t.id}', 'Accepted')" class="btn-claim" style="background:var(--success); flex:1; padding: 12px;">Accept</button>
+                                <button onclick="App.taskAct('${t.id}', 'Rejected')" class="btn-claim" style="background:var(--danger); flex:1; padding: 12px;">Reject</button>
                             </div>`;
                     } else if (t.status === 'Accepted') {
-                        statusUI = `
-                            <div class="submission-portal">
-                                <span class="info-label">Technical Payload Submission</span>
+                        actionUI = `
+                            <div style="margin-top: 18px;">
                                 <div class="input-group">
-                                    <input type="text" id="t-payload-${t.id}" placeholder="Anchor Submission Link..." value="${t.payload || ''}">
-                                    <button onclick="App.submitTask('${t.id}')" class="btn-action">ANCHOR PAYLOAD</button>
+                                    <input type="text" id="t-payload-${t.id}" placeholder="payload-link.git">
+                                    <button onclick="App.submitTask('${t.id}')" class="btn-action">SUBMIT</button>
                                 </div>
                             </div>`;
                     } else if (t.status === 'Done') {
-                        statusUI = `
-                            <div class="submission-portal">
-                                <span class="info-label">Verified Submission</span>
-                                <div class="input-group">
-                                    <input type="text" value="${t.payload || ''}" disabled style="background:#f1f5f9;">
-                                    <button class="btn-action" disabled style="background:var(--emerald);">VERIFIED</button>
-                                </div>
+                        actionUI = `
+                            <div style="margin-top: 18px; background: rgba(16,185,129,0.1); padding: 12px; border-radius: 20px; text-align: center;">
+                                <span style="color: var(--success); font-weight: 600;">
+                                    <i class="fas fa-check-circle"></i> VERIFIED: ${t.payload || 'Completed'}
+                                </span>
                             </div>`;
                     }
 
                     return `
-                        <div class="task-card" style="border-left-color: ${t.status === 'Done' ? 'var(--emerald)' : (t.status === 'Accepted' ? 'var(--primary)' : 'var(--amber)')}">
-                            <div style="display:flex; justify-content:space-between; align-items:start;">
-                                <div><h3 class="info-value">${t.desc || t.title}</h3><p class="info-sub">Due: ${t.due}</p></div>
-                                <span class="badge ${t.status === 'Done' ? 'bg-e' : (t.status === 'Accepted' ? 'bg-p' : 'bg-a')}">${t.status}</span>
+                        <div class="task-card" style="border-left-color: ${t.status === 'Done' ? 'var(--success)' : (t.status === 'Accepted' ? 'var(--primary)' : 'var(--warning)')}">
+                            <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap: wrap; gap: 12px;">
+                                <div>
+                                    <h3 class="info-value" style="font-size:1.2rem;">${t.desc || t.title || 'Task'}</h3>
+                                    <p class="info-sub">Due: ${t.due || 'TBD'}</p>
+                                </div>
+                                <span class="badge" style="background:${t.status === 'Done' ? 'rgba(16,185,129,0.15)' : (t.status === 'Accepted' ? 'rgba(79,70,229,0.15)' : 'rgba(245,158,11,0.15)')}; color:${t.status === 'Done' ? '#10B981' : (t.status === 'Accepted' ? '#4F46E5' : '#F59E0B')}; padding:6px 16px; border-radius:40px; font-size:10px; font-weight:600;">
+                                    ${t.status?.toUpperCase() || 'PENDING'}
+                                </span>
                             </div>
-                            ${statusUI}
+                            ${actionUI}
                         </div>`;
-                }).join('') || '<p class="info-sub">No directives queued.</p>');
+                }).join('') || '<p class="info-sub" style="grid-column: span 2; text-align:center; padding:80px;">No technical directives currently queued.</p>');
 
-                ui.html('n-private', notifications.filter(n => n.target === user.srn || n.target === user.id).map(n => `<div class="notif-item private"><p class="info-label">${n.time}</p><p style="font-weight:700;">${n.text}</p></div>`).join('') || '<p class="info-sub">No secure alerts.</p>');
-                ui.html('n-public', notifications.filter(n => !n.target || n.target === 'all').map(n => `<div class="notif-item"><p class="info-label">${n.time}</p><p style="font-weight:700;">${n.text}</p></div>`).join(''));
-
+                // Chat roster with role-based channels
                 ui.html('chat-roster', `
-                    <div onclick="App.openChat('admin')" class="chat-list-item ${this.state.activeChat === 'admin' ? 'active' : ''}">System Admin</div>
-                    <div onclick="App.openChat('mentor')" class="chat-list-item ${this.state.activeChat === 'mentor' ? 'active' : ''}">Technical Mentor</div>
-                    <div onclick="App.openChat('super')" class="chat-list-item ${this.state.activeChat === 'super' ? 'active' : ''}">Super Admin</div>
-                    ${myProjects.map(p => `<div onclick="App.openChat('${p.id}')" class="chat-list-item ${this.state.activeChat === p.id ? 'active' : ''}">${p.teamName}</div>`).join('')}
+                    <div onclick="App.openChat('admin')" class="chat-list-item ${this.state.activeChat === 'admin' ? 'active' : ''}">
+                        <i class="fas fa-shield-halved"></i> System Admin
+                    </div>
+                    <div onclick="App.openChat('mentor')" class="chat-list-item ${this.state.activeChat === 'mentor' ? 'active' : ''}">
+                        <i class="fas fa-user-tie"></i> Faculty Advisor
+                    </div>
+                    ${myProjects.map(p => `
+                        <div onclick="App.openChat('${p.id}')" class="chat-list-item ${this.state.activeChat === p.id ? 'active' : ''}">
+                            <i class="fas fa-microscope"></i> ${p.teamName || 'Project'}
+                        </div>
+                    `).join('')}
                 `);
-                this.renderSyncWindow();
+
                 this.updateStats();
+                this.renderSyncWindow();
+            },
+
+            async markPoint(projId, index, currentStatus) {
+                // Only allow marking if point is not already marked
+                if (currentStatus !== 'none') {
+                    alert(`❌ Point ${index + 1} is already ${currentStatus === 'pending' ? 'awaiting approval' : 'approved'}.`);
+                    return;
+                }
+
+                const proj = this.state.projects.find(p => p.id === projId);
+                if (!proj) return;
+
+                // Use existing points array - don't modify length
+                const points = proj.points ? [...proj.points] : [];
+
+                // Only mark if index is within bounds
+                if (index < points.length) {
+                    points[index] = { status: 'pending' };
+
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projId), { points });
+
+                    anime({
+                        targets: event.target,
+                        scale: [1, 1.2, 1],
+                        duration: 400
+                    });
+
+                    alert(`✅ Point ${index + 1} marked for mentor approval.`);
+                } else {
+                    alert(`❌ Point index out of range. Project has ${points.length} points.`);
+                }
+            },
+
+            async submitProj(id) {
+                const link = document.getElementById(`p-link-${id}`).value;
+                if (!link) return;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { driveLink: link });
+
+                anime({
+                    targets: event.target,
+                    scale: [1, 1.1, 1],
+                    duration: 300
+                });
+
+                alert("🚀 Technical payload anchored successfully.");
+            },
+
+            async markLog(type) {
+                const timeStr = this.state.portalTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                const dateKey = this.state.portalTime.toISOString().split('T')[0];
+                const studentRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', this.state.user.id);
+                const logObj = this.state.user.logs || {};
+
+                if (!logObj[dateKey]) logObj[dateKey] = {};
+                logObj[dateKey][type.toLowerCase()] = timeStr;
+
+                await updateDoc(studentRef, {
+                    att: 'pending',
+                    logs: logObj,
+                    time: timeStr,
+                    lastAction: type
+                });
+
+                alert(`✅ ${type} protocol synchronized at ${timeStr}.`);
+            },
+
+            async submitTask(id) {
+                const link = document.getElementById(`t-payload-${id}`).value;
+                if (!link) return;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), {
+                    payload: link,
+                    status: 'Done',
+                    submittedAt: serverTimestamp()
+                });
+                alert("📡 Technical transmission success.");
+            },
+
+            async taskAct(id, s) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), { status: s });
             },
 
             updateAttUI() {
-                const colors = { verified: 'var(--emerald)', pending: 'var(--amber)', offline: 'var(--slate)' };
+                const colors = {
+                    verified: '#10B981',
+                    pending: '#F59E0B',
+                    offline: '#94a3b8'
+                };
                 const s = this.state.user.att || 'offline';
-                ui.html('att-badge', `<span class="badge" style="background: rgba(0,0,0,0.05); color: ${colors[s]}; border: 1px solid currentColor;">${s.toUpperCase()}</span>`);
+                ui.html('att-badge', `
+                    <span style="background: var(--surface); color: ${colors[s]}; border: 1px solid ${colors[s]}; font-size:11px; padding:8px 18px; border-radius:40px; font-weight:600; display:inline-block;">
+                        ${s.toUpperCase()}
+                    </span>
+                `);
             },
 
             updateStats() {
                 const ctx = document.getElementById('dashRing');
                 if (!ctx) return;
-                const perc = 60;
+
+                const attended = this.state.user.attendanceCount || 0;
+                const missed = this.state.user.absentCount || 0;
+                const totalElapsed = 26;
+
+                const yieldPerc = totalElapsed === 0 ? 100 : Math.round(((totalElapsed - missed) / totalElapsed) * 100);
+                const finalPerc = Math.min(100, Math.max(0, yieldPerc));
+
                 if (window.chartNode) window.chartNode.destroy();
-                window.chartNode = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: [perc, 100 - perc], backgroundColor: ['#4F46E5', '#E2E8F0'], borderWidth: 0 }] }, options: { cutout: '80%', plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false } });
-                ui.set('dash-perc', perc + '%');
-            },
 
-            async markAtt(type) {
-                const time = this.state.portalTime.toLocaleTimeString('en-US', { hour12: true });
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', this.state.user.id), {
-                    att: 'pending', time: time, lastAction: type
+                window.chartNode = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [finalPerc, 100 - finalPerc],
+                            backgroundColor: ['#6366F1', 'var(--border)'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        cutout: '82%',
+                        plugins: { legend: { display: false } },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
                 });
-                alert(`${type.toUpperCase()} recorded at ${time}. Sync pending reviewer approval.`);
+
+                ui.set('dash-perc', finalPerc + '%');
+                ui.set('verified-count', finalPerc + '%');
+                document.getElementById('bar-att').style.width = finalPerc + '%';
+
+                let matrix = '';
+                for (let i = 1; i <= 30; i++) {
+                    const status = i <= (totalElapsed - missed) ? 'verified' : (i <= totalElapsed ? 'missed' : '');
+                    matrix += `<div class="matrix-node ${status}"></div>`;
+                }
+                ui.html('dash-matrix', matrix);
             },
 
-            async submitProj(id) {
-                const link = document.getElementById(`p-link-${id}`).value;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { driveLink: link });
-                alert("Research anchored.");
-            },
+            renderAttendanceTab() {
+                const grid = document.getElementById('att-calendar');
+                const logList = document.getElementById('daily-log-list');
+                const logs = this.state.user.logs || {};
+                const year = 2026;
+                const month = 1; // February
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            async submitTask(id) {
-                const link = document.getElementById(`t-payload-${id}`).value;
-                if (!link) return alert("Please enter a link.");
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), { payload: link, status: 'Done' });
-                alert("Directive complete. Payload anchored for review.");
-            },
+                let html = '';
+                const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                days.forEach(d => html += `<div class="calendar-header">${d}</div>`);
 
-            async taskAct(id, s) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), { status: s }); },
+                for (let i = 0; i < firstDay; i++) html += `<div></div>`;
 
-            async submitInq() {
-                const txt = document.getElementById('inq-txt').value;
-                if (!txt) return;
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'notifications'), { from: this.state.user.name, senderRole: 'Inquiry', text: txt, time: this.state.portalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
-                document.getElementById('inq-txt').value = '';
-                alert("Logged.");
-            },
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    const hasLog = logs[dateStr];
+                    const isToday = i === 26;
+                    html += `<div class="calendar-cell ${isToday ? 'today' : ''}">
+                        ${i}
+                        ${hasLog ? '<span class="status-dot status-present"></span>' : ''}
+                    </div>`;
+                }
+                grid.innerHTML = html;
 
-            async submitReq() {
-                const txt = document.getElementById('req-txt').value;
-                if (!txt) return;
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'notifications'), { from: this.state.user.name, senderRole: 'Request', text: txt, time: this.state.portalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
-                document.getElementById('req-txt').value = '';
-                alert("Transmitted.");
+                const sortedDates = Object.keys(logs).sort().reverse();
+                logList.innerHTML = sortedDates.map(d => `
+                    <div style="background: var(--surface); padding: 12px; border-radius: 18px; border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <span style="color: var(--text); font-weight: 700;">${d}</span>
+                            <div style="display: flex; gap: 12px;">
+                                <span style="color: var(--success);"><i class="fas fa-sign-in-alt"></i> ${logs[d].in || '--:--'}</span>
+                                <span style="color: var(--warning);"><i class="fas fa-sign-out-alt"></i> ${logs[d].out || '--:--'}</span>
+                            </div>
+                        </div>
+                    </div>`).join('') || '<p class="info-sub">No technical logs synchronized.</p>';
             },
 
             openChat(id) {
                 this.state.activeChat = id;
-                ui.set('chat-h', `Sync Lane: ${id.toUpperCase()}`);
-                this.render();
+                let channelName = id === 'admin' ? "System Admin" : (id === 'mentor' ? "Faculty Advisor" : "Research Team");
+                ui.set('chat-title', `📡 Sync Lane: ${channelName}`);
+                ui.toggle('chat-status', true);
+                this.renderSyncWindow();
             },
 
             renderSyncWindow() {
                 const win = document.getElementById('chat-window');
                 if (!win) return;
-                const msgs = this.state.chats.filter(c => c.channel === this.state.activeChat || (this.state.activeChat === 'mentor' && c.channel === this.state.user.id));
-                win.innerHTML = msgs.map(m => `<div class="bubble ${m.sender === 'Student' ? 'bubble-me' : 'bubble-them'}">${m.text}</div>`).join('') || '<p class="info-sub" style="text-align:center; padding:20px;">Channel initiated.</p>';
+
+                let msgs = [];
+                if (this.state.activeChat === 'admin') {
+                    msgs = this.state.chats.filter(c => c.channel === 'admin');
+                } else if (this.state.activeChat === 'mentor') {
+                    msgs = this.state.chats.filter(c => c.channel === this.state.user.id);
+                } else {
+                    msgs = this.state.chats.filter(c => c.channel === this.state.activeChat);
+                }
+
+                win.innerHTML = msgs.map(m => `
+                    <div class="bubble ${m.sender === 'Student' ? 'bubble-me' : 'bubble-them'}">
+                        ${m.text}
+                        <span class="bubble-time">
+                            ${m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : ''}
+                        </span>
+                    </div>
+                `).join('') || '<p class="info-sub" style="text-align:center; padding:50px;">✨ Secure channel established. Ready for transmission.</p>';
+
                 win.scrollTop = win.scrollHeight;
             },
 
             async sendChat(e) {
                 e.preventDefault();
                 const inp = document.getElementById('chat-input');
-                if (!inp.value) return;
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), { channel: this.state.activeChat === 'mentor' ? this.state.user.id : this.state.activeChat, sender: 'Student', text: inp.value, timestamp: serverTimestamp() });
+                if (!inp.value || !this.state.activeChat) return;
+
+                let channel = this.state.activeChat;
+                if (this.state.activeChat === 'mentor') {
+                    channel = this.state.user.id;
+                }
+
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), {
+                    channel: channel,
+                    sender: 'Student',
+                    text: inp.value,
+                    timestamp: serverTimestamp()
+                });
+
                 inp.value = '';
             },
 
-            renderAttendanceTab() {
-                const grid = document.getElementById('att-calendar');
-                let html = `<div class="calendar-header">S</div><div class="calendar-header">M</div><div class="calendar-header">T</div><div class="calendar-header">W</div><div class="calendar-header">T</div><div class="calendar-header">F</div><div class="calendar-header">S</div>`;
-                for (let i = 1; i <= 28; i++) {
-                    const isToday = i === 26; // Static for demo Feb 26
-                    html += `<div class="calendar-cell ${isToday ? 'today' : ''}">${i}</div>`;
-                }
-                grid.innerHTML = html;
+            toggleSidebar() {
+                document.getElementById('app-sidebar').classList.toggle('active');
             },
 
-            toggleSidebar() { document.getElementById('app-sidebar').classList.toggle('active'); },
-            showHome() { ui.toggle('view-home', true); ui.toggle('top-nav', true); ui.toggle('view-login', false); },
-            showLogin() { ui.toggle('view-home', false); ui.toggle('top-nav', true); ui.toggle('view-login', true); },
+            showHome() {
+                ui.toggle('view-home', true);
+                ui.toggle('top-nav', true);
+                ui.toggle('view-login', false);
+                ui.toggle('view-portal', false);
+            },
+
+            showLogin() {
+                ui.toggle('view-home', false);
+                ui.toggle('top-nav', true);
+                ui.toggle('view-login', true);
+            },
+
             init3D() {
                 const scene = new THREE.Scene();
                 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
                 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setClearColor(0x000000, 0);
                 document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+                const geometry = new THREE.SphereGeometry(0.6, 32, 32);
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x6366F1,
+                    transparent: true,
+                    opacity: 0.12
+                });
+
                 const bubbles = [];
-                for (let i = 0; i < 30; i++) {
-                    const b = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshPhongMaterial({ color: 0x4F46E5, transparent: true, opacity: 0.1 }));
-                    b.position.set((Math.random() - 0.5) * 150, (Math.random() - 0.5) * 150, (Math.random() - 0.5) * 150);
-                    b.userData = { v: new THREE.Vector3((Math.random() - 0.5) * 0.04, (Math.random() - 0.5) * 0.04, (Math.random() - 0.5) * 0.04) };
-                    scene.add(b); bubbles.push(b);
+                for (let i = 0; i < 50; i++) {
+                    const sphere = new THREE.Mesh(geometry, material);
+                    sphere.position.set(
+                        (Math.random() - 0.5) * 180,
+                        (Math.random() - 0.5) * 180,
+                        (Math.random() - 0.5) * 180
+                    );
+                    sphere.userData = {
+                        v: new THREE.Vector3(
+                            (Math.random() - 0.5) * 0.012,
+                            (Math.random() - 0.5) * 0.012,
+                            (Math.random() - 0.5) * 0.012
+                        )
+                    };
+                    scene.add(sphere);
+                    bubbles.push(sphere);
                 }
-                scene.add(new THREE.AmbientLight(0xffffff, 0.8)); camera.position.z = 80;
-                const anim = () => { requestAnimationFrame(anim); bubbles.forEach(b => { b.position.add(b.userData.v); if (Math.abs(b.position.x) > 80) b.userData.v.x *= -1; }); renderer.render(scene, camera); };
-                anim();
+
+                const light = new THREE.DirectionalLight(0xffffff, 0.8);
+                light.position.set(1, 1, 1);
+                scene.add(light);
+                scene.add(new THREE.AmbientLight(0x404060));
+                camera.position.z = 90;
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    bubbles.forEach(b => {
+                        b.position.add(b.userData.v);
+                        if (Math.abs(b.position.x) > 90) b.userData.v.x *= -1;
+                        if (Math.abs(b.position.y) > 90) b.userData.v.y *= -1;
+                        if (Math.abs(b.position.z) > 90) b.userData.v.z *= -1;
+                    });
+                    renderer.render(scene, camera);
+                }
+                animate();
             }
         };
 
