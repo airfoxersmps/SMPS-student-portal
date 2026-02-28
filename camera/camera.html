@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMPS · Meet</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0A0A0B;
+            --surface: #111113;
+            --surface2: #1A1A1E;
+            --surface3: #222228;
+            --border: #2A2A32;
+            --border2: #38383F;
+            --text: #F0EFF8;
+            --text2: #9896A8;
+            --text3: #5C5A6B;
+            --primary: #6C63FF;
+            --primary-soft: rgba(108, 99, 255, 0.15);
+            --primary-glow: rgba(108, 99, 255, 0.3);
+            --green: #22C55E;
+            --green-soft: rgba(34, 197, 94, 0.15);
+            --red: #EF4444;
+            --red-soft: rgba(239, 68, 68, 0.15);
+            --amber: #F59E0B;
+            --amber-soft: rgba(245, 158, 11, 0.15);
+            --teal: #14B8A6;
+            --teal-soft: rgba(20, 184, 166, 0.15);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            --r: 12px;
+            --r-lg: 18px;
+            --r-xl: 24px;
+        }
+
+        [data-theme="light"] {
+            --bg: #F7F6F3;
+            --surface: #FFFFFF;
+            --surface2: #F0EEE9;
+            --surface3: #E8E6DF;
+            --border: #E2DDD6;
+            --border2: #CCC8C0;
+            --text: #1A1916;
+            --text2: #5C5952;
+            --text3: #9B9892;
+            --primary: #2563EB;
+            --primary-soft: rgba(37, 99, 235, 0.1);
+            --primary-glow: rgba(37, 99, 235, 0.2);
+            --green: #16A34A;
+            --green-soft: rgba(22, 163, 74, 0.1);
+            --red: #DC2626;
+            --red-soft: rgba(220, 38, 38, 0.1);
+            --amber: #D97706;
+            --amber-soft: rgba(217, 119, 6, 0.1);
+            --teal: #0D9488;
+            --teal-soft: rgba(13, 148, 136, 0.1);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            transition: background .3s, color .3s;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 99px;
+        }
+
+        /* ── THEME BUTTON (always visible) ── */
+        #theme-btn-fixed {
+            position: fixed;
+            top: 14px;
+            right: 16px;
+            z-index: 9999;
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            cursor: pointer;
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .2s;
+        }
+
+        #theme-btn-fixed:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        /* ── AUTH SCREEN ── */
+        #auth-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] #auth-screen::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.1) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            pointer-events: none;
+        }
+
+        [data-theme="dark"] #auth-screen::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.06) 0%, transparent 70%);
+            bottom: -50px;
+            right: -50px;
+            pointer-events: none;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-xl);
+            padding: 36px;
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            z-index: 1;
+            box-shadow: var(--shadow);
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .auth-logo .mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .auth-logo .title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .auth-logo .sub {
+            font-size: .72rem;
+            color: var(--text3);
+            font-family: 'DM Mono';
+        }
+
+        /* Role tabs */
+        .role-tabs {
+            display: flex;
+            background: var(--surface2);
+            border-radius: 11px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 22px;
+            border: 1px solid var(--border);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 8px 6px;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text2);
+            background: transparent;
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .role-tab.active {
+            background: var(--surface);
+            color: var(--primary);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 6px;
+            letter-spacing: .02em;
+        }
+
+        .input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
+            color: var(--text);
+            font-family: inherit;
+            font-size: .875rem;
+            transition: .2s;
+        }
+
+        .input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+        .auth-error {
+            padding: 9px 13px;
+            background: var(--red-soft);
+            color: var(--red);
+            border: 1px solid rgba(220, 38, 38, .2);
+            border-radius: 9px;
+            font-size: .8rem;
+            margin-bottom: 14px;
+            display: none;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--r);
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            font-family: inherit;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
+
+        .btn-primary:disabled {
+            opacity: .5;
+            pointer-events: none;
+        }
+
+        .fetched-name {
+            margin-top: 10px;
+            padding: 10px 13px;
+            background: var(--green-soft);
+            border: 1px solid rgba(34, 197, 94, .2);
+            border-radius: 9px;
+            font-size: .82rem;
+            color: var(--green);
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Lobby preview */
+        #lobby-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: var(--bg);
+        }
+
+        .lobby-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-xl);
+            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+        }
+
+        .lobby-user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            margin-bottom: 20px;
+        }
+
+        .lobby-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .lobby-avatar.mentor {
+            background: var(--teal);
+        }
+
+        .lobby-avatar.admin {
+            background: var(--red);
+        }
+
+        .lobby-user-info .uname {
+            font-weight: 700;
+            font-size: .95rem;
+        }
+
+        .lobby-user-info .urole {
+            font-size: .75rem;
+            color: var(--text3);
+        }
+
+        .preview-wrap {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--surface2);
+            border-radius: var(--r-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .preview-wrap video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .preview-no-cam {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--text3);
+        }
+
+        .preview-no-cam i {
+            font-size: 2rem;
+        }
+
+        .preview-no-cam span {
+            font-size: .82rem;
+        }
+
+        .preview-name-lbl {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: .75rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .lobby-toggles {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: var(--r);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            font-family: inherit;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .toggle-btn.on {
+            background: var(--green-soft);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .toggle-btn.off {
+            background: var(--red-soft);
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .room-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .room-input-row .input {
+            flex: 1;
+        }
+
+        .btn-ghost {
+            padding: 10px 16px;
+            border-radius: var(--r);
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            font-family: inherit;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        /* ── MEET ROOM ── */
+        #meet-room {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+        }
+
+        .meet-topbar {
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            gap: 12px;
+        }
+
+        .meet-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: .95rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .5;
+                transform: scale(1.3);
+            }
+        }
+
+        .meet-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-id-chip {
+            font-family: 'DM Mono';
+            font-size: .75rem;
+            color: var(--text3);
+            background: var(--surface2);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .room-id-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .meet-clock {
+            font-family: 'DM Mono';
+            font-size: .82rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .meet-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .host-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--amber-soft);
+            color: var(--amber);
+            border: 1px solid rgba(245, 158, 11, .25);
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: .68rem;
+            font-weight: 700;
+        }
+
+        .icon-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .85rem;
+            transition: .2s;
+        }
+
+        .icon-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .icon-btn.active-hand {
+            background: var(--amber-soft);
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        /* Main area */
+        .meet-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Video grid */
+        .video-area {
+            flex: 1;
+            padding: 14px;
+            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all .3s;
+        }
+
+        .video-grid {
+            flex: 1;
+            display: grid;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .vg-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .vg-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .vg-3 {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+
+        .vg-4 {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+
+        .vg-many {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .video-tile {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-lg);
+            position: relative;
+            overflow: hidden;
+            transition: border-color .2s;
+            min-height: 0;
+        }
+
+        .video-tile.local {
+            border-color: var(--primary);
+        }
+
+        .video-tile.speaking {
+            border-color: var(--green);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+        }
+
+        .video-tile video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .video-tile .local-vid {
+            transform: scaleX(-1);
+        }
+
+        .tile-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 12px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+
+        .tile-name {
+            font-size: .8rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
+        }
+
+        .tile-role {
+            font-size: .66rem;
+            color: rgba(255, 255, 255, .6);
+            font-weight: 400;
+        }
+
+        .crown-icon {
+            color: var(--amber);
+            font-size: .68rem;
+        }
+
+        .tile-mic-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .7rem;
+        }
+
+        .tile-mic-badge.on {
+            color: var(--green);
+        }
+
+        .tile-mic-badge.off {
+            color: var(--red);
+        }
+
+        .tile-no-video {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--surface2);
+        }
+
+        .tile-avatar-big {
+            width: 68px;
+            height: 68px;
+            border-radius: 16px;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .tile-avatar-big.mentor-av {
+            background: var(--teal);
+        }
+
+        .tile-avatar-big.admin-av {
+            background: var(--red);
+        }
+
+        .tile-no-name {
+            font-size: .82rem;
+            color: var(--text2);
+            font-weight: 600;
+        }
+
+        .hand-raised-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 1.3rem;
+            animation: wave .7s ease infinite alternate;
+        }
+
+        @keyframes wave {
+            from {
+                transform: rotate(-12deg);
+            }
+
+            to {
+                transform: rotate(12deg);
+            }
+        }
+
+        /* Panels */
+        .side-panel {
+            width: 320px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform .3s;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .side-panel.open {
+            transform: translateX(0);
+        }
+
+        .side-panel.wb-panel {
+            width: 420px;
+        }
+
+        .panel-header {
+            padding: 13px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: .9rem;
+            flex-shrink: 0;
+        }
+
+        /* Participants */
+        .left-panel {
+            width: 250px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(-100%);
+            transition: transform .3s;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .left-panel.open {
+            transform: translateX(0);
+        }
+
+        .pp-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .pp-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 10px;
+            border-radius: 9px;
+            margin-bottom: 4px;
+            transition: .15s;
+        }
+
+        .pp-item:hover {
+            background: var(--surface2);
+        }
+
+        .pp-av {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .82rem;
+            flex-shrink: 0;
+        }
+
+        .pp-av.m {
+            background: var(--teal);
+        }
+
+        .pp-av.a {
+            background: var(--red);
+        }
+
+        .pp-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pp-name {
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pp-role-lbl {
+            font-size: .68rem;
+            color: var(--text3);
+        }
+
+        .pp-icons {
+            display: flex;
+            gap: 4px;
+            font-size: .72rem;
+        }
+
+        .pp-icon-on {
+            color: var(--green);
+        }
+
+        .pp-icon-off {
+            color: var(--red);
+        }
+
+        /* Whiteboard */
+        .wb-tools {
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .wb-btn-tool {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .78rem;
+            transition: .15s;
+        }
+
+        .wb-btn-tool.active {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .wb-btn-tool:hover:not(.active) {
+            background: var(--surface3);
+            color: var(--text);
+        }
+
+        .clr-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: .15s;
+            flex-shrink: 0;
+        }
+
+        .clr-dot.active {
+            border-color: var(--text);
+            transform: scale(1.25);
+        }
+
+        .size-sl {
+            width: 60px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        #wb-canvas {
+            flex: 1;
+            background: #fff;
+            cursor: crosshair;
+            display: block;
+            width: 100%;
+        }
+
+        .wb-footer {
+            padding: 9px 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .wb-action {
+            flex: 1;
+            padding: 7px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            font-family: inherit;
+            font-size: .75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .wb-action:hover {
+            background: var(--surface3);
+            color: var(--text);
+        }
+
+        .wb-action.danger {
+            background: var(--red-soft);
+            color: var(--red);
+            border-color: rgba(220, 38, 38, .2);
+        }
+
+        /* Chat */
+        .cs-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .cs-msg {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .cs-msg .cs-sender {
+            font-size: .7rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .cs-msg .cs-bubble {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 7px 11px;
+            font-size: .8rem;
+            color: var(--text);
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .cs-msg.me .cs-sender {
+            color: var(--teal);
+            text-align: right;
+        }
+
+        .cs-msg.me .cs-bubble {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            align-self: flex-end;
+            max-width: 90%;
+        }
+
+        .cs-input-row {
+            padding: 10px 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .cs-inp {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: .8rem;
+            transition: .2s;
+        }
+
+        .cs-inp:focus {
+            border-color: var(--primary);
+        }
+
+        .cs-send-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .82rem;
+            transition: .2s;
+        }
+
+        .cs-send-btn:hover {
+            opacity: .85;
+        }
+
+        /* Controls bar */
+        .controls-bar {
+            height: 74px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .ctrl-grp {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding-bottom: 16px;
+            position: relative;
+        }
+
+        .ctrl-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 13px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            transition: .2s;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .ctrl-btn:hover {
+            background: var(--surface3);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+
+        .ctrl-btn.on {
+            background: var(--green-soft);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .ctrl-btn.off {
+            background: var(--red-soft);
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .ctrl-btn.panel-on {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .ctrl-btn.danger {
+            background: var(--red);
+            border-color: var(--red);
+            color: #fff;
+            width: 54px;
+            height: 54px;
+            border-radius: 15px;
+        }
+
+        .ctrl-btn.danger:hover {
+            opacity: .85;
+            transform: translateY(-2px);
+        }
+
+        .ctrl-lbl {
+            font-size: .62rem;
+            font-weight: 600;
+            color: var(--text3);
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .ctrl-notif {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            display: none;
+        }
+
+        .meet-duration {
+            position: absolute;
+            right: 20px;
+            font-family: 'DM Mono';
+            font-size: .8rem;
+            color: var(--text3);
+        }
+
+        .sharing-banner {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--amber);
+            color: #000;
+            font-size: .72rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 99px;
+            z-index: 20;
+            display: none;
+        }
+
+        .sharing-banner.show {
+            display: block;
+        }
+
+        /* Toast */
+        .meet-toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 9px 20px;
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--text);
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .25s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .35);
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .meet-toast.show {
+            opacity: 1;
+        }
+
+        /* Empty state in panels */
+        .empty-panel {
+            padding: 32px 20px;
+            text-align: center;
+            color: var(--text3);
+            font-size: .82rem;
+        }
+
+        .empty-panel i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+            opacity: .4;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Theme toggle (always on top) -->
+    <button id="theme-btn-fixed" onclick="App.toggleTheme()" title="Toggle theme">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- ══════════════ AUTH SCREEN ══════════════ -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="mark"><i class="fas fa-video"></i></div>
+                <div>
+                    <div class="title">SMPS Meet</div>
+                    <div class="sub">Secure · Real-time · Collaborative</div>
+                </div>
+            </div>
+
+            <!-- Role selector -->
+            <div class="role-tabs">
+                <button class="role-tab active" id="tab-student" onclick="App.switchRole('student')">
+                    <i class="fas fa-user-graduate"></i> Student
+                </button>
+                <button class="role-tab" id="tab-mentor" onclick="App.switchRole('mentor')">
+                    <i class="fas fa-chalkboard-teacher"></i> Mentor
+                </button>
+                <button class="role-tab" id="tab-admin" onclick="App.switchRole('admin')">
+                    <i class="fas fa-shield-halved"></i> Admin
+                </button>
+            </div>
+
+            <div id="auth-error" class="auth-error"></div>
+
+            <!-- Student login -->
+            <div id="form-student">
+                <div class="form-group">
+                    <label>Student Registration Number (SRN)</label>
+                    <input type="text" class="input" id="s-srn" placeholder="e.g. 1RV20CS001" autocomplete="off"
+                        oninput="App.onSRNInput()" style="text-transform:uppercase;">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="input" id="s-pass" placeholder="Your password">
+                </div>
+                <div class="fetched-name" id="fetched-name">
+                    <i class="fas fa-check-circle" style="margin-right:6px;"></i>
+                    <span id="fetched-name-text"></span>
+                </div>
+            </div>
+
+            <!-- Mentor login -->
+            <div id="form-mentor" class="hidden">
+                <div class="form-group">
+                    <label>Email / Username</label>
+                    <input type="text" class="input" id="m-user" placeholder="mentor@college.edu">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="input" id="m-pass" placeholder="Your password">
+                </div>
+            </div>
+
+            <!-- Admin login -->
+            <div id="form-admin" class="hidden">
+                <div class="form-group">
+                    <label>Admin Username</label>
+                    <input type="text" class="input" id="a-user" placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="input" id="a-pass" placeholder="Your password">
+                </div>
+            </div>
+
+            <button class="btn-primary" id="auth-btn" onclick="App.authenticate()">
+                <i class="fas fa-arrow-right"></i> Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- ══════════════ LOBBY SCREEN ══════════════ -->
+    <div id="lobby-screen" class="hidden">
+        <div class="lobby-card">
+            <div class="lobby-user-chip">
+                <div class="lobby-avatar" id="lobby-avatar">?</div>
+                <div class="lobby-user-info">
+                    <div class="uname" id="lobby-uname">---</div>
+                    <div class="urole" id="lobby-urole">---</div>
+                </div>
+                <button class="btn-ghost" style="margin-left:auto;padding:6px 12px;font-size:.75rem;"
+                    onclick="App.backToAuth()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+
+            <div class="preview-wrap" id="lobby-preview-wrap">
+                <video id="lobby-video" autoplay muted playsinline></video>
+                <div class="preview-no-cam hidden" id="lobby-no-cam">
+                    <i class="fas fa-video-slash"></i>
+                    <span>Camera is off</span>
+                </div>
+                <div class="preview-name-lbl" id="lobby-name-lbl">You</div>
+            </div>
+
+            <div class="lobby-toggles">
+                <button class="toggle-btn on" id="lcam-btn" onclick="App.toggleLobbyCam()">
+                    <i class="fas fa-video" id="lcam-icon"></i> Camera
+                </button>
+                <button class="toggle-btn on" id="lmic-btn" onclick="App.toggleLobbyMic()">
+                    <i class="fas fa-microphone" id="lmic-icon"></i> Mic
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Room ID</label>
+                <div class="room-input-row">
+                    <input type="text" class="input" id="lobby-room" placeholder="Enter Room ID" value="SMPS-MEET-001">
+                    <button class="btn-ghost" onclick="App.generateRoomId()"><i class="fas fa-dice"></i> New</button>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="App.joinMeeting()">
+                <i class="fas fa-video"></i> Join Meeting
+            </button>
+        </div>
+    </div>
+
+    <!-- ══════════════ MEET ROOM ══════════════ -->
+    <div id="meet-room" class="hidden">
+
+        <!-- Top bar -->
+        <div class="meet-topbar">
+            <div class="meet-logo">
+                <div class="live-dot"></div>
+                SMPS Meet
+            </div>
+            <div class="meet-info">
+                <div class="room-id-chip" id="room-chip" onclick="App.copyRoomId()" title="Click to copy">
+                    <i class="fas fa-link" style="margin-right:5px;font-size:.7rem;"></i>
+                    <span id="room-chip-txt">---</span>
+                </div>
+                <div class="meet-clock" id="meet-clock">--:--:--</div>
+            </div>
+            <div class="meet-topbar-right">
+                <div class="host-badge hidden" id="host-badge"><i class="fas fa-crown"></i> HOST</div>
+                <button class="icon-btn" id="hand-btn" onclick="App.toggleHand()" title="Raise / Lower Hand">
+                    <i class="fas fa-hand"></i>
+                </button>
+                <button class="icon-btn" onclick="App.toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon" id="meet-theme-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="sharing-banner" id="sharing-banner">
+            <i class="fas fa-desktop"></i> Sharing Screen
+        </div>
+
+        <!-- Main -->
+        <div class="meet-main" id="meet-main">
+
+            <!-- Participants (left) -->
+            <div class="left-panel" id="panel-participants">
+                <div class="panel-header">
+                    <span><i class="fas fa-users" style="color:var(--primary);margin-right:7px;"></i>Participants</span>
+                    <button class="icon-btn" onclick="App.closePanel('participants')" style="width:26px;height:26px;"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="pp-list" id="pp-list">
+                    <div class="empty-panel"><i class="fas fa-users"></i>No participants yet</div>
+                </div>
+            </div>
+
+            <!-- Video area -->
+            <div class="video-area" id="video-area">
+                <div class="video-grid vg-1" id="video-grid"></div>
+            </div>
+
+            <!-- Whiteboard (right) -->
+            <div class="side-panel wb-panel" id="panel-whiteboard">
+                <div class="panel-header">
+                    <span><i class="fas fa-pen" style="color:var(--primary);margin-right:7px;"></i>Whiteboard</span>
+                    <button class="icon-btn" onclick="App.closePanel('whiteboard')" style="width:26px;height:26px;"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="wb-tools">
+                    <button class="wb-btn-tool active" id="wtool-pen" onclick="App.setWBTool('pen')" title="Pen"><i
+                            class="fas fa-pen"></i></button>
+                    <button class="wb-btn-tool" id="wtool-eraser" onclick="App.setWBTool('eraser')" title="Eraser"><i
+                            class="fas fa-eraser"></i></button>
+                    <button class="wb-btn-tool" id="wtool-line" onclick="App.setWBTool('line')" title="Line"><i
+                            class="fas fa-minus"></i></button>
+                    <button class="wb-btn-tool" id="wtool-rect" onclick="App.setWBTool('rect')" title="Rect"><i
+                            class="far fa-square"></i></button>
+                    <button class="wb-btn-tool" id="wtool-circle" onclick="App.setWBTool('circle')" title="Circle"><i
+                            class="far fa-circle"></i></button>
+                    <button class="wb-btn-tool" id="wtool-text" onclick="App.setWBTool('text')" title="Text"><i
+                            class="fas fa-font"></i></button>
+                    <div style="width:1px;height:22px;background:var(--border);margin:0 2px;"></div>
+                    <div class="clr-dot active" style="background:#1a1a2e;border:2px solid var(--border2);"
+                        data-c="#1a1a2e" onclick="App.setWBColor(this)"></div>
+                    <div class="clr-dot" style="background:#fff;" data-c="#FFFFFF" onclick="App.setWBColor(this)"></div>
+                    <div class="clr-dot" style="background:#EF4444;" data-c="#EF4444" onclick="App.setWBColor(this)">
+                    </div>
+                    <div class="clr-dot" style="background:#22C55E;" data-c="#22C55E" onclick="App.setWBColor(this)">
+                    </div>
+                    <div class="clr-dot" style="background:#6C63FF;" data-c="#6C63FF" onclick="App.setWBColor(this)">
+                    </div>
+                    <div class="clr-dot" style="background:#F59E0B;" data-c="#F59E0B" onclick="App.setWBColor(this)">
+                    </div>
+                    <div class="clr-dot" style="background:#14B8A6;" data-c="#14B8A6" onclick="App.setWBColor(this)">
+                    </div>
+                    <div style="width:1px;height:22px;background:var(--border);margin:0 2px;"></div>
+                    <input type="range" class="size-sl" id="wb-size" min="2" max="24" value="4"
+                        oninput="App.s.wbSize=+this.value" title="Brush size">
+                </div>
+                <canvas id="wb-canvas"></canvas>
+                <div class="wb-footer">
+                    <button class="wb-action" onclick="App.wbUndo()"><i class="fas fa-undo"></i> Undo</button>
+                    <button class="wb-action" onclick="App.wbSave()"><i class="fas fa-download"></i> Save</button>
+                    <button class="wb-action danger" onclick="App.wbClear()"><i class="fas fa-trash"></i> Clear</button>
+                </div>
+            </div>
+
+            <!-- Chat (right) -->
+            <div class="side-panel" id="panel-chat">
+                <div class="panel-header">
+                    <span><i class="fas fa-comments" style="color:var(--primary);margin-right:7px;"></i>Chat</span>
+                    <button class="icon-btn" onclick="App.closePanel('chat')" style="width:26px;height:26px;"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="cs-msgs" id="cs-msgs">
+                    <div class="empty-panel"><i class="fas fa-comments"></i>No messages yet</div>
+                </div>
+                <div class="cs-input-row">
+                    <input type="text" class="cs-inp" id="cs-input" placeholder="Type a message…">
+                    <button class="cs-send-btn" onclick="App.sendChat()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <div class="ctrl-grp">
+                <button class="ctrl-btn on" id="btn-mic" onclick="App.toggleMic()">
+                    <i class="fas fa-microphone" id="mic-icon"></i>
+                </button>
+                <span class="ctrl-lbl">Mic</span>
+            </div>
+            <div class="ctrl-grp">
+                <button class="ctrl-btn on" id="btn-cam" onclick="App.toggleCam()">
+                    <i class="fas fa-video" id="cam-icon"></i>
+                </button>
+                <span class="ctrl-lbl">Camera</span>
+            </div>
+            <div class="ctrl-grp">
+                <button class="ctrl-btn" id="btn-screen" onclick="App.toggleScreen()">
+                    <i class="fas fa-desktop" id="screen-icon"></i>
+                </button>
+                <span class="ctrl-lbl">Share</span>
+            </div>
+            <div class="ctrl-grp">
+                <button class="ctrl-btn" id="btn-wb" onclick="App.openPanel('whiteboard')">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <span class="ctrl-lbl">Board</span>
+            </div>
+            <div class="ctrl-grp">
+                <button class="ctrl-btn" id="btn-chat" onclick="App.openPanel('chat')">
+                    <i class="fas fa-comments"></i>
+                    <span class="ctrl-notif" id="chat-notif"></span>
+                </button>
+                <span class="ctrl-lbl">Chat</span>
+            </div>
+            <div class="ctrl-grp">
+                <button class="ctrl-btn" id="btn-people" onclick="App.openPanel('participants')">
+                    <i class="fas fa-users"></i>
+                </button>
+                <span class="ctrl-lbl">People</span>
+            </div>
+
+            <div class="meet-duration" id="meet-duration">00:00</div>
+
+            <div class="ctrl-grp" style="margin-left:16px;">
+                <button class="ctrl-btn danger" onclick="App.leaveMeeting()">
+                    <i class="fas fa-phone-slash"></i>
+                </button>
+                <span class="ctrl-lbl" style="color:var(--red);">Leave</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="meet-toast" id="meet-toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyBN4o8oj-6DhJb51sGGrcyS8d9SDX7HKWk",
+            authDomain: "students-management-2ec78.firebaseapp.com",
+            projectId: "students-management-2ec78",
+            storageBucket: "students-management-2ec78.firebasestorage.app",
+            messagingSenderId: "649634574508",
+            appId: "1:649634574508:web:d856dbe5bcc112fde0ef09"
+        });
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const PATH = 'artifacts/smps-v1/public/data';
+
+        const App = {
+            s: {
+                role: 'student', theme: localStorage.getItem('smps-meet-theme') || 'dark',
+                user: null,         // {name, role, srn, isHost, id}
+                localStream: null, screenStream: null,
+                micOn: true, camOn: true, screenOn: false,
+                lobbyMic: true, lobbyCam: true,
+                roomId: '', isHost: false,
+                participants: [],   // [{id,name,role,isHost,micOn,camOn}]
+                chatMsgs: [],
+                openPanel: null,
+                wbTool: 'pen', wbColor: '#1a1a2e', wbSize: 4,
+                wbHistory: [], wbSnap: null, wbStartX: 0, wbStartY: 0,
+                startTime: null, handRaised: false,
+                _srnTimer: null, _chatUnsub: null,
+            },
+
+            init() {
+                document.documentElement.setAttribute('data-theme', this.s.theme);
+                this.applyThemeIcon();
+                auth.signInAnonymously().catch(() => { });
+                document.getElementById('cs-input').addEventListener('keydown', e => { if (e.key === 'Enter') this.sendChat(); });
+                document.getElementById('s-pass').addEventListener('keydown', e => { if (e.key === 'Enter') this.authenticate(); });
+                document.getElementById('m-pass').addEventListener('keydown', e => { if (e.key === 'Enter') this.authenticate(); });
+                document.getElementById('a-pass').addEventListener('keydown', e => { if (e.key === 'Enter') this.authenticate(); });
+            },
+
+            // ── THEME ──
+            toggleTheme() {
+                this.s.theme = this.s.theme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', this.s.theme);
+                localStorage.setItem('smps-meet-theme', this.s.theme);
+                this.applyThemeIcon();
+            },
+            applyThemeIcon() {
+                const icon = this.s.theme === 'dark' ? 'fa-sun' : 'fa-moon';
+                document.querySelectorAll('#theme-icon,#meet-theme-icon').forEach(el => {
+                    el.className = `fas ${icon}`;
+                });
+            },
+
+            // ── ROLE SWITCH ──
+            switchRole(role) {
+                this.s.role = role;
+                ['student', 'mentor', 'admin'].forEach(r => {
+                    document.getElementById(`tab-${r}`).classList.toggle('active', r === role);
+                    document.getElementById(`form-${r}`).classList.toggle('hidden', r !== role);
+                });
+                this.clearError();
+                document.getElementById('fetched-name').style.display = 'none';
+            },
+
+            // ── SRN LOOKUP ──
+            onSRNInput() {
+                clearTimeout(this.s._srnTimer);
+                const srn = document.getElementById('s-srn').value.trim().toUpperCase();
+                document.getElementById('s-srn').value = srn;
+                if (srn.length < 5) { document.getElementById('fetched-name').style.display = 'none'; return; }
+                this.s._srnTimer = setTimeout(async () => {
+                    try {
+                        const snap = await db.collection(`${PATH}/students`).where('srn', '==', srn).get();
+                        const nameEl = document.getElementById('fetched-name');
+                        const nameText = document.getElementById('fetched-name-text');
+                        if (!snap.empty) {
+                            const d = snap.docs[0].data();
+                            nameText.textContent = `Found: ${d.name} · ${d.branch || ''}`;
+                            nameEl.style.display = 'block';
+                        } else {
+                            nameEl.style.display = 'none';
+                        }
+                    } catch (e) { }
+                }, 500);
+            },
+
+            // ── AUTHENTICATE ──
+            async authenticate() {
+                const btn = document.getElementById('auth-btn');
+                btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying…';
+                this.clearError();
+                try {
+                    if (this.s.role === 'student') await this._authStudent();
+                    else if (this.s.role === 'mentor') await this._authMentor();
+                    else await this._authAdmin();
+                } catch (e) {
+                    this.showError(e.message || 'Authentication failed.');
+                }
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-arrow-right"></i> Continue';
+            },
+
+            async _authStudent() {
+                const srn = document.getElementById('s-srn').value.trim().toUpperCase();
+                const pass = document.getElementById('s-pass').value;
+                if (!srn || !pass) throw new Error('Please enter SRN and password.');
+                const snap = await db.collection(`${PATH}/students`).where('srn', '==', srn).where('pass', '==', pass).get();
+                if (snap.empty) throw new Error('Incorrect SRN or password.');
+                const d = snap.docs[0].data();
+                this.s.user = { id: snap.docs[0].id, name: d.name, role: 'student', srn: d.srn, isHost: false, branch: d.branch || '' };
+                this.goToLobby();
+            },
+
+            async _authMentor() {
+                const u = document.getElementById('m-user').value.trim();
+                const p = document.getElementById('m-pass').value;
+                if (!u || !p) throw new Error('Please enter username and password.');
+                const snap = await db.collection(`${PATH}/mentors`).get();
+                const match = snap.docs.find(d => (d.data().email === u || d.data().name === u) && d.data().spec === p);
+                if (!match) throw new Error('Incorrect mentor credentials.');
+                const d = match.data();
+                this.s.user = { id: match.id, name: d.name, role: 'mentor', isHost: true, department: d.department || '' };
+                this.goToLobby();
+            },
+
+            async _authAdmin() {
+                const u = document.getElementById('a-user').value.trim();
+                const p = document.getElementById('a-pass').value;
+                if (!u || !p) throw new Error('Please enter username and password.');
+                const hardcoded = (u === 'admin' && p === 'admin@123') || (u === 'superadmin' && p === 'smps@admin2026');
+                if (!hardcoded) {
+                    const snap = await db.collection(`${PATH}/admins`).where('username', '==', u).where('password', '==', p).get();
+                    if (snap.empty) throw new Error('Incorrect admin credentials.');
+                }
+                this.s.user = { id: 'admin', name: 'Admin', role: 'admin', isHost: true };
+                this.goToLobby();
+            },
+
+            // ── LOBBY ──
+            goToLobby() {
+                const u = this.s.user;
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('lobby-screen').classList.remove('hidden');
+
+                // Set user chip
+                const av = document.getElementById('lobby-avatar');
+                av.textContent = u.name[0].toUpperCase();
+                av.className = `lobby-avatar ${u.role === 'mentor' ? 'mentor' : u.role === 'admin' ? 'admin' : ''}`;
+                document.getElementById('lobby-uname').textContent = u.name;
+                document.getElementById('lobby-urole').textContent =
+                    u.role === 'student' ? `Student · ${u.srn || ''}`
+                        : u.role === 'mentor' ? `Mentor · ${u.department || ''}`
+                            : 'Super Admin';
+                document.getElementById('lobby-name-lbl').textContent = u.name;
+
+                this.startLobbyPreview();
+            },
+
+            backToAuth() {
+                if (this.s.localStream) { this.s.localStream.getTracks().forEach(t => t.stop()); this.s.localStream = null; }
+                document.getElementById('lobby-screen').classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
+                this.s.user = null;
+            },
+
+            async startLobbyPreview() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    this.s.localStream = stream;
+                    document.getElementById('lobby-video').srcObject = stream;
+                    document.getElementById('lobby-no-cam').classList.add('hidden');
+                } catch (e) {
+                    document.getElementById('lobby-no-cam').classList.remove('hidden');
+                    document.getElementById('lobby-video').style.display = 'none';
+                    this.s.lobbyCam = false; this.s.lobbyMic = false;
+                    this.updateLobbyToggle('cam', false);
+                    this.updateLobbyToggle('mic', false);
+                    this.toast('Camera/mic blocked. You can still join without them.');
+                }
+            },
+
+            toggleLobbyCam() {
+                this.s.lobbyCam = !this.s.lobbyCam;
+                if (this.s.localStream) this.s.localStream.getVideoTracks().forEach(t => t.enabled = this.s.lobbyCam);
+                document.getElementById('lobby-no-cam').classList.toggle('hidden', this.s.lobbyCam);
+                this.updateLobbyToggle('cam', this.s.lobbyCam);
+            },
+            toggleLobbyMic() {
+                this.s.lobbyMic = !this.s.lobbyMic;
+                if (this.s.localStream) this.s.localStream.getAudioTracks().forEach(t => t.enabled = this.s.lobbyMic);
+                this.updateLobbyToggle('mic', this.s.lobbyMic);
+            },
+            updateLobbyToggle(type, on) {
+                const btn = document.getElementById(`l${type}-btn`);
+                const icon = document.getElementById(`l${type}-icon`);
+                btn.className = `toggle-btn ${on ? 'on' : 'off'}`;
+                icon.className = type === 'cam' ? (on ? 'fas fa-video' : 'fas fa-video-slash') : (on ? 'fas fa-microphone' : 'fas fa-microphone-slash');
+            },
+            generateRoomId() {
+                const id = 'SMPS-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+                document.getElementById('lobby-room').value = id;
+            },
+
+            // ── JOIN MEETING ──
+            joinMeeting() {
+                const roomId = document.getElementById('lobby-room').value.trim() || 'SMPS-MEET-001';
+                this.s.roomId = roomId;
+                this.s.micOn = this.s.lobbyMic;
+                this.s.camOn = this.s.lobbyCam;
+                this.s.isHost = this.s.user.isHost;
+
+                document.getElementById('lobby-screen').classList.add('hidden');
+                document.getElementById('meet-room').classList.remove('hidden');
+
+                // Top bar
+                document.getElementById('room-chip-txt').textContent = roomId;
+                if (this.s.isHost) document.getElementById('host-badge').classList.remove('hidden');
+
+                this.startMeetClock();
+                this.setupWhiteboard();
+                this.addLocalTile();
+                this.syncPresence();
+                this.listenPresence();
+                this.listenChat();
+                this.updateMicCtrl();
+                this.updateCamCtrl();
+                this.toast(`Welcome, ${this.s.user.name}!${this.s.isHost ? ' You are the host.' : ''}`);
+            },
+
+            // ── TILES ──
+            addLocalTile() {
+                this.addTile({
+                    id: 'local', name: this.s.user.name,
+                    role: this.s.user.role, isHost: this.s.isHost,
+                    micOn: this.s.micOn, camOn: this.s.camOn, isLocal: true
+                });
+                if (this.s.localStream) {
+                    const vid = document.getElementById('vid-local');
+                    if (vid) { vid.srcObject = this.s.localStream; vid.classList.add('local-vid'); }
+                }
+                this.updateTileCam('local', this.s.camOn);
+                this.addToParticipants({ id: 'local', name: this.s.user.name, role: this.s.user.role, isHost: this.s.isHost, micOn: this.s.micOn, camOn: this.s.camOn });
+            },
+
+            addTile({ id, name, role, isHost, micOn, camOn, isLocal }) {
+                const grid = document.getElementById('video-grid');
+                if (document.getElementById(`tile-${id}`)) return;
+                const t = document.createElement('div');
+                t.className = `video-tile${isLocal ? ' local' : ''}`;
+                t.id = `tile-${id}`;
+                const avClass = role === 'mentor' ? 'mentor-av' : role === 'admin' ? 'admin-av' : '';
+                t.innerHTML = `
+      <video autoplay ${isLocal ? 'muted' : ''} playsinline id="vid-${id}" style="width:100%;height:100%;object-fit:cover;display:none;"></video>
+      <div class="tile-no-video" id="novid-${id}">
+        <div class="tile-avatar-big ${avClass}">${(name || '?')[0].toUpperCase()}</div>
+        <div class="tile-no-name">${name}</div>
+      </div>
+      <div class="tile-overlay">
+        <div class="tile-name">
+          ${isHost ? '<i class="fas fa-crown crown-icon"></i>' : ''}
+          ${name}
+          <span class="tile-role">${role}</span>
+        </div>
+        <div class="tile-mic-badge ${micOn ? 'on' : 'off'}" id="mbadge-${id}">
+          <i class="fas fa-microphone${micOn ? '' : '-slash'}"></i>
+        </div>
+      </div>`;
+                grid.appendChild(t);
+                this.updateGridLayout();
+            },
+
+            removeTile(id) {
+                const t = document.getElementById(`tile-${id}`);
+                if (t) t.remove();
+                this.updateGridLayout();
+            },
+
+            updateTileCam(id, on) {
+                const vid = document.getElementById(`vid-${id}`);
+                const nv = document.getElementById(`novid-${id}`);
+                if (vid) vid.style.display = on ? 'block' : 'none';
+                if (nv) nv.classList.toggle('hidden', on);
+            },
+
+            updateTileMic(id, on) {
+                const badge = document.getElementById(`mbadge-${id}`);
+                if (!badge) return;
+                badge.className = `tile-mic-badge ${on ? 'on' : 'off'}`;
+                badge.innerHTML = `<i class="fas fa-microphone${on ? '' : '-slash'}"></i>`;
+            },
+
+            updateGridLayout() {
+                const grid = document.getElementById('video-grid');
+                const n = grid.children.length;
+                grid.className = `video-grid ${n <= 1 ? 'vg-1' : n === 2 ? 'vg-2' : n === 3 ? 'vg-3' : n === 4 ? 'vg-4' : 'vg-many'}`;
+            },
+
+            // ── PARTICIPANTS ──
+            addToParticipants(p) {
+                if (!this.s.participants.find(x => x.id === p.id)) this.s.participants.push(p);
+                this.renderParticipants();
+            },
+            updateParticipant(id, changes) {
+                const p = this.s.participants.find(x => x.id === id);
+                if (p) Object.assign(p, changes);
+                this.renderParticipants();
+            },
+            removeParticipant(id) {
+                this.s.participants = this.s.participants.filter(x => x.id !== id);
+                this.renderParticipants();
+            },
+            renderParticipants() {
+                const el = document.getElementById('pp-list');
+                if (!this.s.participants.length) {
+                    el.innerHTML = '<div class="empty-panel"><i class="fas fa-users"></i>No participants yet</div>';
+                    return;
+                }
+                el.innerHTML = this.s.participants.map(p => `
+      <div class="pp-item">
+        <div class="pp-av ${p.role === 'mentor' ? 'm' : p.role === 'admin' ? 'a' : ''}">${p.name[0].toUpperCase()}</div>
+        <div class="pp-info">
+          <div class="pp-name">${p.name}${p.id === 'local' ? ' (You)' : ''}</div>
+          <div class="pp-role-lbl">${p.isHost ? '👑 Host · ' : ''}${p.role}</div>
+        </div>
+        <div class="pp-icons">
+          <i class="fas fa-microphone ${p.micOn ? 'pp-icon-on' : 'pp-icon-off'}"></i>
+          <i class="fas fa-video ${p.camOn ? 'pp-icon-on' : 'pp-icon-off'}" style="margin-left:4px;"></i>
+        </div>
+      </div>`).join('');
+            },
+
+            // ── FIREBASE PRESENCE ──
+            syncPresence() {
+                const u = this.s.user;
+                const ref = db.collection(`${PATH}/meet-presence`).doc(`${this.s.roomId}__${u.id || u.name}`);
+                const data = {
+                    room: this.s.roomId, uid: u.id || u.name,
+                    name: u.name, role: u.role, isHost: this.s.isHost,
+                    micOn: this.s.micOn, camOn: this.s.camOn,
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    active: true
+                };
+                ref.set(data).catch(() => { });
+                this._presenceRef = ref;
+                // Update presence on mic/cam change
+                this._updatePresence = (changes) => { ref.update(changes).catch(() => { }); };
+            },
+
+            listenPresence() {
+                this._presUnsub = db.collection(`${PATH}/meet-presence`)
+                    .where('room', '==', this.s.roomId)
+                    .where('active', '==', true)
+                    .onSnapshot(snap => {
+                        const me = this.s.user;
+                        snap.docChanges().forEach(ch => {
+                            const d = ch.doc.data();
+                            const isMe = (d.uid === me.id || d.uid === me.name || d.name === me.name);
+                            if (isMe) return;
+                            const pid = d.uid || d.name;
+                            if (ch.type === 'added' || ch.type === 'modified') {
+                                if (ch.type === 'added') {
+                                    this.addTile({ id: pid, name: d.name, role: d.role, isHost: d.isHost, micOn: d.micOn, camOn: d.camOn, isLocal: false });
+                                    this.addToParticipants({ id: pid, name: d.name, role: d.role, isHost: d.isHost, micOn: d.micOn, camOn: d.camOn });
+                                    if (!isMe) this.toast(`${d.name} joined the meeting`);
+                                } else {
+                                    this.updateTileMic(pid, d.micOn);
+                                    this.updateTileCam(pid, d.camOn);
+                                    this.updateParticipant(pid, { micOn: d.micOn, camOn: d.camOn });
+                                }
+                            } else if (ch.type === 'removed') {
+                                this.removeTile(pid);
+                                this.removeParticipant(pid);
+                                this.toast(`${d.name} left the meeting`);
+                            }
+                        });
+                    }, () => { });
+            },
+
+            // ── CHAT ──
+            listenChat() {
+                this._chatUnsub = db.collection(`${PATH}/meet-chat`)
+                    .where('room', '==', this.s.roomId)
+                    .orderBy('createdAt', 'asc')
+                    .limitToLast(100)
+                    .onSnapshot(snap => {
+                        snap.docChanges().forEach(ch => {
+                            if (ch.type === 'added') {
+                                const d = ch.doc.data();
+                                const isMe = (d.sender === this.s.user.name);
+                                if (!isMe) {
+                                    this.s.chatMsgs.push({
+                                        sender: d.sender, role: d.role || '', text: d.text, isMe: false,
+                                        time: d.createdAt?.toDate ? d.createdAt.toDate().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : 'now'
+                                    });
+                                    this.renderChat();
+                                    if (this.s.openPanel !== 'chat') document.getElementById('chat-notif').style.display = 'block';
+                                }
+                            }
+                        });
+                    }, () => { });
+            },
+
+            sendChat() {
+                const inp = document.getElementById('cs-input');
+                const text = inp.value.trim(); if (!text) return;
+                inp.value = '';
+                const u = this.s.user;
+                const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                this.s.chatMsgs.push({ sender: u.name, role: u.role, text, isMe: true, time });
+                this.renderChat();
+                db.collection(`${PATH}/meet-chat`).add({
+                    room: this.s.roomId, sender: u.name, role: u.role, text,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(() => { });
+            },
+
+            renderChat() {
+                const el = document.getElementById('cs-msgs');
+                if (!this.s.chatMsgs.length) {
+                    el.innerHTML = '<div class="empty-panel"><i class="fas fa-comments"></i>No messages yet</div>';
+                    return;
+                }
+                el.innerHTML = this.s.chatMsgs.map(m => `
+      <div class="cs-msg ${m.isMe ? 'me' : ''}">
+        <div class="cs-sender">${m.sender} <span style="font-size:.65rem;color:var(--text3);font-weight:400;">${m.time}</span></div>
+        <div class="cs-bubble">${m.text}</div>
+      </div>`).join('');
+                el.scrollTop = el.scrollHeight;
+            },
+
+            // ── CONTROLS ──
+            toggleMic() {
+                this.s.micOn = !this.s.micOn;
+                if (this.s.localStream) this.s.localStream.getAudioTracks().forEach(t => t.enabled = this.s.micOn);
+                this.updateMicCtrl();
+                this.updateTileMic('local', this.s.micOn);
+                this.updateParticipant('local', { micOn: this.s.micOn });
+                if (this._updatePresence) this._updatePresence({ micOn: this.s.micOn });
+                this.toast(this.s.micOn ? 'Microphone on' : 'Microphone muted');
+            },
+            updateMicCtrl() {
+                const btn = document.getElementById('btn-mic');
+                const icon = document.getElementById('mic-icon');
+                btn.className = `ctrl-btn ${this.s.micOn ? 'on' : 'off'}`;
+                icon.className = `fas fa-microphone${this.s.micOn ? '' : '-slash'}`;
+            },
+
+            toggleCam() {
+                this.s.camOn = !this.s.camOn;
+                if (this.s.localStream) this.s.localStream.getVideoTracks().forEach(t => t.enabled = this.s.camOn);
+                this.updateCamCtrl();
+                this.updateTileCam('local', this.s.camOn);
+                this.updateParticipant('local', { camOn: this.s.camOn });
+                if (this._updatePresence) this._updatePresence({ camOn: this.s.camOn });
+                this.toast(this.s.camOn ? 'Camera on' : 'Camera off');
+            },
+            updateCamCtrl() {
+                const btn = document.getElementById('btn-cam');
+                const icon = document.getElementById('cam-icon');
+                btn.className = `ctrl-btn ${this.s.camOn ? 'on' : 'off'}`;
+                icon.className = `fas fa-video${this.s.camOn ? '' : '-slash'}`;
+            },
+
+            async toggleScreen() {
+                if (this.s.screenOn) {
+                    if (this.s.screenStream) { this.s.screenStream.getTracks().forEach(t => t.stop()); this.s.screenStream = null; }
+                    this.s.screenOn = false;
+                    document.getElementById('btn-screen').className = 'ctrl-btn';
+                    document.getElementById('sharing-banner').classList.remove('show');
+                    // Restore cam
+                    const vid = document.getElementById('vid-local');
+                    if (vid && this.s.localStream) { vid.srcObject = this.s.localStream; }
+                    this.updateTileCam('local', this.s.camOn);
+                    this.toast('Screen sharing stopped');
+                } else {
+                    try {
+                        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+                        this.s.screenStream = stream; this.s.screenOn = true;
+                        const vid = document.getElementById('vid-local');
+                        if (vid) { vid.srcObject = stream; vid.style.display = 'block'; }
+                        const nv = document.getElementById('novid-local');
+                        if (nv) nv.classList.add('hidden');
+                        document.getElementById('btn-screen').className = 'ctrl-btn panel-on';
+                        document.getElementById('sharing-banner').classList.add('show');
+                        stream.getVideoTracks()[0].onended = () => this.toggleScreen();
+                        this.toast('You are now sharing your screen');
+                    } catch (e) {
+                        this.toast('Screen share cancelled.');
+                    }
+                }
+            },
+
+            // ── PANELS ──
+            openPanel(name) {
+                // If same panel, close it
+                if (this.s.openPanel === name) { this.closePanel(name); return; }
+                // Close previous
+                if (this.s.openPanel) this._closePanel(this.s.openPanel);
+                this.s.openPanel = name;
+                const panelMap = {
+                    whiteboard: 'panel-whiteboard',
+                    chat: 'panel-chat',
+                    participants: 'panel-participants'
+                };
+                const btnMap = { whiteboard: 'btn-wb', chat: 'btn-chat', participants: 'btn-people' };
+                document.getElementById(panelMap[name])?.classList.add('open');
+                document.getElementById(btnMap[name])?.classList.add('panel-on');
+                if (name === 'chat') {
+                    document.getElementById('chat-notif').style.display = 'none';
+                    setTimeout(() => document.getElementById('cs-input').focus(), 200);
+                }
+                if (name === 'whiteboard') setTimeout(() => this.resizeWB && this.resizeWB(), 50);
+            },
+            closePanel(name) {
+                this._closePanel(name);
+                if (this.s.openPanel === name) this.s.openPanel = null;
+            },
+            _closePanel(name) {
+                const panelMap = { whiteboard: 'panel-whiteboard', chat: 'panel-chat', participants: 'panel-participants' };
+                const btnMap = { whiteboard: 'btn-wb', chat: 'btn-chat', participants: 'btn-people' };
+                document.getElementById(panelMap[name])?.classList.remove('open');
+                document.getElementById(btnMap[name])?.classList.remove('panel-on');
+            },
+
+            // ── HAND RAISE ──
+            toggleHand() {
+                this.s.handRaised = !this.s.handRaised;
+                const btn = document.getElementById('hand-btn');
+                btn.classList.toggle('active-hand', this.s.handRaised);
+                const tile = document.getElementById('tile-local');
+                if (tile) {
+                    const existing = tile.querySelector('.hand-raised-icon');
+                    if (this.s.handRaised && !existing) {
+                        const el = document.createElement('div');
+                        el.className = 'hand-raised-icon'; el.textContent = '✋';
+                        tile.appendChild(el);
+                    } else if (!this.s.handRaised && existing) existing.remove();
+                }
+                this.toast(this.s.handRaised ? '✋ Hand raised' : 'Hand lowered');
+            },
+
+            copyRoomId() {
+                navigator.clipboard.writeText(this.s.roomId).then(() => this.toast('Room ID copied!')).catch(() => this.toast('Room: ' + this.s.roomId));
+            },
+
+            // ── WHITEBOARD ──
+            setupWhiteboard() {
+                const canvas = document.getElementById('wb-canvas');
+                const ctx = canvas.getContext('2d');
+
+                const init = () => {
+                    const p = canvas.parentElement;
+                    canvas.width = p.clientWidth || 380;
+                    canvas.height = p.clientHeight - 1 || 400;
+                    ctx.fillStyle = '#1a1a2e';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    this._drawWBGrid(ctx, canvas);
+                };
+                this.resizeWB = init;
+                setTimeout(init, 120);
+
+                let drawing = false, lx = 0, ly = 0;
+                const pos = e => {
+                    const r = canvas.getBoundingClientRect();
+                    const src = e.touches ? e.touches[0] : e;
+                    return { x: src.clientX - r.left, y: src.clientY - r.top };
+                };
+                const start = e => {
+                    e.preventDefault(); drawing = true;
+                    const p = pos(e); lx = p.x; ly = p.y;
+                    this.s.wbStartX = p.x; this.s.wbStartY = p.y;
+                    if (!['pen', 'eraser'].includes(this.s.wbTool)) {
+                        this.s.wbSnap = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    }
+                    if (this.s.wbTool === 'text') {
+                        const t = prompt('Enter text:');
+                        if (t) {
+                            ctx.font = `${this.s.wbSize * 4 + 12}px DM Sans`;
+                            ctx.fillStyle = this.s.wbColor;
+                            ctx.fillText(t, p.x, p.y);
+                            this._saveWBState();
+                        }
+                        drawing = false;
+                    }
+                };
+                const draw = e => {
+                    e.preventDefault(); if (!drawing) return;
+                    const p = pos(e);
+                    if (this.s.wbTool === 'pen') {
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = this.s.wbColor;
+                        ctx.lineWidth = this.s.wbSize;
+                        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+                        ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.stroke();
+                        lx = p.x; ly = p.y;
+                    } else if (this.s.wbTool === 'eraser') {
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.lineWidth = this.s.wbSize * 4;
+                        ctx.lineCap = 'round';
+                        ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.stroke();
+                        ctx.globalCompositeOperation = 'source-over';
+                        lx = p.x; ly = p.y;
+                    } else if (this.s.wbSnap) {
+                        ctx.putImageData(this.s.wbSnap, 0, 0);
+                        ctx.strokeStyle = this.s.wbColor; ctx.lineWidth = this.s.wbSize;
+                        ctx.lineCap = 'round'; ctx.beginPath();
+                        if (this.s.wbTool === 'line') {
+                            ctx.moveTo(this.s.wbStartX, this.s.wbStartY); ctx.lineTo(p.x, p.y); ctx.stroke();
+                        } else if (this.s.wbTool === 'rect') {
+                            ctx.strokeRect(this.s.wbStartX, this.s.wbStartY, p.x - this.s.wbStartX, p.y - this.s.wbStartY);
+                        } else if (this.s.wbTool === 'circle') {
+                            const rx = (p.x - this.s.wbStartX) / 2, ry = (p.y - this.s.wbStartY) / 2;
+                            ctx.ellipse(this.s.wbStartX + rx, this.s.wbStartY + ry, Math.abs(rx), Math.abs(ry), 0, 0, Math.PI * 2);
+                            ctx.stroke();
+                        }
+                    }
+                };
+                const end = () => { if (!drawing) return; drawing = false; this._saveWBState(); };
+
+                canvas.addEventListener('mousedown', start);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', end);
+                canvas.addEventListener('mouseleave', end);
+                canvas.addEventListener('touchstart', start, { passive: false });
+                canvas.addEventListener('touchmove', draw, { passive: false });
+                canvas.addEventListener('touchend', end);
+            },
+
+            _drawWBGrid(ctx, canvas) {
+                ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 24) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+                for (let y = 0; y < canvas.height; y += 24) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+            },
+
+            _saveWBState() {
+                const c = document.getElementById('wb-canvas');
+                this.s.wbHistory.push(c.toDataURL());
+                if (this.s.wbHistory.length > 30) this.s.wbHistory.shift();
+            },
+
+            wbUndo() {
+                if (!this.s.wbHistory.length) return;
+                const c = document.getElementById('wb-canvas'); const ctx = c.getContext('2d');
+                this.s.wbHistory.pop();
+                if (this.s.wbHistory.length) {
+                    const img = new Image();
+                    img.onload = () => { ctx.clearRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0); };
+                    img.src = this.s.wbHistory[this.s.wbHistory.length - 1];
+                } else {
+                    ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, c.width, c.height);
+                    this._drawWBGrid(ctx, c);
+                }
+            },
+
+            wbClear() {
+                if (!confirm('Clear the whiteboard?')) return;
+                const c = document.getElementById('wb-canvas'); const ctx = c.getContext('2d');
+                ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, c.width, c.height);
+                this._drawWBGrid(ctx, c);
+                this.s.wbHistory = [];
+            },
+
+            wbSave() {
+                const c = document.getElementById('wb-canvas');
+                const a = document.createElement('a');
+                a.download = `SMPS-Whiteboard-${Date.now()}.png`;
+                a.href = c.toDataURL(); a.click();
+                this.toast('Whiteboard saved!');
+            },
+
+            setWBTool(tool) {
+                this.s.wbTool = tool;
+                document.querySelectorAll('.wb-btn-tool').forEach(b => b.classList.remove('active'));
+                document.getElementById(`wtool-${tool}`)?.classList.add('active');
+                const c = document.getElementById('wb-canvas');
+                c.style.cursor = tool === 'eraser' ? 'cell' : tool === 'text' ? 'text' : 'crosshair';
+            },
+
+            setWBColor(el) {
+                this.s.wbColor = el.getAttribute('data-c');
+                document.querySelectorAll('.clr-dot').forEach(d => d.classList.remove('active'));
+                el.classList.add('active');
+            },
+
+            // ── CLOCK ──
+            startMeetClock() {
+                this.s.startTime = Date.now();
+                const tick = () => {
+                    const el = document.getElementById('meet-clock');
+                    const dur = document.getElementById('meet-duration');
+                    if (el) el.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                    if (dur) {
+                        const s = Math.floor((Date.now() - this.s.startTime) / 1000);
+                        const m = Math.floor(s / 60).toString().padStart(2, '0');
+                        const sec = (s % 60).toString().padStart(2, '0');
+                        dur.textContent = `${m}:${sec}`;
+                    }
+                };
+                tick(); this._clockInterval = setInterval(tick, 1000);
+            },
+
+            // ── LEAVE ──
+            leaveMeeting() {
+                if (!confirm('Leave the meeting?')) return;
+                clearInterval(this._clockInterval);
+                if (this.s.localStream) this.s.localStream.getTracks().forEach(t => t.stop());
+                if (this.s.screenStream) this.s.screenStream.getTracks().forEach(t => t.stop());
+                if (this._presenceRef) this._presenceRef.update({ active: false }).catch(() => { });
+                if (this._presUnsub) this._presUnsub();
+                if (this._chatUnsub) this._chatUnsub();
+                // Reset state
+                this.s.localStream = null; this.s.screenStream = null;
+                this.s.participants = []; this.s.chatMsgs = [];
+                this.s.openPanel = null; this.s.handRaised = false;
+                this.s.wbHistory = []; this.s.screenOn = false;
+                document.getElementById('video-grid').innerHTML = '';
+                document.getElementById('cs-msgs').innerHTML = '<div class="empty-panel"><i class="fas fa-comments"></i>No messages yet</div>';
+                document.getElementById('host-badge').classList.add('hidden');
+                document.getElementById('sharing-banner').classList.remove('show');
+                document.getElementById('hand-btn').classList.remove('active-hand');
+                ['whiteboard', 'chat', 'participants'].forEach(p => this._closePanel(p));
+                document.getElementById('meet-room').classList.add('hidden');
+                document.getElementById('lobby-screen').classList.remove('hidden');
+                // Restart lobby preview
+                this.startLobbyPreview();
+                this.toast('You left the meeting.');
+            },
+
+            // ── HELPERS ──
+            showError(msg) {
+                const el = document.getElementById('auth-error');
+                el.textContent = msg; el.style.display = 'block';
+            },
+            clearError() {
+                const el = document.getElementById('auth-error');
+                el.style.display = 'none'; el.textContent = '';
+            },
+            toast(msg, dur = 2800) {
+                const el = document.getElementById('meet-toast');
+                el.textContent = msg; el.classList.add('show');
+                clearTimeout(this._toastT);
+                this._toastT = setTimeout(() => el.classList.remove('show'), dur);
+            }
+        };
+
+        window.App = App;
+        document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+
+</html>
