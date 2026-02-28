@@ -1659,6 +1659,15 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .portal-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+        }
     </style>
 </head>
 
@@ -1792,6 +1801,7 @@
                 <h3>Attendance Tracking</h3>
                 <p>Check in and out daily. View your monthly calendar and overall attendance percentage.</p>
             </div>
+
             <div class="feature-card">
                 <div class="feature-icon" style="background:var(--c-green-soft);color:var(--c-green);"><i
                         class="fas fa-layer-group"></i></div>
@@ -1822,13 +1832,53 @@
                 <h3>Resource Library</h3>
                 <p>Access syllabus, notes, and materials uploaded by your mentor and faculty.</p>
             </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:var(--c-primary-soft);color:var(--c-primary);"><i
+                        class="fas fa-calendar-check"></i></div>
+
+                <a href="mentor/mentor.html"
+                    class="portal-card bg-white border border-gray-100 p-8 rounded-2xl shadow-sm text-center group">
+                    <div
+                        class="bg-blue-50 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fas fa-user-shield text-2xl"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Mentor Portal</h2>
+                    <p class="text-gray-500 text-sm mb-6"></p>
+                    <span
+                        class="inline-flex items-center text-blue-600 font-medium group-hover:translate-x-1 transition-transform">
+                        Enter Dashboard <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </span>
+                </a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:var(--c-primary-soft);color:var(--c-primary);"><i
+                        class="fas fa-calendar-check"></i></div>
+
+                <a href="admin/admin.html"
+                    class="portal-card bg-white border border-gray-100 p-8 rounded-2xl shadow-sm text-center group">
+                    <div
+                        class="bg-blue-50 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fas fa-user-shield text-2xl"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2">Admin Portal</h2>
+                    <p class="text-gray-500 text-sm mb-6"></p>
+                    <span
+                        class="inline-flex items-center text-blue-600 font-medium group-hover:translate-x-1 transition-transform">
+                        Enter Dashboard <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </span>
+                </a>
+            </div>
         </div>
+
         <div class="landing-footer">
             <p>Built by <a href="https://www.shivabhalke.life/" target="_blank">Shiva Bhalke</a> · SMPS NEO Student
                 Portal</p>
         </div>
     </div>
+    <!-- Navigation Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
 
+    </div>
     <!-- Login View -->
     <div id="view-login" class="hidden">
         <div class="login-box">
@@ -1949,7 +1999,7 @@
                                 </div>
                             </div>
                             <div>
-                                <div class="val" id="att-fraction" style="font-size:1.1rem;">26/26</div>
+                                <div class="val" id="att-fraction" style="font-size:1.1rem;">90/90</div>
                                 <div class="sub">Days Present</div>
                                 <div style="margin-top:8px;"><span class="badge badge-green"
                                         id="att-status-badge">Good</span></div>
