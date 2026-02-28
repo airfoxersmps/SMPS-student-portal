@@ -1623,26 +1623,41 @@
             pointer-events: none;
         }
 
+        #tour-overlay.visible {
+            pointer-events: auto;
+        }
+
+        .tour-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 7001;
+            pointer-events: auto;
+        }
+
         .tour-highlight {
             position: fixed;
             border-radius: 12px;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, .65);
             border: 2px solid var(--c-primary);
+            background: transparent;
             transition: all .4s cubic-bezier(.4, 0, .2, 1);
-            z-index: 7001;
+            z-index: 7003;
             pointer-events: none;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65);
         }
 
         .tour-popup {
             position: fixed;
-            z-index: 7002;
+            z-index: 7004;
             background: var(--c-surface);
             border: 1px solid var(--c-border);
             border-radius: var(--r-xl);
             padding: 20px 24px;
             max-width: 320px;
+            width: 320px;
             box-shadow: var(--shadow-lg);
             transition: all .35s;
+            pointer-events: auto;
         }
 
         .tour-popup h4 {
@@ -1799,6 +1814,60 @@
                 height: 95vh;
             }
         }
+
+        /* Paste this into your <style> section */
+        .admin-card {
+            width: 320px;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            font-family: sans-serif;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-4px);
+            border-color: #007bff;
+        }
+
+        .card-accent {
+            height: 4px;
+            background: #007bff;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .card-link {
+            display: block;
+            text-align: center;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .card-link:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
 
@@ -1865,7 +1934,7 @@
         </div>
     </div>
 
-    <!-- Tour -->
+    <!-- Tour Overlay — rebuilt with proper z-index layering -->
     <div id="tour-overlay" class="hidden">
         <div id="tour-highlight" class="tour-highlight"></div>
         <div id="tour-popup" class="tour-popup">
@@ -1909,7 +1978,7 @@
             <div class="hero-cta">
                 <button class="btn btn-primary" onclick="App.showLogin()">Get Started <i
                         class="fas fa-arrow-right"></i></button>
-                <button class="btn btn-ghost" onclick="App.startTour()"><i class="fas fa-play"></i> Watch Tour</button>
+                <button class="btn btn-ghost" onclick="App.showLogin()"><i class="fas fa-play"></i> Watch Tour</button>
             </div>
         </div>
         <div class="features-grid">
@@ -2069,7 +2138,8 @@
                                 <div
                                     style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
                                     <span id="att-pct"
-                                        style="font-size:1rem;font-weight:700;color:var(--c-text);">100%</span></div>
+                                        style="font-size:1rem;font-weight:700;color:var(--c-text);">100%</span>
+                                </div>
                             </div>
                             <div>
                                 <div class="val" id="att-fraction" style="font-size:1.1rem;">90/90</div>
@@ -2108,6 +2178,16 @@
                     <div class="card span-6" id="tour-projects-summary">
                         <div class="lbl" style="margin-bottom:12px;">Project Overview</div>
                         <div id="d-projects-list"></div>
+                    </div>
+                    <div class="admin-card">
+                        <div class="card-accent"></div>
+                        <div class="card-body">
+                            <h3 class="card-title">SMPS Video Portal</h3>
+                            <p class="card-text">Access the GitHub-hosted video repository for automated data
+                                management.</p>
+                            <a href="https://airfoxersmps.github.io/SMPS-VIDEOS/" target="_blank" class="card-link">Open
+                                Portal</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2276,13 +2356,11 @@
             s: {
                 user: null, projects: [], tasks: [], mentors: [], resources: [], notifications: [],
                 chats: {}, activeChat: null,
-                // ─── PDF state stores the actual URL object, NOT embedded in onclick attrs ───
                 pdfDoc: null, pdfPage: 1, pdfTotal: 1, pdfScale: 1.4,
-                currentPdfUrl: null,   // <-- KEY FIX: store URL here, not in onclick
+                currentPdfUrl: null,
                 resourceFilter: 'all',
                 theme: localStorage.getItem('theme') || 'light',
                 tourStep: 0, tourActive: false,
-                // Cache projects by id for doc lookups
                 projectsById: {},
             },
 
@@ -2353,7 +2431,6 @@
                 ['projects', 'tasks', 'mentors', 'resources', 'notifications'].forEach(c => {
                     db.collection(`${PATH}/${c}`).onSnapshot(snap => {
                         this.s[c] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                        // Rebuild projectsById cache every time projects update
                         if (c === 'projects') {
                             this.s.projectsById = {};
                             this.s.projects.forEach(p => { this.s.projectsById[p.id] = p; });
@@ -2486,10 +2563,6 @@
                     </div>`).join('') : '<p class="sub" style="font-size:.82rem;">No logs found.</p>';
             },
 
-            // ══════════════════════════════════════════════════════════════
-            // FIXED renderProjects — uses data-pid + data-di attributes
-            // instead of embedding base64 URLs directly in onclick handlers
-            // ══════════════════════════════════════════════════════════════
             renderProjects() {
                 const u = this.s.user; if (!u) return;
                 const myP = this.s.projects.filter(p => p.members?.includes(u.name) || p.members?.includes(u.srn));
@@ -2503,7 +2576,6 @@
                     const approved = pts.filter(x => x.status === 'approved').length;
                     const pct = total > 0 ? Math.round((approved / total) * 100) : 0;
                     const cols = Math.min(10, Math.ceil(Math.sqrt(total)) || 10);
-                    // ONLY use real documents from Firestore — no demo fallback
                     const docs = p.documents || [];
                     const docCount = docs.length;
 
@@ -2564,7 +2636,6 @@
                 }).join('');
             },
 
-            // ─── NEW: open a doc by looking up its URL from the cached project data ───
             openDocByIndex(btn) {
                 const pid = btn.getAttribute('data-pid');
                 const di = parseInt(btn.getAttribute('data-di'), 10);
@@ -2706,6 +2777,13 @@
                 render('mentor', 'notif-mentor'); render('admin', 'notif-admin');
             },
 
+            // ══════════════════════════════════════════════════════════════
+            // FIX 1: CHAT — renderChatList now stores contact data in a map
+            // and openChat uses a contactId to look up name/avatar,
+            // avoiding the broken event.currentTarget reference issue.
+            // ══════════════════════════════════════════════════════════════
+            _chatContacts: {},
+
             renderChatList() {
                 const u = this.s.user; if (!u) return;
                 const contacts = [];
@@ -2715,64 +2793,119 @@
                 this.s.projects.filter(p => p.members?.includes(u.name) || p.members?.includes(u.srn)).forEach(p => {
                     (p.members || []).filter(m => m !== u.name && m !== u.srn).forEach(member => {
                         if (!contacts.find(c => c.name === member))
-                            contacts.push({ id: `team-${member.replace(/\s+/g, '-')}`, name: member, avatar: member[0] || 'T', type: 'team', desc: `Team · ${p.name || 'Project'}` });
+                            contacts.push({ id: `team-${member.replace(/\s+/g, '-')}`, name: member, avatar: (member[0] || 'T').toUpperCase(), type: 'team', desc: `Team · ${p.name || 'Project'}` });
                     });
                 });
+
+                // Store contacts in a map for lookup by ID
+                this._chatContacts = {};
+                contacts.forEach(c => { this._chatContacts[c.id] = c; });
+
                 document.getElementById('chat-contacts').innerHTML = contacts.map(c => `
-                    <div class="chat-item ${this.s.activeChat === c.id ? 'active' : ''}" onclick="App.openChat('${c.id}','${c.name.replace(/'/g, "\\'")}','${c.avatar}')">
+                    <div class="chat-item ${this.s.activeChat === c.id ? 'active' : ''}"
+                         id="chat-contact-${c.id}"
+                         onclick="App.openChat('${c.id}')">
                         <div class="c-avatar" style="${c.type === 'mentor' ? 'background:var(--c-primary-soft);color:var(--c-primary);' : c.type === 'admin' ? 'background:var(--c-purple-soft);color:var(--c-purple);' : ''}">${c.avatar}</div>
                         <div style="flex:1;min-width:0;"><div class="c-name">${c.name}</div><div class="c-preview">${c.desc}</div></div>
                     </div>`).join('');
             },
 
-            openChat(id, name, avatar) {
+            // FIX 1 cont: openChat now takes just the contact ID and looks up
+            // name/avatar from the stored map — no more broken event references.
+            openChat(id) {
+                const contact = this._chatContacts[id];
+                if (!contact) return;
+
                 this.s.activeChat = id;
-                document.getElementById('chat-active-name').textContent = name;
-                document.getElementById('chat-active-avatar').textContent = avatar;
+
+                // Update header
+                document.getElementById('chat-active-name').textContent = contact.name;
+                document.getElementById('chat-active-avatar').textContent = contact.avatar;
                 document.getElementById('chat-status-badge').style.display = 'inline-flex';
+
+                // Update active styling on contact list items
                 document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
-                event?.currentTarget?.classList.add('active');
+                const contactEl = document.getElementById(`chat-contact-${id}`);
+                if (contactEl) contactEl.classList.add('active');
+
+                // Start listening to messages for this channel
                 this.listenMessages(id);
             },
 
             listenMessages(channelId) {
                 if (this._chatUnsub) this._chatUnsub();
                 const q = db.collection(`${PATH}/messages`).where('channel', '==', channelId).orderBy('createdAt', 'asc').limitToLast(50);
-                this._chatUnsub = q.onSnapshot(snap => { this.renderMessages(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }, () => this.renderMessages([]));
+                this._chatUnsub = q.onSnapshot(
+                    snap => { this.renderMessages(snap.docs.map(d => ({ id: d.id, ...d.data() }))); },
+                    err => {
+                        console.warn('Chat listener error:', err);
+                        this.renderMessages([]);
+                    }
+                );
             },
 
             renderMessages(msgs = []) {
                 const u = this.s.user; const el = document.getElementById('chat-messages');
-                if (!msgs.length) { el.innerHTML = '<div style="text-align:center;color:var(--c-text3);font-size:.875rem;margin:auto;padding:40px;">No messages yet. Say hello!</div>'; return; }
+                if (!msgs.length) {
+                    el.innerHTML = '<div style="text-align:center;color:var(--c-text3);font-size:.875rem;margin:auto;padding:40px;">No messages yet. Say hello! 👋</div>';
+                    return;
+                }
                 el.innerHTML = msgs.map(m => {
                     const isMe = m.senderId === u.id || m.senderId === u.srn;
                     const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
-                    return `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">${m.text || ''}<div class="msg-time">${time}</div></div>`;
+                    return `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">${this._escHtml(m.text || '')}<div class="msg-time">${time}</div></div>`;
                 }).join('');
                 el.scrollTop = el.scrollHeight;
             },
 
             async sendMessage() {
                 const inp = document.getElementById('chat-input');
-                const text = inp.value.trim(); if (!text || !this.s.activeChat) return;
-                inp.value = ''; const u = this.s.user;
-                await db.collection(`${PATH}/messages`).add({ channel: this.s.activeChat, text, senderId: u.id || u.srn, senderName: u.name || 'Student', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                const text = inp.value.trim();
+                if (!text || !this.s.activeChat) {
+                    if (!this.s.activeChat) this.toast('Select a conversation first.', 'error');
+                    return;
+                }
+                inp.value = '';
+                const u = this.s.user;
+                try {
+                    await db.collection(`${PATH}/messages`).add({
+                        channel: this.s.activeChat,
+                        text,
+                        senderId: u.id || u.srn,
+                        senderName: u.name || 'Student',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (e) {
+                    console.error('Send message error:', e);
+                    this.toast('Failed to send message. Try again.', 'error');
+                    inp.value = text; // restore text on failure
+                }
             },
 
             renderResources() {
                 const res = this.s.resources.length ? this.s.resources : DEMO_RESOURCES;
                 const filtered = this.s.resourceFilter === 'all' ? res : res.filter(r => r.category === this.s.resourceFilter);
                 const el = document.getElementById('resources-grid');
+                // Store resource URLs in a map to avoid embedding in onclick
+                this._resUrls = {};
+                filtered.forEach(r => { this._resUrls[r.id] = { url: r.pdfUrl || '', title: r.title || 'Resource' }; });
+
                 el.innerHTML = filtered.map(r => `
-                    <div class="res-card" onclick="App.openPDF('${r.pdfUrl || ''}','${this._escAttr(r.title || '')}')">
+                    <div class="res-card" onclick="App.openResById('${r.id}')">
                         <div class="res-icon"><i class="fas fa-file-pdf"></i></div>
-                        <div class="res-title">${r.title || 'Untitled'}</div>
-                        <div class="res-desc">${r.description || ''}</div>
+                        <div class="res-title">${this._escHtml(r.title || 'Untitled')}</div>
+                        <div class="res-desc">${this._escHtml(r.description || '')}</div>
                         <div class="res-meta">
                             <span class="badge badge-blue" style="font-size:10px;">${r.category || 'general'}</span>
-                            <span style="display:flex;align-items:center;gap:4px;"><i class="fas fa-user" style="font-size:10px;"></i>${r.uploadedBy || 'Faculty'}</span>
+                            <span style="display:flex;align-items:center;gap:4px;"><i class="fas fa-user" style="font-size:10px;"></i>${this._escHtml(r.uploadedBy || 'Faculty')}</span>
                         </div>
                     </div>`).join('') || '<p class="sub" style="padding:20px;">No resources in this category.</p>';
+            },
+
+            openResById(id) {
+                const r = (this._resUrls || {})[id];
+                if (!r) return;
+                this.openPDF(r.url, r.title);
             },
 
             filterRes(cat, el) {
@@ -2823,11 +2956,6 @@
                 this.toast(`${type === 'IN' ? 'Checked in' : 'Checked out'} at ${time}`, 'success');
             },
 
-            // ══════════════════════════════════════════════════════════
-            // FIXED openPDF — accepts a direct URL string (not embedded
-            // in onclick attrs). Works with both base64 data URLs and
-            // regular https:// URLs.
-            // ══════════════════════════════════════════════════════════
             async openPDF(url, title) {
                 if (!url) { this.toast('No document available.', 'error'); return; }
                 document.getElementById('pdf-modal-title').textContent = title || 'Document';
@@ -2835,7 +2963,7 @@
                 document.getElementById('pdf-spinner').style.display = 'block';
                 document.getElementById('pdf-canvas').style.display = 'none';
                 this.s.pdfPage = 1; this.s.pdfScale = 1.4;
-                this.s.currentPdfUrl = url;  // store for zoom/page controls
+                this.s.currentPdfUrl = url;
                 try {
                     this.s.pdfDoc = await pdfjsLib.getDocument(url).promise;
                     this.s.pdfTotal = this.s.pdfDoc.numPages;
@@ -2871,60 +2999,163 @@
             closeSidebar() { document.getElementById('sidebar').classList.remove('open'); },
 
             toast(msg, type = 'info') {
+                // Remove any existing toast
+                document.querySelectorAll('.app-toast').forEach(t => t.remove());
                 const t = document.createElement('div');
+                t.className = 'app-toast';
                 t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-size:.875rem;font-weight:600;z-index:9999;animation:fadeUp .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.15);color:#fff;`;
                 t.style.background = type === 'success' ? 'var(--c-green)' : type === 'error' ? 'var(--c-red)' : 'var(--c-primary)';
-                t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+                t.textContent = msg;
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 3000);
             },
 
+            // ══════════════════════════════════════════════════════════════
+            // FIX 2: TOUR — completely rewritten to work correctly.
+            // Key fixes:
+            // 1. Tour now requires login — redirects to login if not logged in
+            //    and auto-starts tour after login via a pending flag.
+            // 2. renderTourStep uses requestAnimationFrame to ensure elements
+            //    are visible before measuring their bounding rects.
+            // 3. tour-overlay uses visibility properly with pointer-events.
+            // 4. Skips steps where the target element doesn't exist or is hidden.
+            // ══════════════════════════════════════════════════════════════
             tourSteps: [
-                { target: 'tour-identity', title: 'Your Profile', desc: 'Your name, branch, and registration number are shown here.' },
+                { target: 'tour-identity', title: 'Your Profile', desc: 'Your name, branch, and registration number are shown here at all times.' },
                 { target: 'tour-mentor', title: 'Your Mentor', desc: 'Your assigned faculty mentor who guides you through the program.' },
-                { target: 'tour-attendance-card', title: 'Attendance Overview', desc: 'Live attendance percentage with a visual ring chart.' },
+                { target: 'tour-attendance-card', title: 'Attendance Overview', desc: 'Live attendance percentage with a visual ring chart showing your status.' },
                 { target: 'tour-checkin', title: 'Check In / Out', desc: 'Mark your daily attendance. Check in when you arrive, check out when you leave.' },
-                { target: 'tour-leaves', title: 'Leave Balance', desc: 'Track your sick (5) and normal (2) leave balance. Apply using the button above.' },
-                { target: 'tour-projects-summary', title: 'Project Overview', desc: 'Quick summary of your projects with document counts and completion progress.' },
-                { target: 'nav-notifications', title: 'Notifications', desc: 'View mentor and admin updates. Red dot = unread notifications.' },
-                { target: 'nav-chat', title: 'Messages', desc: 'Chat directly with your team, mentor, and admin.' },
-                { target: 'nav-resources', title: 'Resource Library', desc: 'Access study materials, notes, syllabus, and past papers.' },
+                { target: 'tour-leaves', title: 'Leave Balance', desc: 'Track your sick (5 total) and normal (2 total) leave balance. Apply via the button above.' },
+                { target: 'tour-projects-summary', title: 'Project Overview', desc: 'Quick summary of your projects with document counts and milestone completion.' },
+                { target: 'nav-notifications', title: 'Notifications', desc: 'View mentor and admin updates here. A red dot appears when you have unread notifications.' },
+                { target: 'nav-chat', title: 'Messages', desc: 'Chat directly with your team members, mentor, and admin from this tab.' },
+                { target: 'nav-resources', title: 'Resource Library', desc: 'Access study materials, notes, syllabus documents, and past exam papers.' },
             ],
 
             startTour() {
-                if (!this.s.user) { this.showLogin(); return; }
-                this.switchTab('dashboard'); this.s.tourStep = 0; this.s.tourActive = true;
-                document.getElementById('tour-overlay').classList.remove('hidden'); this.renderTourStep();
+                if (!this.s.user) {
+                    // Not logged in — go to login, tour will start after
+                    this._pendingTour = true;
+                    this.showLogin();
+                    this.toast('Sign in first to take the tour!', 'info');
+                    return;
+                }
+                // Make sure we're on the dashboard tab
+                this.switchTab('dashboard');
+                this.s.tourStep = 0;
+                this.s.tourActive = true;
+                const overlay = document.getElementById('tour-overlay');
+                overlay.classList.remove('hidden');
+                overlay.classList.add('visible');
+                // Small delay to let the tab render
+                setTimeout(() => this.renderTourStep(), 100);
             },
+
             renderTourStep() {
-                const step = this.tourSteps[this.s.tourStep]; if (!step) { this.tourSkip(); return; }
+                if (!this.s.tourActive) return;
+                const steps = this.tourSteps;
+                // Skip steps if element not found or not visible
+                while (this.s.tourStep < steps.length) {
+                    const el = document.getElementById(steps[this.s.tourStep].target);
+                    if (el && el.offsetParent !== null) break; // found a visible element
+                    this.s.tourStep++;
+                }
+                if (this.s.tourStep >= steps.length) { this.tourSkip(); return; }
+
+                const step = steps[this.s.tourStep];
                 const target = document.getElementById(step.target);
-                if (!target) { this.s.tourStep++; this.renderTourStep(); return; }
-                const rect = target.getBoundingClientRect(), pad = 10;
-                const hl = document.getElementById('tour-highlight');
-                hl.style.left = `${rect.left - pad}px`; hl.style.top = `${rect.top - pad}px`;
-                hl.style.width = `${rect.width + pad * 2}px`; hl.style.height = `${rect.height + pad * 2}px`;
-                document.getElementById('tour-title').textContent = step.title;
-                document.getElementById('tour-desc').textContent = step.desc;
-                document.getElementById('tour-step-label').textContent = `${this.s.tourStep + 1} of ${this.tourSteps.length}`;
-                document.getElementById('tour-next-btn').textContent = this.s.tourStep === this.tourSteps.length - 1 ? 'Finish' : 'Next';
-                document.getElementById('tour-dots').innerHTML = this.tourSteps.map((_, i) => `<div class="tour-dot ${i === this.s.tourStep ? 'active' : ''}"></div>`).join('');
-                const pop = document.getElementById('tour-popup'), poph = 240, popw = 320;
-                let top = rect.bottom + pad + 10, left = rect.left;
-                if (top + poph > window.innerHeight - 20) top = rect.top - poph - 20;
-                if (left + popw > window.innerWidth - 20) left = window.innerWidth - popw - 20;
-                if (left < 10) left = 10;
-                pop.style.top = `${Math.max(10, top)}px`; pop.style.left = `${left}px`;
+
+                // Scroll target into view, then use rAF to measure after paint
                 target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        if (!this.s.tourActive) return;
+                        const rect = target.getBoundingClientRect();
+                        const pad = 8;
+
+                        // Position highlight
+                        const hl = document.getElementById('tour-highlight');
+                        hl.style.left = `${rect.left - pad}px`;
+                        hl.style.top = `${rect.top - pad}px`;
+                        hl.style.width = `${rect.width + pad * 2}px`;
+                        hl.style.height = `${rect.height + pad * 2}px`;
+
+                        // Update popup content
+                        document.getElementById('tour-title').textContent = step.title;
+                        document.getElementById('tour-desc').textContent = step.desc;
+                        document.getElementById('tour-step-label').textContent = `${this.s.tourStep + 1} of ${steps.length}`;
+                        document.getElementById('tour-next-btn').textContent = this.s.tourStep === steps.length - 1 ? 'Finish ✓' : 'Next →';
+                        document.getElementById('tour-dots').innerHTML = steps.map((_, i) =>
+                            `<div class="tour-dot ${i === this.s.tourStep ? 'active' : ''}"></div>`
+                        ).join('');
+
+                        // Smart popup positioning — avoid going off screen
+                        const pop = document.getElementById('tour-popup');
+                        const popW = 320, popH = 200, margin = 12;
+                        const vw = window.innerWidth, vh = window.innerHeight;
+
+                        let top, left;
+
+                        // Try below first, then above
+                        if (rect.bottom + popH + margin < vh) {
+                            top = rect.bottom + margin;
+                        } else if (rect.top - popH - margin > 0) {
+                            top = rect.top - popH - margin;
+                        } else {
+                            top = Math.max(margin, vh / 2 - popH / 2);
+                        }
+
+                        // Align left with target, but keep on screen
+                        left = rect.left;
+                        if (left + popW > vw - margin) left = vw - popW - margin;
+                        if (left < margin) left = margin;
+
+                        pop.style.top = `${top}px`;
+                        pop.style.left = `${left}px`;
+                    });
+                });
             },
-            tourNext() { this.s.tourStep++; if (this.s.tourStep >= this.tourSteps.length) { this.tourSkip(); return; } this.renderTourStep(); },
-            tourSkip() { this.s.tourActive = false; document.getElementById('tour-overlay').classList.add('hidden'); this.toast('Tour complete! Explore freely.', 'success'); },
+
+            tourNext() {
+                this.s.tourStep++;
+                if (this.s.tourStep >= this.tourSteps.length) {
+                    this.tourSkip();
+                    return;
+                }
+                this.renderTourStep();
+            },
+
+            tourSkip() {
+                this.s.tourActive = false;
+                const overlay = document.getElementById('tour-overlay');
+                overlay.classList.add('hidden');
+                overlay.classList.remove('visible');
+                this.toast('Tour complete! Explore freely. 🎉', 'success');
+            },
         };
 
         window.App = App;
-        document.addEventListener('DOMContentLoaded', () => App.init());
+        document.addEventListener('DOMContentLoaded', () => {
+            App.init();
+            // Check for pending tour after portal loads
+            const origEnter = App.enterPortal.bind(App);
+            App.enterPortal = function () {
+                origEnter();
+                if (App._pendingTour) {
+                    App._pendingTour = false;
+                    setTimeout(() => App.startTour(), 600);
+                }
+            };
+        });
         document.getElementById('pdf-modal').addEventListener('click', function (e) { if (e.target === this) App.closePDF(); });
         document.getElementById('leave-modal').addEventListener('click', function (e) { if (e.target === this) App.closeLeaveModal(); });
         document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') { App.closePDF(); App.closeLeaveModal(); if (App.s.tourActive) App.tourSkip(); }
+            if (e.key === 'Escape') {
+                App.closePDF();
+                App.closeLeaveModal();
+                if (App.s.tourActive) App.tourSkip();
+            }
         });
     </script>
 </body>
