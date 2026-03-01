@@ -1039,6 +1039,147 @@
             box-shadow: var(--shadow-lg);
         }
 
+        /* Milestone grid styles */
+        .milestones-grid {
+            display: grid;
+            gap: 5px;
+            margin: 12px 0;
+        }
+
+        .m-node {
+            aspect-ratio: 1;
+            border-radius: 7px;
+            border: 1.5px solid var(--c-border);
+            background: var(--c-surface2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--c-text3);
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        .m-node:hover {
+            border-color: var(--c-primary);
+            transform: scale(1.1);
+        }
+
+        .m-node.pending {
+            background: var(--c-amber-soft);
+            border-color: var(--c-amber);
+            color: var(--c-amber);
+        }
+
+        .m-node.approved {
+            background: var(--c-green-soft);
+            border-color: var(--c-green);
+            color: var(--c-green);
+        }
+
+        .m-node.none {
+            background: var(--c-surface2);
+            border-color: var(--c-border);
+            color: var(--c-text3);
+        }
+
+        /* Upload area */
+        .upload-area {
+            border: 2px dashed var(--c-border);
+            border-radius: var(--r);
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: .2s;
+            background: var(--c-surface2);
+        }
+
+        .upload-area:hover {
+            border-color: var(--c-primary);
+            background: var(--c-primary-soft);
+        }
+
+        /* Doc list */
+        .doc-list-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: var(--c-surface2);
+            border: 1px solid var(--c-border);
+            border-radius: 10px;
+            margin-bottom: 7px;
+            transition: .15s;
+        }
+
+        .doc-list-item:hover {
+            border-color: var(--c-primary);
+        }
+
+        .doc-list-item .doc-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--c-red-soft);
+            color: var(--c-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .95rem;
+            flex-shrink: 0;
+        }
+
+        .doc-list-item .doc-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .doc-list-item .doc-name {
+            font-weight: 600;
+            font-size: .82rem;
+            color: var(--c-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-list-item .doc-meta {
+            font-size: .72rem;
+            color: var(--c-text3);
+        }
+
+        .doc-add-form {
+            border: 1.5px dashed var(--c-border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 10px;
+            background: var(--c-surface2);
+        }
+
+        /* Group cards */
+        .group-card {
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-lg);
+            padding: 18px;
+            transition: .2s;
+        }
+
+        .group-card:hover {
+            border-color: var(--c-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .member-badge {
+            padding: 4px 10px;
+            background: var(--c-surface2);
+            border-radius: 99px;
+            font-size: .72rem;
+            color: var(--c-text2);
+            border: 1px solid var(--c-border);
+        }
+
         @media(max-width:900px) {
             .sidebar {
                 position: fixed;
@@ -1149,6 +1290,8 @@
                     class="fas fa-user-graduate nav-icon"></i> Student Roster</div>
             <div class="nav-item" id="nav-mentors" onclick="App.tab('mentors')"><i class="fas fa-user-tie nav-icon"></i>
                 Mentor Fleet</div>
+            <div class="nav-item" id="nav-groups" onclick="App.tab('groups')"><i class="fas fa-users nav-icon"></i>
+                Groups</div>
 
             <div class="nav-group">Academics</div>
             <div class="nav-item" id="nav-projects" onclick="App.tab('projects')"><i
@@ -1217,12 +1360,12 @@
                         <div class="stat-val" id="ds-projects">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-lbl">Pending Leaves</div>
-                        <div class="stat-val" id="ds-leaves" style="color:var(--c-amber);">0</div>
+                        <div class="stat-lbl">Groups</div>
+                        <div class="stat-val" id="ds-groups">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-lbl">Gross Revenue</div>
-                        <div class="stat-val" id="ds-revenue" style="color:var(--c-green);">₹0</div>
+                        <div class="stat-lbl">Pending Leaves</div>
+                        <div class="stat-val" id="ds-leaves" style="color:var(--c-amber);">0</div>
                     </div>
                 </div>
 
@@ -1291,6 +1434,8 @@
                             style="width:220px;" oninput="App.renderStudentsTab()">
                         <button class="btn btn-primary" onclick="App.showModal('student')"><i class="fas fa-plus"></i>
                             Enroll Student</button>
+                        <button class="btn btn-ghost" onclick="App.exportFullReport()"><i class="fas fa-file-pdf"></i>
+                            Export All</button>
                     </div>
                 </div>
                 <div class="card" style="padding:0;overflow:hidden;">
@@ -1323,11 +1468,24 @@
                     style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
             </div>
 
+            <!-- GROUPS (NEW) -->
+            <div id="tab-groups" class="hidden">
+                <div class="ws-header">
+                    <h1><i class="fas fa-users" style="color:var(--c-primary);margin-right:8px;"></i>Groups</h1>
+                    <button class="btn btn-primary" onclick="App.showModal('group')"><i class="fas fa-plus"></i> Create
+                        Group</button>
+                </div>
+                <div id="groups-container"
+                    style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;"></div>
+            </div>
+
             <!-- PROJECTS -->
             <div id="tab-projects" class="hidden">
                 <div class="ws-header">
                     <h1><i class="fas fa-layer-group" style="color:var(--c-primary);margin-right:8px;"></i>All Projects
                     </h1>
+                    <button class="btn btn-primary" onclick="App.showModal('project')"><i class="fas fa-plus"></i> New
+                        Project</button>
                 </div>
                 <div id="projects-list"></div>
             </div>
@@ -1469,7 +1627,7 @@
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
                     <div class="card">
-                        <div class="lbl" style="margin-bottom:14px;">Send Admin Notification</div>
+                        <div class="lbl" style="margin-bottom:14px;">Send Notification</div>
                         <div class="form-group"><label>Title</label><input type="text" class="input" id="bc-title"
                                 placeholder="Notification title…"></div>
                         <div class="form-group"><label>Message</label><textarea class="input" id="bc-msg" rows="5"
@@ -1479,6 +1637,13 @@
                                 <option value="all">All Students & Mentors</option>
                                 <option value="students">Students Only</option>
                                 <option value="mentors">Mentors Only</option>
+                                <option value="group">Specific Group</option>
+                            </select>
+                        </div>
+                        <div class="form-group hidden" id="group-select-container">
+                            <label>Select Group</label>
+                            <select class="input" id="bc-group">
+                                <option value="">Select Group</option>
                             </select>
                         </div>
                         <button class="btn btn-primary" onclick="App.sendBroadcast()"
@@ -1513,7 +1678,7 @@
 
         const App = {
             s: {
-                students: [], mentors: [], projects: [], tasks: [], notifications: [], resources: [],
+                students: [], mentors: [], projects: [], tasks: [], notifications: [], resources: [], groups: [],
                 currentTab: 'dashboard', selectedLedger: null, activeChat: null,
                 theme: localStorage.getItem('theme') || 'light', resFilter: 'all'
             },
@@ -1527,6 +1692,10 @@
                 setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1100);
                 document.getElementById('login-form').onsubmit = e => this.handleLogin(e);
                 document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') this.sendMsg(); });
+                document.getElementById('bc-target').addEventListener('change', () => {
+                    const val = document.getElementById('bc-target').value;
+                    document.getElementById('group-select-container').classList.toggle('hidden', val !== 'group');
+                });
             },
 
             startClock() {
@@ -1574,7 +1743,7 @@
             },
 
             syncAll() {
-                ['students', 'mentors', 'projects', 'tasks', 'notifications', 'resources'].forEach(c => {
+                ['students', 'mentors', 'projects', 'tasks', 'notifications', 'resources', 'groups'].forEach(c => {
                     db.collection(`${PATH}/${c}`).onSnapshot(snap => {
                         this.s[c] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                         this.onUpdate(c);
@@ -1587,22 +1756,25 @@
                 const lc = document.getElementById('leave-count');
                 if (lc) { lc.textContent = pl.length; lc.classList.toggle('hidden', pl.length === 0); }
                 document.getElementById('ds-leaves').textContent = pl.length;
+                document.getElementById('ds-groups').textContent = this.s.groups.length;
+
                 const t = this.s.currentTab;
                 if (t === 'dashboard') this.renderDashboard();
                 if (t === 'analytics') this.renderAnalytics();
                 if (t === 'students' && col === 'students') this.renderStudentsTab();
                 if (t === 'mentors' && col === 'mentors') this.renderMentors();
+                if (t === 'groups' && col === 'groups') this.renderGroups();
                 if (t === 'projects' && col === 'projects') this.renderProjects();
                 if (t === 'tasks') this.renderTasks();
                 if (t === 'finance' && col === 'students') this.renderFinance();
                 if (t === 'leaves') this.renderLeaves();
                 if (t === 'resources' && col === 'resources') this.renderResources();
                 if (t === 'broadcast' && col === 'notifications') this.renderBroadcasts();
+
                 const rev = this.s.students.reduce((a, s) => a + (Number(s.fee) || 0), 0);
                 document.getElementById('ds-students').textContent = this.s.students.length;
                 document.getElementById('ds-mentors').textContent = this.s.mentors.length;
                 document.getElementById('ds-projects').textContent = this.s.projects.length;
-                document.getElementById('ds-revenue').textContent = '₹' + rev.toLocaleString();
             },
 
             pendingLeaves() {
@@ -1625,6 +1797,7 @@
                     analytics: () => this.renderAnalytics(),
                     students: () => this.renderStudentsTab(),
                     mentors: () => this.renderMentors(),
+                    groups: () => this.renderGroups(),
                     projects: () => this.renderProjects(),
                     tasks: () => this.renderTasks(),
                     attendance: () => this.renderAttendance(),
@@ -1646,7 +1819,6 @@
                 document.getElementById('ds-students').textContent = students.length;
                 document.getElementById('ds-mentors').textContent = mentors.length;
                 document.getElementById('ds-projects').textContent = projects.length;
-                document.getElementById('ds-revenue').textContent = '₹' + rev.toLocaleString();
 
                 document.getElementById('dash-recent').innerHTML = students.slice(-6).reverse().map(s => `
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--c-surface2);border:1px solid var(--c-border);border-radius:9px;margin-bottom:7px;">
@@ -1662,7 +1834,7 @@
                     const pct = students.length > 0 ? Math.round((count / students.length) * 100) : 0;
                     return `<div style="margin-bottom:12px;">
                         <div style="display:flex;justify-content:space-between;font-size:.82rem;font-weight:600;margin-bottom:4px;"><span>${m.name}</span><span style="color:var(--c-primary);">${count} students</span></div>
-                        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100, pct * (students.length > 0 ? 1 : 0))}%;"></div></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100, pct)}%;"></div></div>
                     </div>`;
                 }).join('') || '<p class="lbl">No mentors added yet.</p>';
 
@@ -1786,7 +1958,99 @@
                 }).join('');
             },
 
-            // ─── PROJECTS ───
+            // ─── GROUPS (NEW) ───
+            renderGroups() {
+                const el = document.getElementById('groups-container');
+                if (!this.s.groups.length) {
+                    el.innerHTML = '<div class="card"><p style="text-align:center;padding:40px;color:var(--c-text3);">No groups created yet.</p></div>';
+                    return;
+                }
+                el.innerHTML = this.s.groups.map(g => {
+                    const memberCount = g.members?.length || 0;
+                    const project = this.s.projects.find(p => p.id === g.projectId);
+                    return `<div class="group-card">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div style="font-weight:700;font-size:1rem;">${g.name}</div>
+                            <span class="badge badge-blue">${g.track || 'General'}</span>
+                        </div>
+                        <div style="margin:8px 0;font-size:.78rem;color:var(--c-text2);">${g.description || 'No description'}</div>
+                        <div style="margin-bottom:10px;">
+                            <span class="badge badge-purple">${memberCount} Members</span>
+                            ${project ? `<span class="badge badge-green">Project: ${project.name}</span>` : ''}
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <div class="lbl" style="margin-bottom:6px;">Members:</div>
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                ${g.members?.slice(0, 5).map(m => {
+                        const student = this.s.students.find(s => s.id === m || s.srn === m);
+                        return `<span class="member-badge">${student ? student.name : m}</span>`;
+                    }).join('')}
+                                ${memberCount > 5 ? `<span class="member-badge">+${memberCount - 5} more</span>` : ''}
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:7px;">
+                            <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="App.viewGroup('${g.id}')"><i class="fas fa-eye"></i> View</button>
+                            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="App.editGroup('${g.id}')"><i class="fas fa-pen"></i> Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="App.deleteItem('groups','${g.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                }).join('');
+            },
+
+            viewGroup(id) {
+                const g = this.s.groups.find(x => x.id === id); if (!g) return;
+                const members = g.members?.map(m => {
+                    const student = this.s.students.find(s => s.id === m || s.srn === m);
+                    return student ? `${student.name} (${student.srn})` : m;
+                }).join(', ') || 'No members';
+
+                const project = this.s.projects.find(p => p.id === g.projectId);
+
+                document.getElementById('modal-title').textContent = 'Group Details';
+                document.getElementById('modal-body').innerHTML = `
+                    <div style="background:var(--c-surface2);border:1px solid var(--c-border);border-radius:12px;padding:16px;margin-bottom:16px;">
+                        <div style="font-weight:700;font-size:1.2rem;margin-bottom:4px;">${g.name}</div>
+                        <div style="font-size:.82rem;color:var(--c-text2);">Track: ${g.track || 'General'} · Created: ${g.createdAt || 'N/A'}</div>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <div class="lbl" style="margin-bottom:4px;">Description</div>
+                        <p style="font-size:.875rem;">${g.description || 'No description provided.'}</p>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <div class="lbl" style="margin-bottom:4px;">Project</div>
+                        <p style="font-size:.875rem;">${project ? project.name : 'No project assigned'}</p>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <div class="lbl" style="margin-bottom:4px;">Members (${g.members?.length || 0})</div>
+                        <p style="font-size:.875rem;">${members}</p>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn btn-primary" style="flex:1;" onclick="App.editGroup('${g.id}')"><i class="fas fa-pen"></i> Edit</button>
+                        <button class="btn btn-ghost" style="flex:1;" onclick="App.generateGroupPDF('${g.id}')"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                    </div>`;
+                document.getElementById('modal-overlay').classList.add('open');
+            },
+
+            editGroup(id) {
+                const g = this.s.groups.find(x => x.id === id);
+                if (!g) return;
+                this.showModal('group');
+                setTimeout(() => {
+                    document.getElementById('g-name').value = g.name || '';
+                    document.getElementById('g-track').value = g.track || '';
+                    document.getElementById('g-desc').value = g.description || '';
+                    document.getElementById('g-project').value = g.projectId || '';
+
+                    // Pre-select members
+                    const checkboxes = document.querySelectorAll('[id^="gm-"]');
+                    checkboxes.forEach(cb => {
+                        const studentId = cb.value;
+                        cb.checked = g.members?.includes(studentId) || false;
+                    });
+                }, 200);
+            },
+
+            // ─── PROJECTS (with multi-doc upload) ───
             renderProjects() {
                 const el = document.getElementById('projects-list');
                 if (!this.s.projects.length) { el.innerHTML = '<div class="card"><p style="text-align:center;padding:40px;color:var(--c-text3);">No projects created yet.</p></div>'; return; }
@@ -1795,26 +2059,134 @@
                     const approved = pts.filter(x => x.status === 'approved').length;
                     const pending = pts.filter(x => x.status === 'pending').length;
                     const pct = total > 0 ? Math.round((approved / total) * 100) : 0;
-                    return `<div class="card" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
-                        <div style="flex:1;min-width:200px;">
-                            <div style="font-weight:700;font-size:.95rem;">${p.name || 'Unnamed'}</div>
-                            <div style="font-size:.78rem;color:var(--c-text2);">Team: ${p.teamName || 'Solo'} · Mentor: ${(p.mentor || '').split('@')[0] || '---'}</div>
-                            <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;">
-                                ${(p.members || []).map(m => `<span class="badge badge-blue" style="font-size:9px;">${m}</span>`).join('')}
-                                ${pending > 0 ? `<span class="badge badge-amber">${pending} pending</span>` : ''}
+                    const cols = Math.min(12, Math.ceil(Math.sqrt(total)) || 8);
+                    const docs = p.documents || [];
+
+                    return `<div class="project-card" style="background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-xl);overflow:hidden;margin-bottom:20px;">
+                        <div style="padding:20px 24px;border-bottom:1px solid var(--c-border);">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+                                <div>
+                                    <div style="font-weight:700;font-size:1.15rem;">${p.name || 'Unnamed'}</div>
+                                    <div style="font-size:.82rem;color:var(--c-text2);margin-top:2px;">Team: ${p.teamName || 'Solo'} · Track: ${p.track || ''} · Mentor: ${(p.mentor || '').split('@')[0] || '---'}</div>
+                                </div>
+                                <div style="display:flex;gap:8px;align-items:center;">
+                                    ${pending > 0 ? `<span class="badge badge-amber"><i class="fas fa-clock"></i> ${pending} pending</span>` : ''}
+                                    <div style="text-align:right;"><div style="font-size:2.2rem;font-weight:700;color:var(--c-primary);line-height:1;">${pct}</div><div class="lbl">Score</div></div>
+                                    <button onclick="App.deleteItem('projects','${p.id}')" class="btn btn-danger btn-sm" style="padding:7px 10px;"><i class="fas fa-trash"></i></button>
+                                </div>
                             </div>
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+                                ${(p.members || []).map(m => `<span class="badge badge-blue">${m}</span>`).join('')}
+                            </div>
+                            <div class="progress-bar" style="margin-top:10px;"><div class="progress-fill ${pct >= 80 ? 'green' : pct >= 50 ? 'amber' : ''}" style="width:${pct}%;"></div></div>
                         </div>
-                        <div style="width:140px;">
-                            <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px;"><span class="lbl">Progress</span><span style="font-weight:700;color:var(--c-primary);">${pct}%</span></div>
-                            <div class="progress-bar"><div class="progress-fill ${pct >= 80 ? 'green' : pct >= 50 ? 'amber' : ''}" style="width:${pct}%;"></div></div>
-                            <div style="font-size:.72rem;color:var(--c-text3);margin-top:4px;">${approved}/${total} milestones</div>
-                        </div>
-                        <div style="display:flex;gap:6px;">
-                            ${p.driveLink ? `<a href="${p.driveLink}" target="_blank" class="btn btn-ghost btn-xs"><i class="fas fa-external-link-alt"></i> Link</a>` : ''}
-                            <button class="btn btn-danger btn-xs" onclick="App.deleteItem('projects','${p.id}')"><i class="fas fa-trash"></i></button>
+                        <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:0;">
+                            <div style="padding:20px 24px;">
+                                <div class="lbl" style="margin-bottom:8px;">Milestones — click pending to approve</div>
+                                <div class="milestones-grid" style="grid-template-columns:repeat(${cols},1fr);">
+                                    ${Array(total).fill(0).map((_, i) => `<div class="m-node ${pts[i]?.status || 'none'}" onclick="App.approvePoint('${p.id}',${i})" title="Milestone ${i + 1} — ${pts[i]?.status || 'none'}">${i + 1}</div>`).join('')}
+                                </div>
+                                <div style="margin-top:14px;">
+                                    <div class="lbl" style="margin-bottom:6px;">Adjust Milestone Count</div>
+                                    <div style="display:flex;gap:8px;">
+                                        <input type="number" class="input" id="pts-${p.id}" value="${total}" style="width:90px;">
+                                        <button class="btn btn-ghost btn-sm" onclick="App.updateMilestoneCount('${p.id}')">Update</button>
+                                    </div>
+                                </div>
+                                ${p.driveLink ? `<div style="margin-top:12px;"><div class="lbl" style="margin-bottom:6px;">Student Submission</div><a href="${p.driveLink}" target="_blank" class="btn btn-ghost btn-sm"><i class="fas fa-external-link-alt"></i> View Link</a></div>` : ''}
+                            </div>
+                            <div style="padding:20px 24px;border-left:1px solid var(--c-border);">
+                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                                    <div class="lbl"><i class="fas fa-folder-open" style="margin-right:4px;color:var(--c-primary);"></i>Project Documents <span class="badge badge-blue" style="margin-left:4px;">${docs.length}</span></div>
+                                </div>
+                                <div class="docs-manager" id="docs-list-${p.id}">
+                                    ${docs.length ? docs.map((doc, di) => `
+                                        <div class="doc-list-item">
+                                            <div class="doc-icon"><i class="fas fa-file-pdf"></i></div>
+                                            <div class="doc-info">
+                                                <div class="doc-name">${this._esc(doc.name || doc.fileName || 'Document')}</div>
+                                                <div class="doc-meta">${doc.uploadedAt || ''}</div>
+                                            </div>
+                                            <button class="btn btn-ghost btn-sm" onclick="App.removeDoc('${p.id}',${di})" style="padding:5px 8px;" title="Delete"><i class="fas fa-trash"></i></button>
+                                        </div>`).join('') : '<p style="font-size:.78rem;color:var(--c-text3);padding:8px 0;">No documents yet. Add your first PDF below.</p>'}
+                                </div>
+                                <div class="doc-add-form">
+                                    <span class="lbl"><i class="fas fa-plus" style="margin-right:4px;"></i>Add Document</span>
+                                    <div style="margin-bottom:8px;">
+                                        <input type="text" class="input" id="docname-${p.id}" placeholder="Document name" style="font-size:.8rem;">
+                                    </div>
+                                    <label class="upload-area" style="display:block;margin-bottom:8px;">
+                                        <input type="file" accept=".pdf" id="docfile-${p.id}" style="display:none;" onchange="App.previewDocFile('${p.id}')">
+                                        <i class="fas fa-file-pdf" style="color:var(--c-red);margin-right:6px;"></i>
+                                        <span id="docfile-label-${p.id}" style="font-size:.78rem;font-weight:600;">Choose PDF…</span>
+                                    </label>
+                                    <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center;" onclick="App.addDoc('${p.id}')"><i class="fas fa-upload"></i> Upload Document</button>
+                                </div>
+                            </div>
                         </div>
                     </div>`;
                 }).join('');
+            },
+
+            previewDocFile(pid) {
+                const fi = document.getElementById(`docfile-${pid}`);
+                const lbl = document.getElementById(`docfile-label-${pid}`);
+                if (fi?.files[0] && lbl) lbl.textContent = fi.files[0].name;
+            },
+
+            async addDoc(pid) {
+                const nameEl = document.getElementById(`docname-${pid}`);
+                const fileEl = document.getElementById(`docfile-${pid}`);
+                if (!nameEl?.value.trim() || !fileEl?.files[0]) { this.toast('Please enter a name and select a PDF file.', 'error'); return; }
+                const p = this.s.projects.find(x => x.id === pid); if (!p) return;
+
+                const r = new FileReader();
+                r.onload = async e => {
+                    try {
+                        const docs = [...(p.documents || []), {
+                            name: nameEl.value.trim(),
+                            url: e.target.result,
+                            fileName: fileEl.files[0].name,
+                            uploadedBy: 'Admin',
+                            uploadedAt: new Date().toISOString().split('T')[0]
+                        }];
+                        await db.doc(`${PATH}/projects/${pid}`).update({ documents: docs });
+                        nameEl.value = ''; fileEl.value = '';
+                        const lbl = document.getElementById(`docfile-label-${pid}`);
+                        if (lbl) lbl.textContent = 'Choose PDF…';
+                        this.toast('Document uploaded successfully!', 'success');
+                    } catch (err) { this.toast('File too large for Firestore. Try a smaller PDF (< 900KB).', 'error'); }
+                };
+                r.readAsDataURL(fileEl.files[0]);
+            },
+
+            async removeDoc(pid, idx) {
+                if (!confirm('Remove this document?')) return;
+                const p = this.s.projects.find(x => x.id === pid); if (!p) return;
+                const docs = [...(p.documents || [])];
+                docs.splice(idx, 1);
+                await db.doc(`${PATH}/projects/${pid}`).update({ documents: docs });
+                this.toast('Document removed.', 'success');
+            },
+
+            async approvePoint(pid, idx) {
+                const p = this.s.projects.find(x => x.id === pid); if (!p) return;
+                const pts = [...(p.points || [])];
+                while (pts.length <= idx) pts.push({ status: 'none' });
+                if (pts[idx]?.status === 'approved') return;
+                pts[idx] = { status: 'approved', updated: new Date().toISOString() };
+                await db.doc(`${PATH}/projects/${pid}`).update({ points: pts });
+                this.toast('Milestone approved!', 'success');
+            },
+
+            async updateMilestoneCount(pid) {
+                const newTotal = parseInt(document.getElementById(`pts-${pid}`)?.value) || 24;
+                const p = this.s.projects.find(x => x.id === pid); if (!p) return;
+                let pts = [...(p.points || [])];
+                if (newTotal > pts.length) for (let i = pts.length; i < newTotal; i++)pts.push({ status: 'none' });
+                else pts = pts.slice(0, newTotal);
+                await db.doc(`${PATH}/projects/${pid}`).update({ points: pts, totalPoints: newTotal });
+                this.toast('Milestones updated!', 'success');
             },
 
             // ─── TASKS ───
@@ -1870,10 +2242,12 @@
                 const s = this.s.students.find(x => x.id === id); if (!s) return;
                 const logs = s.logs || {};
                 const logKeys = Object.keys(logs).sort().reverse();
-                const absent = s.absentCount || 0; const total = 26;
-                const present = Math.max(0, total - absent);
-                const pct = Math.round((present / total) * 100);
-                const year = 2026, month = 1;
+                const totalDays = 90; // Total days in semester
+                const present = logKeys.filter(d => logs[d]?.in).length;
+                const absent = totalDays - present;
+                const pct = Math.round((present / totalDays) * 100);
+
+                const year = 2026, month = 1; // February
                 const days = new Date(year, month + 1, 0).getDate();
                 const firstDay = new Date(year, month, 1).getDay();
                 const today = new Date();
@@ -1889,19 +2263,26 @@
                     calHtml += `<div style="${cls}aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">${i}</div>`;
                 }
 
+                // Get student's tasks
+                const studentTasks = this.s.tasks.filter(t => t.sid === s.id || t.sid === s.srn);
+
+                // Get student's projects
+                const studentProjects = this.s.projects.filter(p => p.members?.includes(s.name) || p.members?.includes(s.srn));
+
                 document.getElementById('ledger-detail').innerHTML = `
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
                         <div>
                             <h3 style="font-weight:700;font-size:1.3rem;">${s.name}</h3>
                             <div class="mono" style="color:var(--c-primary);font-size:.82rem;">SRN: ${s.srn}</div>
-                            <div style="font-size:.78rem;color:var(--c-text2);margin-top:2px;">${s.branch || '---'} · ${s.product || '---'}</div>
+                            <div style="font-size:.78rem;color:var(--c-text2);margin-top:2px;">${s.branch || '---'} · ${s.product || '---'} · Mentor: ${(s.mentor || '').split('@')[0] || '---'}</div>
                         </div>
                         <div style="display:flex;gap:7px;flex-wrap:wrap;">
-                            <button class="btn btn-ghost btn-sm" onclick="App.setAttAdmin('${s.id}','verified')"><i class="fas fa-check" style="color:var(--c-green);"></i> Mark Present</button>
-                            <button class="btn btn-ghost btn-sm" onclick="App.setAttAdmin('${s.id}','absent')"><i class="fas fa-times" style="color:var(--c-red);"></i> Mark Absent</button>
-                            <button class="btn btn-ghost btn-sm" onclick="App.generateStudentPDF('${s.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
+                            <button class="btn btn-ghost btn-sm" onclick="App.setAttAdmin('${s.id}','verified')"><i class="fas fa-check" style="color:var(--c-green);"></i> Present</button>
+                            <button class="btn btn-ghost btn-sm" onclick="App.setAttAdmin('${s.id}','absent')"><i class="fas fa-times" style="color:var(--c-red);"></i> Absent</button>
+                            <button class="btn btn-primary btn-sm" onclick="App.generateStudentPDF('${s.id}')"><i class="fas fa-file-pdf"></i> Full PDF</button>
                         </div>
                     </div>
+                    
                     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
                         <div style="text-align:center;padding:12px;background:var(--c-surface2);border-radius:10px;border:1px solid var(--c-border);">
                             <div style="font-size:1.3rem;font-weight:700;color:var(--c-primary);">${pct}%</div>
@@ -1920,16 +2301,61 @@
                             <div class="lbl" style="color:var(--c-amber);">Log Days</div>
                         </div>
                     </div>
+                    
                     <div class="lbl" style="margin-bottom:10px;">February 2026 Calendar</div>
                     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:18px;">${calHtml}</div>
+                    
                     <div class="lbl" style="margin-bottom:10px;">Daily Logs</div>
-                    <div style="display:flex;flex-direction:column;gap:7px;max-height:200px;overflow-y:auto;">
+                    <div style="display:flex;flex-direction:column;gap:7px;max-height:200px;overflow-y:auto;margin-bottom:18px;">
                         ${logKeys.length ? logKeys.map(dk => `
                             <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--c-surface2);border-radius:9px;border:1px solid var(--c-border);">
                                 <span class="mono" style="font-size:.78rem;">${dk}</span>
                                 <span style="font-size:.75rem;color:var(--c-text2);">${logs[dk].in || '--'} → ${logs[dk].out || '--'}</span>
                             </div>`).join('') : '<p style="font-size:.82rem;color:var(--c-text3);">No logs recorded.</p>'}
+                    </div>
+                    
+                    <div class="tab-pills">
+                        <div class="tab-pill active" onclick="App.switchLedgerTab('tasks')" id="ledger-tab-tasks">Tasks</div>
+                        <div class="tab-pill" onclick="App.switchLedgerTab('projects')" id="ledger-tab-projects">Projects</div>
+                    </div>
+                    
+                    <div id="ledger-tasks">
+                        ${studentTasks.length ? studentTasks.map(t => `
+                            <div style="padding:12px;background:var(--c-surface2);border:1px solid var(--c-border);border-radius:9px;margin-bottom:8px;">
+                                <div style="font-weight:600;font-size:.875rem;">${t.desc || t.title || 'Task'}</div>
+                                <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:.75rem;">
+                                    <span class="badge ${t.status === 'done' ? 'badge-green' : t.status === 'submitted' ? 'badge-purple' : t.status === 'accepted' ? 'badge-blue' : 'badge-amber'}">${t.status || 'pending'}</span>
+                                    <span>Due: ${t.due || 'N/A'}</span>
+                                </div>
+                                ${t.submitLink ? `<div style="margin-top:8px;"><a href="${t.submitLink}" target="_blank" class="btn btn-ghost btn-xs"><i class="fas fa-external-link-alt"></i> Submission</a></div>` : ''}
+                            </div>`).join('') : '<p style="font-size:.82rem;color:var(--c-text3);">No tasks assigned.</p>'}
+                    </div>
+                    
+                    <div id="ledger-projects" style="display:none;">
+                        ${studentProjects.length ? studentProjects.map(p => {
+                    const pts = p.points || [];
+                    const total = p.totalPoints || pts.length || 0;
+                    const approved = pts.filter(x => x.status === 'approved').length;
+                    const pct = total > 0 ? Math.round((approved / total) * 100) : 0;
+                    return `<div style="padding:12px;background:var(--c-surface2);border:1px solid var(--c-border);border-radius:9px;margin-bottom:8px;">
+                                <div style="font-weight:600;font-size:.875rem;">${p.name}</div>
+                                <div style="font-size:.75rem;color:var(--c-text2);">Team: ${p.teamName || 'Solo'}</div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+                                    <span>Progress</span>
+                                    <span style="font-weight:600;color:var(--c-primary);">${pct}%</span>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
+                                ${p.driveLink ? `<a href="${p.driveLink}" target="_blank" class="btn btn-ghost btn-xs" style="margin-top:8px;"><i class="fas fa-external-link-alt"></i> Project Link</a>` : ''}
+                            </div>`;
+                }).join('') : '<p style="font-size:.82rem;color:var(--c-text3);">No projects assigned.</p>'}
                     </div>`;
+            },
+
+            switchLedgerTab(tab) {
+                document.getElementById('ledger-tasks').style.display = tab === 'tasks' ? 'block' : 'none';
+                document.getElementById('ledger-projects').style.display = tab === 'projects' ? 'block' : 'none';
+                document.getElementById('ledger-tab-tasks').classList.toggle('active', tab === 'tasks');
+                document.getElementById('ledger-tab-projects').classList.toggle('active', tab === 'projects');
             },
 
             async setAttAdmin(id, val) {
@@ -2005,6 +2431,17 @@
                 leaves.requests[idx].status = decision;
                 if (decision === 'approved') { const type = leaves.requests[idx].type; leaves[type] = (leaves[type] || 0) + 1; }
                 await db.doc(`${PATH}/students/${studentId}`).update({ leaves });
+
+                // Send notification to student
+                await db.collection(`${PATH}/notifications`).add({
+                    type: 'admin',
+                    title: `Leave Request ${decision}`,
+                    message: `Your ${leaves.requests[idx].type} leave request has been ${decision}.`,
+                    time: 'Just now',
+                    unread: true,
+                    studentId: studentId
+                });
+
                 this.toast(`Leave ${decision}!`, decision === 'approved' ? 'success' : 'error');
             },
 
@@ -2096,15 +2533,57 @@
             async sendBroadcast() {
                 const title = document.getElementById('bc-title').value.trim();
                 const msg = document.getElementById('bc-msg').value.trim();
+                const target = document.getElementById('bc-target').value;
+                const groupId = document.getElementById('bc-group').value;
+
                 if (!title || !msg) { this.toast('Fill in title and message.', 'error'); return; }
-                await db.collection(`${PATH}/notifications`).add({
-                    type: 'admin', title, message: msg, from: 'Super Admin', senderRole: 'Super Admin',
-                    time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
-                    unread: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                if (target === 'group' && !groupId) { this.toast('Please select a group.', 'error'); return; }
+
+                let targetStudents = [];
+                if (target === 'all') {
+                    targetStudents = this.s.students.map(s => s.id);
+                } else if (target === 'students') {
+                    targetStudents = this.s.students.map(s => s.id);
+                } else if (target === 'mentors') {
+                    // Send to mentors
+                    for (const m of this.s.mentors) {
+                        await db.collection(`${PATH}/notifications`).add({
+                            type: 'admin',
+                            title,
+                            message: msg,
+                            from: 'Super Admin',
+                            senderRole: 'Super Admin',
+                            time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+                            unread: true,
+                            targetMentor: m.id,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                } else if (target === 'group') {
+                    const group = this.s.groups.find(g => g.id === groupId);
+                    if (group) {
+                        targetStudents = group.members || [];
+                    }
+                }
+
+                // Send to students
+                for (const studentId of targetStudents) {
+                    await db.collection(`${PATH}/notifications`).add({
+                        type: 'admin',
+                        title,
+                        message: msg,
+                        from: 'Super Admin',
+                        senderRole: 'Super Admin',
+                        time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+                        unread: true,
+                        studentId: studentId,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
                 document.getElementById('bc-title').value = '';
                 document.getElementById('bc-msg').value = '';
-                this.toast('Broadcast sent to all students!', 'success');
+                this.toast(`Broadcast sent to ${target} recipients!`, 'success');
             },
 
             renderBroadcasts() {
@@ -2115,6 +2594,13 @@
                         <div style="font-size:.78rem;color:var(--c-text2);">${n.message || n.text || ''}</div>
                         <div style="font-size:.72rem;color:var(--c-text3);margin-top:5px;">${n.time || ''}</div>
                     </div>`).join('') || '<p style="font-size:.82rem;color:var(--c-text3);">No broadcasts yet.</p>';
+
+                // Update group dropdown
+                const select = document.getElementById('bc-group');
+                if (select) {
+                    select.innerHTML = '<option value="">Select Group</option>' +
+                        this.s.groups.map(g => `<option value="${g.id}">${g.name} (${g.members?.length || 0} members)</option>`).join('');
+                }
             },
 
             // ─── MODALS ───
@@ -2122,6 +2608,8 @@
                 document.getElementById('modal-overlay').classList.add('open');
                 if (type === 'student') this._modalStudent();
                 else if (type === 'mentor') this._modalMentor();
+                else if (type === 'group') this._modalGroup();
+                else if (type === 'project') this._modalProject();
                 else if (type === 'task') this._modalTask();
                 else if (type === 'resource') this._modalResource();
             },
@@ -2159,6 +2647,52 @@
                         <div class="form-group span-2"><label>Department</label><input type="text" class="input" id="m-dept" placeholder="Computer Science"></div>
                     </div>
                     <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="App.addMentor()"><i class="fas fa-plus"></i> Add Mentor</button>`;
+            },
+
+            _modalGroup() {
+                document.getElementById('modal-title').textContent = 'Create Group';
+                document.getElementById('modal-body').innerHTML = `
+                    <div class="form-grid">
+                        <div class="form-group span-2"><label>Group Name</label><input type="text" class="input" id="g-name" placeholder="e.g. Team Phoenix"></div>
+                        <div class="form-group"><label>Track</label><input type="text" class="input" id="g-track" placeholder="e.g. AI/ML"></div>
+                        <div class="form-group span-2"><label>Description</label><textarea class="input" id="g-desc" rows="2" placeholder="Group purpose / focus"></textarea></div>
+                        <div class="form-group"><label>Project (Optional)</label>
+                            <select class="input" id="g-project">
+                                <option value="">None</option>
+                                ${this.s.projects.map(p => `<option value="${p.id}">${p.name} (${p.teamName})</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group span-2"><label>Select Members</label>
+                            <div style="background:var(--c-surface2);border:1.5px solid var(--c-border);border-radius:10px;padding:10px;max-height:200px;overflow-y:auto;">
+                                ${this.s.students.map((s, i) => `<label style="display:flex;align-items:center;gap:8px;padding:8px;cursor:pointer;font-size:.875rem;"><input type="checkbox" id="gm-${i}" value="${s.id}" style="width:16px;height:16px;accent-color:var(--c-primary);">${s.name} (${s.srn})</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="App.addGroup()"><i class="fas fa-plus"></i> Create Group</button>`;
+            },
+
+            _modalProject() {
+                const ms = this.s.students;
+                document.getElementById('modal-title').textContent = 'Create New Project';
+                document.getElementById('modal-body').innerHTML = `
+                    <div class="form-grid">
+                        <div class="form-group span-2"><label>Project Title</label><input type="text" class="input" id="p-name" placeholder="Research project title"></div>
+                        <div class="form-group"><label>Track / Category</label><input type="text" class="input" id="p-track" placeholder="e.g. Drone Tech"></div>
+                        <div class="form-group"><label>Team Name</label><input type="text" class="input" id="p-team" placeholder="e.g. NEO_AI_01"></div>
+                        <div class="form-group"><label>Milestone Count</label><input type="number" class="input" id="p-pts" value="24" min="1" max="200"></div>
+                        <div class="form-group span-2"><label>Assign Mentor</label>
+                            <select class="input" id="p-mentor">
+                                <option value="">Select Mentor</option>
+                                ${this.s.mentors.map(m => `<option value="${m.email}">${m.name} (${m.email})</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group span-2"><label>Assign Members</label>
+                            <div style="background:var(--c-surface2);border:1.5px solid var(--c-border);border-radius:10px;padding:10px;max-height:200px;overflow-y:auto;">
+                                ${ms.map((s, i) => `<label style="display:flex;align-items:center;gap:8px;padding:8px;cursor:pointer;font-size:.875rem;"><input type="checkbox" id="pm-${i}" value="${s.name}" style="width:16px;height:16px;accent-color:var(--c-primary);">${s.name} (${s.srn})</label>`).join('') || '<p style="font-size:.78rem;color:var(--c-text3);">No students available.</p>'}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="App.addProject()"><i class="fas fa-plus"></i> Create Project</button>`;
             },
 
             _modalTask() {
@@ -2250,12 +2784,74 @@
                 this.toast('Mentor added!', 'success');
             },
 
+            async addGroup() {
+                const name = document.getElementById('g-name').value.trim();
+                const track = document.getElementById('g-track').value;
+                const desc = document.getElementById('g-desc').value;
+                const projectId = document.getElementById('g-project').value;
+                const members = Array.from(document.querySelectorAll('[id^="gm-"]:checked')).map(cb => cb.value);
+
+                if (!name) { this.toast('Group name required.', 'error'); return; }
+                if (members.length === 0) { this.toast('Select at least one member.', 'error'); return; }
+
+                await db.collection(`${PATH}/groups`).add({
+                    name,
+                    track,
+                    description: desc,
+                    projectId,
+                    members,
+                    createdAt: new Date().toISOString().split('T')[0]
+                });
+                this.closeModal();
+                this.toast('Group created!', 'success');
+            },
+
+            async addProject() {
+                const name = document.getElementById('p-name').value.trim();
+                const track = document.getElementById('p-track').value;
+                const team = document.getElementById('p-team').value.trim();
+                const total = parseInt(document.getElementById('p-pts').value) || 24;
+                const mentor = document.getElementById('p-mentor').value;
+                const members = Array.from(document.querySelectorAll('[id^="pm-"]:checked')).map(c => c.value);
+
+                if (!name || !team || !mentor || members.length === 0) {
+                    this.toast('Fill all required fields and select members.', 'error');
+                    return;
+                }
+
+                await db.collection(`${PATH}/projects`).add({
+                    name, track, teamName: team,
+                    mentor, members,
+                    points: Array(total).fill({ status: 'none' }),
+                    totalPoints: total, documents: []
+                });
+                this.closeModal();
+                this.toast('Project created!', 'success');
+            },
+
             async addTask() {
                 const sid = document.getElementById('t-sid').value;
                 const desc = document.getElementById('t-desc').value.trim();
                 const due = document.getElementById('t-due').value;
                 if (!desc) { this.toast('Enter a task description.', 'error'); return; }
-                await db.collection(`${PATH}/tasks`).add({ sid, desc, due, status: 'pending', assignedBy: 'Admin', assignedAt: firebase.firestore.FieldValue.serverTimestamp() });
+
+                if (sid === 'global') {
+                    // Assign to all students
+                    for (const s of this.s.students) {
+                        await db.collection(`${PATH}/tasks`).add({
+                            sid: s.id, desc, due, status: 'pending',
+                            assignedBy: 'Admin',
+                            assignedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                } else {
+                    await db.collection(`${PATH}/tasks`).add({
+                        sid, desc, due, status: 'pending',
+                        assignedBy: 'Admin',
+                        assignedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
                 this.closeModal();
                 this.toast('Directive dispatched!', 'success');
             },
@@ -2301,37 +2897,204 @@
                 document.getElementById('modal-overlay').classList.add('open');
             },
 
-            // ─── PDF EXPORT ───
+            // ─── PDF EXPORT (Enhanced with full student info) ───
             generateStudentPDF(id) {
                 const s = this.s.students.find(x => x.id === id); if (!s) return;
+
+                // Get student's tasks
+                const studentTasks = this.s.tasks.filter(t => t.sid === s.id || t.sid === s.srn);
+
+                // Get student's projects
+                const studentProjects = this.s.projects.filter(p => p.members?.includes(s.name) || p.members?.includes(s.srn));
+
+                // Get attendance logs
+                const logs = s.logs || {};
+                const logEntries = Object.entries(logs).sort().reverse();
+
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-                doc.setFillColor(37, 99, 235); doc.rect(0, 0, 210, 38, 'F');
-                doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+
+                // Header
+                doc.setFillColor(37, 99, 235);
+                doc.rect(0, 0, 210, 38, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(18);
+                doc.setFont('helvetica', 'bold');
                 doc.text('SMPS Student Report', 20, 16);
-                doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
                 doc.text(`Generated: ${new Date().toLocaleDateString('en-IN')}`, 20, 27);
+
+                // Student Info
                 doc.autoTable({
-                    startY: 48, head: [['Field', 'Details']],
-                    body: [['Name', s.name || '---'], ['SRN', s.srn || '---'], ['Branch', s.branch || '---'], ['Track/Product', s.product || '---'], ['Gmail', s.gmail || '---'], ['Mobile', s.phone || '---'], ['Mentor', s.mentor || '---'], ['Fee Paid', '₹' + (s.fee || 0)], ['Attendance', s.att || '---'], ['Sick Leaves Used', String(s.leaves?.sick || 0)], ['Normal Leaves Used', String(s.leaves?.normal || 0)]],
-                    theme: 'striped', headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] }, styles: { font: 'helvetica', fontSize: 10 }
+                    startY: 48,
+                    head: [['Student Information', '']],
+                    body: [
+                        ['Name', s.name || '---'],
+                        ['SRN', s.srn || '---'],
+                        ['Branch', s.branch || '---'],
+                        ['Track/Product', s.product || '---'],
+                        ['Gmail', s.gmail || '---'],
+                        ['Mobile', s.phone || '---'],
+                        ['Date of Birth', s.dob || '---'],
+                        ['Mentor', (s.mentor || '').split('@')[0] || '---'],
+                        ['Internship Fee', '₹' + (s.fee || 0)],
+                        ['Attendance Status', s.att || '---'],
+                        ['Sick Leaves Used', String(s.leaves?.sick || 0)],
+                        ['Normal Leaves Used', String(s.leaves?.normal || 0)]
+                    ],
+                    theme: 'striped',
+                    headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
+                    styles: { font: 'helvetica', fontSize: 10 }
                 });
-                doc.save(`SMPS_${s.srn || 'Student'}_Report.pdf`);
+
+                // Projects
+                if (studentProjects.length > 0) {
+                    doc.addPage();
+                    doc.setFillColor(37, 99, 235);
+                    doc.rect(0, 0, 210, 20, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Assigned Projects', 20, 14);
+
+                    let yPos = 30;
+                    studentProjects.forEach((p, idx) => {
+                        const pts = p.points || [];
+                        const total = p.totalPoints || pts.length || 0;
+                        const approved = pts.filter(x => x.status === 'approved').length;
+                        const pct = total > 0 ? Math.round((approved / total) * 100) : 0;
+
+                        doc.setFontSize(12);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text(`${idx + 1}. ${p.name}`, 20, yPos);
+                        yPos += 6;
+
+                        doc.setFontSize(10);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(`Team: ${p.teamName || 'Solo'} · Track: ${p.track || '---'}`, 20, yPos);
+                        yPos += 5;
+                        doc.text(`Progress: ${approved}/${total} milestones (${pct}%)`, 20, yPos);
+                        yPos += 5;
+
+                        if (p.driveLink) {
+                            doc.text(`Submission Link: ${p.driveLink}`, 20, yPos);
+                            yPos += 5;
+                        }
+
+                        // Documents
+                        const docs = p.documents || [];
+                        if (docs.length > 0) {
+                            doc.text('Documents:', 20, yPos);
+                            yPos += 5;
+                            docs.forEach(d => {
+                                doc.text(`  • ${d.name || 'Document'} (${d.uploadedAt || 'N/A'})`, 20, yPos);
+                                yPos += 5;
+                            });
+                        }
+
+                        yPos += 8;
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                    });
+                }
+
+                // Tasks
+                if (studentTasks.length > 0) {
+                    doc.addPage();
+                    doc.setFillColor(37, 99, 235);
+                    doc.rect(0, 0, 210, 20, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Assigned Tasks', 20, 14);
+
+                    let yPos = 30;
+                    studentTasks.forEach((t, idx) => {
+                        doc.setFontSize(11);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text(`${idx + 1}. ${t.desc || t.title || 'Task'}`, 20, yPos);
+                        yPos += 5;
+
+                        doc.setFontSize(9);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(`Status: ${t.status || 'pending'}`, 20, yPos);
+                        yPos += 4;
+                        doc.text(`Due: ${t.due || 'No deadline'}`, 20, yPos);
+                        yPos += 4;
+
+                        if (t.submitLink) {
+                            doc.text(`Submission: ${t.submitLink}`, 20, yPos);
+                            yPos += 4;
+                        }
+
+                        yPos += 6;
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                    });
+                }
+
+                // Attendance Logs
+                if (logEntries.length > 0) {
+                    doc.addPage();
+                    doc.setFillColor(37, 99, 235);
+                    doc.rect(0, 0, 210, 20, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Attendance Logs', 20, 14);
+
+                    const tableBody = logEntries.map(([date, log]) => [date, log.in || '--', log.out || '--']);
+
+                    doc.autoTable({
+                        startY: 30,
+                        head: [['Date', 'Check In', 'Check Out']],
+                        body: tableBody,
+                        theme: 'striped',
+                        headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
+                        styles: { fontSize: 9 }
+                    });
+                }
+
+                doc.save(`SMPS_${s.srn || 'Student'}_Full_Report.pdf`);
             },
 
             exportFullReport() {
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.setFillColor(37, 99, 235); doc.rect(0, 0, 210, 38, 'F');
-                doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+                const doc = new jsPDF('l'); // Landscape for more columns
+                doc.setFillColor(37, 99, 235);
+                doc.rect(0, 0, 297, 28, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(18);
+                doc.setFont('helvetica', 'bold');
                 doc.text('SMPS Full Student Roster', 20, 16);
-                doc.setFontSize(10); doc.text(`Total Students: ${this.s.students.length} | Generated: ${new Date().toLocaleDateString('en-IN')}`, 20, 27);
+                doc.setFontSize(10);
+                doc.text(`Total Students: ${this.s.students.length} | Generated: ${new Date().toLocaleDateString('en-IN')}`, 20, 24);
                 const rev = this.s.students.reduce((a, s) => a + (Number(s.fee) || 0), 0);
-                doc.text(`Total Revenue: ₹${rev.toLocaleString()}`, 110, 27);
+                doc.text(`Total Revenue: ₹${rev.toLocaleString()}`, 150, 24);
+
+                const tableBody = this.s.students.map(s => [
+                    s.name || '',
+                    s.srn || '',
+                    s.branch || '',
+                    s.product || '---',
+                    (s.mentor || '').split('@')[0] || '',
+                    '₹' + (s.fee || 0),
+                    s.att || 'offline',
+                    String(Object.keys(s.logs || {}).length)
+                ]);
+
                 doc.autoTable({
-                    startY: 48, head: [['Name', 'SRN', 'Branch', 'Track', 'Mentor', 'Fee', 'Status']],
-                    body: this.s.students.map(s => [s.name || '', s.srn || '', s.branch || '', s.product || '---', (s.mentor || '').split('@')[0] || '', '₹' + (s.fee || 0), s.att || 'offline']),
-                    theme: 'striped', headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] }, styles: { fontSize: 8 }
+                    startY: 35,
+                    head: [['Name', 'SRN', 'Branch', 'Track', 'Mentor', 'Fee', 'Status', 'Log Days']],
+                    body: tableBody,
+                    theme: 'striped',
+                    headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
+                    styles: { fontSize: 8 }
                 });
                 doc.save(`SMPS_Full_Roster_${new Date().toLocaleDateString('en-IN').replace(/\//g, '-')}.pdf`);
             },
@@ -2350,6 +3113,72 @@
                     theme: 'striped', headStyles: { fillColor: [22, 163, 74], textColor: [255, 255, 255] }, styles: { fontSize: 9 }
                 });
                 doc.save(`SMPS_Finance_Report_${new Date().toLocaleDateString('en-IN').replace(/\//g, '-')}.pdf`);
+            },
+
+            generateGroupPDF(id) {
+                const g = this.s.groups.find(x => x.id === id); if (!g) return;
+
+                const members = g.members?.map(m => {
+                    const student = this.s.students.find(s => s.id === m || s.srn === m);
+                    return student ? `${student.name} (${student.srn})` : m;
+                }) || [];
+
+                const project = this.s.projects.find(p => p.id === g.projectId);
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                doc.setFillColor(37, 99, 235);
+                doc.rect(0, 0, 210, 38, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(18);
+                doc.setFont('helvetica', 'bold');
+                doc.text('SMPS Group Report', 20, 16);
+                doc.setFontSize(10);
+                doc.text(`Generated: ${new Date().toLocaleDateString('en-IN')}`, 20, 27);
+
+                doc.autoTable({
+                    startY: 48,
+                    head: [['Group Information', '']],
+                    body: [
+                        ['Group Name', g.name || '---'],
+                        ['Track', g.track || 'General'],
+                        ['Description', g.description || '---'],
+                        ['Project', project ? project.name : 'None'],
+                        ['Created', g.createdAt || 'N/A'],
+                        ['Members Count', String(g.members?.length || 0)]
+                    ],
+                    theme: 'striped',
+                    headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
+                    styles: { font: 'helvetica', fontSize: 10 }
+                });
+
+                doc.addPage();
+                doc.setFillColor(37, 99, 235);
+                doc.rect(0, 0, 210, 20, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Group Members', 20, 14);
+
+                let yPos = 30;
+                members.forEach((member, idx) => {
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(`${idx + 1}. ${member}`, 20, yPos);
+                    yPos += 6;
+
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                });
+
+                doc.save(`SMPS_Group_${g.name.replace(/\s+/g, '_')}_Report.pdf`);
+            },
+
+            _esc(str) {
+                return String(str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             },
 
             // ─── TOAST ───
