@@ -21,9 +21,9 @@
             --c-text: #1A1916;
             --c-text2: #5C5952;
             --c-text3: #9B9892;
-            --c-primary: #2563EB;
-            --c-primary-soft: rgba(37, 99, 235, 0.1);
-            --c-primary-glow: rgba(37, 99, 235, 0.2);
+            --c-primary: #1a56db;
+            --c-primary-soft: rgba(26, 86, 219, 0.1);
+            --c-primary-glow: rgba(26, 86, 219, 0.2);
             --c-green: #16A34A;
             --c-green-soft: rgba(22, 163, 74, 0.1);
             --c-amber: #D97706;
@@ -109,6 +109,32 @@
             border-radius: 99px;
         }
 
+        /* ── SMPS Brand Header Strip ── */
+        .smps-brand-strip {
+            background: linear-gradient(135deg, #0f2a6b 0%, #1a56db 50%, #0ea5e9 100%);
+            color: #fff;
+            text-align: center;
+            padding: 6px 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .smps-brand-strip span {
+            opacity: .75;
+        }
+
+        .smps-brand-strip .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .5);
+        }
+
         #loader {
             position: fixed;
             inset: 0;
@@ -121,9 +147,41 @@
             gap: 20px;
         }
 
+        .loader-logo {
+            width: 90px;
+            height: 90px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loader-logo img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 20px rgba(26, 86, 219, .3));
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 32px rgba(26, 86, 219, .35);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 40px rgba(26, 86, 219, .5);
+            }
+        }
+
         .loader-ring {
-            width: 48px;
-            height: 48px;
+            width: 36px;
+            height: 36px;
             border: 3px solid var(--c-border);
             border-top-color: var(--c-primary);
             border-radius: 50%;
@@ -140,6 +198,15 @@
             font-size: 13px;
             color: var(--c-text3);
             letter-spacing: .05em;
+        }
+
+        .loader-brand {
+            font-size: 11px;
+            color: var(--c-primary);
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-top: -4px;
         }
 
         .hidden {
@@ -311,12 +378,13 @@
             margin: 20px 0;
         }
 
+        /* ── Top Nav ── */
         #top-nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -331,22 +399,41 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-weight: 800;
+            font-size: 1.15rem;
             color: var(--c-text);
             text-decoration: none;
+            letter-spacing: -.02em;
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--c-primary);
-            border-radius: 8px;
+            width: 48px;
+            height: 48px;
+            background: transparent;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-size: .9rem;
+            color: var(--c-primary);
+            font-size: 1.4rem;
+            overflow: visible;
+        }
+
+        .logo-icon img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--c-primary);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            display: block;
+            margin-top: -2px;
         }
 
         .theme-btn {
@@ -369,12 +456,13 @@
             color: var(--c-text);
         }
 
+        /* ── Landing ── */
         #view-home {
-            padding-top: 60px;
+            padding-top: 64px;
         }
 
         .hero-section {
-            min-height: calc(100vh - 60px);
+            min-height: calc(100vh - 64px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -401,9 +489,60 @@
             background: var(--c-primary-soft);
             color: var(--c-primary);
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: .05em;
             margin-bottom: 28px;
+        }
+
+        .smps-hero-logo {
+            width: 130px;
+            height: 130px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+        }
+
+        .smps-hero-logo img {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 6px 20px rgba(26, 86, 219, .25));
+        }
+
+        .smps-hero-logo i {
+            font-size: 3.5rem;
+            color: var(--c-primary);
+        }
+
+        /* Transparent watermark logo behind hero text */
+        .hero-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(600px, 90vw);
+            height: min(600px, 90vw);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-watermark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0.12;
+            filter: saturate(0) brightness(0.6);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .hero-title {
@@ -439,6 +578,22 @@
             padding: 14px 32px;
             border-radius: 12px;
             font-size: 1rem;
+        }
+
+        .smps-powered {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(26, 86, 219, .08), rgba(14, 165, 233, .08));
+            border: 1px solid rgba(26, 86, 219, .15);
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            color: var(--c-primary);
+            text-transform: uppercase;
+            margin-top: 32px;
         }
 
         .features-grid {
@@ -508,18 +663,55 @@
 
         .landing-footer {
             text-align: center;
-            padding: 40px;
+            padding: 32px 40px;
             border-top: 1px solid var(--c-border);
-            font-size: .85rem;
+            background: linear-gradient(to top, var(--c-surface2), transparent);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .footer-logo-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-logo-icon img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .footer-brand {
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: -.01em;
+        }
+
+        .footer-tagline {
+            font-size: .8rem;
             color: var(--c-text3);
         }
 
-        .landing-footer a {
-            color: var(--c-primary);
-            font-weight: 600;
-            text-decoration: none;
+        .footer-made {
+            font-size: .8rem;
+            color: var(--c-text2);
+            margin-top: 8px;
         }
 
+        .footer-made .heart {
+            color: #e11d48;
+        }
+
+        /* ── Login ── */
         #view-login {
             min-height: 100vh;
             display: flex;
@@ -530,7 +722,7 @@
 
         .login-box {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             background: var(--c-surface);
             border: 1px solid var(--c-border);
             border-radius: var(--r-xl);
@@ -538,11 +730,41 @@
             box-shadow: var(--shadow-lg);
         }
 
+        .login-logo {
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .login-logo img {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(26, 86, 219, .2));
+        }
+
+        .login-logo i {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
         .login-box h2 {
             font-size: 1.8rem;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             letter-spacing: -.03em;
+        }
+
+        .login-brand-sub {
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--c-primary);
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
         }
 
         .login-box .sub {
@@ -580,6 +802,7 @@
             color: var(--c-text);
         }
 
+        /* ── Portal Shell ── */
         #view-portal {
             display: flex;
             height: 100vh;
@@ -605,6 +828,20 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+
+        .sidebar-smps-badge {
+            background: linear-gradient(135deg, rgba(26, 86, 219, .08), rgba(14, 165, 233, .06));
+            border: 1px solid rgba(26, 86, 219, .12);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin: 0 0 8px 0;
+            text-align: center;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            color: var(--c-primary);
+            text-transform: uppercase;
         }
 
         .nav-item {
@@ -670,7 +907,7 @@
             width: 36px;
             height: 36px;
             border-radius: 9px;
-            background: var(--c-primary);
+            background: linear-gradient(135deg, #0f2a6b, #1a56db);
             color: #fff;
             display: flex;
             align-items: center;
@@ -692,6 +929,34 @@
             font-family: 'DM Mono';
         }
 
+        .smps-footer-credit {
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(26, 86, 219, .05), rgba(14, 165, 233, .05));
+            border: 1px solid rgba(26, 86, 219, .08);
+        }
+
+        .smps-footer-credit .brand-line {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--c-primary);
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+
+        .smps-footer-credit .made-line {
+            font-size: 9px;
+            color: var(--c-text3);
+            margin-top: 2px;
+        }
+
+        .smps-footer-credit .heart {
+            color: #e11d48;
+        }
+
+        /* ── Workspace ── */
         .workspace {
             flex: 1;
             overflow-y: auto;
@@ -968,7 +1233,6 @@
             line-height: 1;
         }
 
-        /* ── Multi-doc grid ── */
         .docs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1232,6 +1496,13 @@
             font-weight: 700;
             font-size: .875rem;
             border-bottom: 1px solid var(--c-border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-list-header i {
+            color: var(--c-primary);
         }
 
         .chat-item {
@@ -1293,6 +1564,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            background: var(--c-surface);
         }
 
         .chat-msgs {
@@ -1352,6 +1624,27 @@
             display: flex;
             gap: 10px;
             background: var(--c-surface);
+        }
+
+        .chat-empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--c-text3);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .chat-empty-state i {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: .3;
+        }
+
+        .chat-empty-state p {
+            font-size: .875rem;
         }
 
         /* ── Resources ── */
@@ -1627,14 +1920,6 @@
             pointer-events: auto;
         }
 
-        .tour-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.65);
-            z-index: 7001;
-            pointer-events: auto;
-        }
-
         .tour-highlight {
             position: fixed;
             border-radius: 12px;
@@ -1701,6 +1986,60 @@
             background: var(--c-primary);
             width: 16px;
             border-radius: 3px;
+        }
+
+        /* ── Admin/mentor cards ── */
+        .admin-card {
+            width: 320px;
+            background: var(--c-surface);
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--c-primary);
+        }
+
+        .card-accent {
+            height: 4px;
+            background: linear-gradient(90deg, #0f2a6b, #1a56db, #0ea5e9);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: var(--c-text);
+            font-weight: 700;
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: var(--c-text2);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .card-link {
+            display: block;
+            text-align: center;
+            background: var(--c-primary);
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .card-link:hover {
+            opacity: .9;
         }
 
         #mob-menu-btn {
@@ -1775,6 +2114,7 @@
 
             .chat-shell {
                 flex-direction: column;
+                height: calc(100vh - 100px);
             }
 
             .chat-list {
@@ -1813,67 +2153,34 @@
             .modal-box {
                 height: 95vh;
             }
-        }
 
-        /* Paste this into your <style> section */
-        .admin-card {
-            width: 320px;
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            font-family: sans-serif;
-            overflow: hidden;
-            transition: transform 0.2s ease;
-        }
-
-        .admin-card:hover {
-            transform: translateY(-4px);
-            border-color: #007bff;
-        }
-
-        .card-accent {
-            height: 4px;
-            background: #007bff;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .card-title {
-            margin: 0 0 8px 0;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .card-text {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .card-link {
-            display: block;
-            text-align: center;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: 600;
-        }
-
-        .card-link:hover {
-            background: #0056b3;
+            .smps-brand-strip {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
 
 <body data-theme="light">
+
+    <!-- SMPS Brand Strip -->
+    <div class="smps-brand-strip">
+        <i class="fas fa-graduation-cap"></i>
+        <span>SMPS TECH LABS</span>
+        <div class="dot"></div>
+        <span>Student Management & Progress System</span>
+        <div class="dot"></div>
+        <span>v6.0</span>
+    </div>
+
     <div id="loader">
+        <div class="loader-logo">
+            <img src="smps-logo.jpg" alt="SMPS"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <i class="fas fa-graduation-cap" style="display:none;"></i>
+        </div>
         <div class="loader-ring"></div>
+        <div class="loader-brand">SMPS Tech Labs</div>
         <div class="loader-text">Loading Student Portal…</div>
     </div>
 
@@ -1934,7 +2241,7 @@
         </div>
     </div>
 
-    <!-- Tour Overlay — rebuilt with proper z-index layering -->
+    <!-- Tour Overlay -->
     <div id="tour-overlay" class="hidden">
         <div id="tour-highlight" class="tour-highlight"></div>
         <div id="tour-popup" class="tour-popup">
@@ -1956,8 +2263,14 @@
     <!-- Top Nav -->
     <nav id="top-nav" class="hidden">
         <a class="logo">
-            <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
-            SMPS Portal
+            <div class="logo-icon">
+                <img src="smps-logo.jpg" alt="SMPS"
+                    onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-graduation-cap\' style=\'color:#fff;\'></i>'">
+            </div>
+            <div>
+                SMPS Portal
+                <span class="logo-sub">Tech Labs</span>
+            </div>
         </a>
         <div style="display:flex;align-items:center;gap:12px;">
             <button class="btn btn-ghost" onclick="App.startTour()" style="font-size:.8rem;padding:8px 14px;"><i
@@ -1971,14 +2284,27 @@
     <!-- Landing View -->
     <div id="view-home" class="hidden">
         <div class="hero-section">
-            <div class="hero-eyebrow"><i class="fas fa-sparkles"></i> Student Management Portal v6</div>
-            <h1 class="hero-title">Manage Your <span>Academic Journey</span> in One Place</h1>
-            <p class="hero-desc">Track attendance, submit projects, chat with mentors, and stay updated with all
-                notifications — all in a clean, simple dashboard.</p>
-            <div class="hero-cta">
-                <button class="btn btn-primary" onclick="App.showLogin()">Get Started <i
-                        class="fas fa-arrow-right"></i></button>
-                <button class="btn btn-ghost" onclick="App.showLogin()"><i class="fas fa-play"></i> Watch Tour</button>
+            <!-- Transparent watermark logo in background -->
+            <div class="hero-watermark">
+                <img src="smps-logo.jpg" alt="" aria-hidden="true" onerror="this.parentElement.style.display='none'">
+            </div>
+            <!-- Hero content above watermark -->
+            <div class="hero-content">
+                <div class="smps-hero-logo">
+                    <img src="smps-logo.jpg" alt="SMPS Logo"
+                        onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-graduation-cap\' style=\'font-size:2.5rem;color:#fff;\'></i>'">
+                </div>
+                <div class="hero-eyebrow"><i class="fas fa-shield-check"></i> SMPS Tech Labs · Student Portal v6</div>
+                <h1 class="hero-title">Manage Your <span>Academic Journey</span> in One Place</h1>
+                <p class="hero-desc">Track attendance, submit projects, chat with mentors, and stay updated with all
+                    notifications — all in a clean, simple dashboard by SMPS Tech Labs.</p>
+                <div class="hero-cta">
+                    <button class="btn btn-primary" onclick="App.showLogin()">Get Started <i
+                            class="fas fa-arrow-right"></i></button>
+                    <button class="btn btn-ghost" onclick="App.showLogin()"><i class="fas fa-play"></i> Watch
+                        Tour</button>
+                </div>
+                <div class="smps-powered"><i class="fas fa-bolt"></i> Powered by SMPS Tech Labs</div>
             </div>
         </div>
         <div class="features-grid">
@@ -1997,7 +2323,7 @@
             <div class="feature-card">
                 <div class="feature-icon" style="background:var(--c-amber-soft);color:var(--c-amber);"><i
                         class="fas fa-message"></i></div>
-                <h3>Chat with Team & Mentor</h3>
+                <h3>Chat with Team &amp; Mentor</h3>
                 <p>Message your team members, mentor, and admin directly from the portal.</p>
             </div>
             <div class="feature-card">
@@ -2020,44 +2346,57 @@
             </div>
             <div class="feature-card">
                 <div class="feature-icon" style="background:var(--c-primary-soft);color:var(--c-primary);"><i
-                        class="fas fa-user-shield"></i></div><a href="mentor/mentor.html">
+                        class="fas fa-user-shield"></i></div>
+                <a href="mentor/mentor.html">
                     <h2>Mentor Portal</h2>
                     <p class="sub">Enter mentor dashboard →</p>
                 </a>
             </div>
             <div class="feature-card">
                 <div class="feature-icon" style="background:var(--c-purple-soft);color:var(--c-purple);"><i
-                        class="fas fa-shield-halved"></i></div><a href="admin/admin.html">
+                        class="fas fa-shield-halved"></i></div>
+                <a href="admin/admin.html">
                     <h2>Admin Portal</h2>
                     <p class="sub">Enter admin dashboard →</p>
                 </a>
             </div>
             <div class="feature-card">
                 <div class="feature-icon" style="background:var(--c-purple-soft);color:var(--c-purple);"><i
-                        class="fas fa-shield-halved"></i></div><a href="camera/camera.html">
-                    <h2>SMPS MEET </h2>
+                        class="fas fa-video"></i></div>
+                <a href="camera/camera.html">
+                    <h2>SMPS MEET</h2>
                     <p class="sub">Enter MEET →</p>
                 </a>
             </div>
         </div>
-
         <div class="landing-footer">
-            <p>Built by <a href="https://www.shivabhalke.life/" target="_blank">Shiva Bhalke</a> · SMPS NEO Student
-                Portal</p>
+            <div class="footer-logo">
+                <div class="footer-logo-icon">
+                    <img src="smps-logo.jpg" alt="SMPS"
+                        onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-graduation-cap\' style=\'color:#fff;font-size:.85rem;\'></i>'">
+                </div>
+                <span class="footer-brand">SMPS Tech Labs</span>
+            </div>
+            <div class="footer-tagline">Student Management &amp; Progress System · Portal v6</div>
+            <div class="footer-made">Made with <span class="heart">♥</span> in India by <strong>SMPS Tech Labs</strong>
+            </div>
         </div>
     </div>
 
     <!-- Login View -->
     <div id="view-login" class="hidden">
         <div class="login-box">
-            <button class="back-btn" onclick="App.showHome()"><i class="fas fa-arrow-left"></i> Back to
-                home</button>
+            <button class="back-btn" onclick="App.showHome()"><i class="fas fa-arrow-left"></i> Back to home</button>
+            <div class="login-logo">
+                <img src="smps-logo.jpg" alt="SMPS"
+                    onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-graduation-cap\'></i>'">
+            </div>
             <h2>Welcome back</h2>
+            <div class="login-brand-sub">SMPS Tech Labs · Student Portal</div>
             <p class="sub">Sign in with your SRN and password to continue.</p>
             <form id="login-form">
                 <div class="form-group"><label>Student Registration Number (SRN)</label><input type="text" id="l-srn"
-                        class="input" placeholder="e.g. 1RV20CS001" required autocomplete="username">
-                </div>
+                        class="input" placeholder="e.g. 1RV20CS001" required autocomplete="username"></div>
                 <div class="form-group" style="margin-bottom:24px;"><label>Password</label><input type="password"
                         id="l-pass" class="input" placeholder="Your password" required autocomplete="current-password">
                 </div>
@@ -2075,10 +2414,20 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo" style="text-decoration:none;">
-                    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>SMPS
+                    <div class="logo-icon">
+                        <img src="smps-logo.jpg" alt="SMPS"
+                            onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fas fa-graduation-cap\' style=\'color:#fff;\'></i>'">
+                    </div>
+                    <div>
+                        SMPS
+                        <span class="logo-sub">Tech Labs</span>
+                    </div>
                 </div>
                 <button class="theme-btn" onclick="App.toggleTheme()" id="theme-btn-side"><i
                         class="fas fa-moon"></i></button>
+            </div>
+            <div class="sidebar-smps-badge">
+                <i class="fas fa-shield-check" style="margin-right:4px;"></i> SMPS Student Portal
             </div>
             <div class="nav-group-label">Main</div>
             <div class="nav-item active" id="nav-dashboard" onclick="App.switchTab('dashboard')"><i class="fas fa-home"
@@ -2108,9 +2457,10 @@
                 </div>
                 <button class="btn btn-danger" style="width:100%;justify-content:center;" onclick="location.reload()"><i
                         class="fas fa-power-off"></i> Sign Out</button>
-                <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--c-text3);">Built by <a
-                        href="https://www.shivabhalke.life/" target="_blank"
-                        style="color:var(--c-primary);font-weight:600;text-decoration:none;">Shiva Bhalke</a></div>
+                <div class="smps-footer-credit">
+                    <div class="brand-line"><i class="fas fa-graduation-cap"></i> SMPS Tech Labs</div>
+                    <div class="made-line">Made with <span class="heart">♥</span> in India</div>
+                </div>
             </div>
         </aside>
 
@@ -2143,8 +2493,8 @@
                     <div class="card span-3 stat-card" id="tour-attendance-card">
                         <div class="lbl">Attendance</div>
                         <div style="display:flex;align-items:center;gap:16px;margin-top:4px;">
-                            <div style="position:relative;width:80px;height:80px;"><canvas id="att-ring" width="80"
-                                    height="80"></canvas>
+                            <div style="position:relative;width:80px;height:80px;">
+                                <canvas id="att-ring" width="80" height="80"></canvas>
                                 <div
                                     style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
                                     <span id="att-pct"
@@ -2189,16 +2539,6 @@
                         <div class="lbl" style="margin-bottom:12px;">Project Overview</div>
                         <div id="d-projects-list"></div>
                     </div>
-                    <!-- <div class="admin-card">
-                        <div class="card-accent"></div>
-                        <div class="card-body">
-                            <h3 class="card-title">SMPS Video Portal</h3>
-                            <p class="card-text">Access the GitHub-hosted video repository for automated data
-                                management.</p>
-                            <a href="https://airfoxersmps.github.io/SMPS-VIDEOS/" target="_blank" class="card-link">Open
-                                Portal</a>
-                        </div>
-                    </div> -->
                 </div>
             </div>
 
@@ -2211,8 +2551,7 @@
                 <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;">
                     <div class="calendar-wrap">
                         <div class="calendar-month"><i class="fas fa-calendar" style="color:var(--c-primary);"></i><span
-                                id="cal-month-lbl">February 2026</span>
-                        </div>
+                                id="cal-month-lbl">February 2026</span></div>
                         <div class="cal-grid" id="att-calendar"></div>
                         <div
                             style="display:flex;gap:20px;margin-top:20px;padding-top:16px;border-top:1px solid var(--c-border);flex-wrap:wrap;">
@@ -2236,8 +2575,7 @@
                     <div class="card">
                         <div class="lbl" style="margin-bottom:12px;">Daily Logs</div>
                         <div id="daily-logs"
-                            style="display:flex;flex-direction:column;gap:8px;max-height:500px;overflow-y:auto;">
-                        </div>
+                            style="display:flex;flex-direction:column;gap:8px;max-height:500px;overflow-y:auto;"></div>
                     </div>
                 </div>
             </div>
@@ -2254,8 +2592,7 @@
             <!-- TASKS -->
             <div id="tab-tasks" class="hidden">
                 <div class="ws-header">
-                    <h1><i class="fas fa-list-check" style="color:var(--c-primary);margin-right:10px;"></i>Tasks
-                    </h1>
+                    <h1><i class="fas fa-list-check" style="color:var(--c-primary);margin-right:10px;"></i>Tasks</h1>
                 </div>
                 <div id="tasks-list"></div>
             </div>
@@ -2263,8 +2600,7 @@
             <!-- NOTIFICATIONS -->
             <div id="tab-notifications" class="hidden">
                 <div class="ws-header">
-                    <h1><i class="fas fa-bell" style="color:var(--c-primary);margin-right:10px;"></i>Notifications
-                    </h1>
+                    <h1><i class="fas fa-bell" style="color:var(--c-primary);margin-right:10px;"></i>Notifications</h1>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
                     <div>
@@ -2283,12 +2619,11 @@
             <!-- CHAT -->
             <div id="tab-chat" class="hidden">
                 <div class="ws-header">
-                    <h1><i class="fas fa-message" style="color:var(--c-primary);margin-right:10px;"></i>Messages
-                    </h1>
+                    <h1><i class="fas fa-message" style="color:var(--c-primary);margin-right:10px;"></i>Messages</h1>
                 </div>
                 <div class="chat-shell">
                     <div class="chat-list">
-                        <div class="chat-list-header">Conversations</div>
+                        <div class="chat-list-header"><i class="fas fa-comments"></i> Conversations</div>
                         <div id="chat-contacts"></div>
                     </div>
                     <div class="chat-main">
@@ -2300,14 +2635,17 @@
                                 id="chat-status-badge">Secure</span>
                         </div>
                         <div class="chat-msgs" id="chat-messages">
-                            <div style="text-align:center;color:var(--c-text3);font-size:.875rem;margin:auto;">
-                                Select a
-                                conversation to start messaging</div>
+                            <div class="chat-empty-state">
+                                <i class="fas fa-comments"></i>
+                                <p>Select a conversation to start messaging</p>
+                            </div>
                         </div>
-                        <div class="chat-input-row"><input type="text" class="input" id="chat-input"
-                                placeholder="Type a message…" style="flex:1;"><button class="btn btn-primary"
-                                onclick="App.sendMessage()" style="padding:10px 16px;"><i
-                                    class="fas fa-paper-plane"></i></button></div>
+                        <div class="chat-input-row">
+                            <input type="text" class="input" id="chat-input"
+                                placeholder="Type a message… (Enter to send)" style="flex:1;">
+                            <button class="btn btn-primary" onclick="App.sendMessage()" style="padding:10px 16px;"><i
+                                    class="fas fa-paper-plane"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2326,18 +2664,18 @@
                     <button class="filter-chip" onclick="App.filterRes('pastpapers',this)">Past Papers</button>
                 </div>
                 <div id="resources-grid" class="resource-grid-display"></div>
-                <div class="card-accent"></div>
-                <div class="card-body">
-                    <h3 class="card-title">SMPS Resource Library</h3>
-                    <p class="card-text">Access the GitHub-hosted video repository for automated data
-                        management.</p>
-                    <a href="https://airfoxersmps.github.io/SMPS-VIDEOS/" target="_blank" class="card-link">Open
-                        Portal</a>
+                <div class="admin-card" style="margin-top:24px;">
+                    <div class="card-accent"></div>
+                    <div class="card-body">
+                        <h3 class="card-title">SMPS Resource Library</h3>
+                        <p class="card-text">Access the GitHub-hosted video repository for automated data management.
+                        </p>
+                        <a href="https://airfoxersmps.github.io/SMPS-VIDEOS/" target="_blank" class="card-link">Open
+                            Portal</a>
+                    </div>
                 </div>
             </div>
-    </div>
-
-    </main>
+        </main>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -2371,6 +2709,9 @@
             { id: 'r5', title: 'Computer Networks - Lecture Slides', description: 'Module-wise slides for CN covering OSI, TCP/IP, routing.', category: 'notes', uploadedBy: 'Prof. Anita L', uploadedAt: '2026-02-12', pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
             { id: 'r6', title: 'Research Methodology Guide', description: 'Guidelines for writing technical papers and project reports.', category: 'reference', uploadedBy: 'Dr. Kavitha R', uploadedAt: '2026-02-01', pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
         ];
+
+        // FIX 1: Demo notifications for students should ONLY show mentor/admin messages
+        // NOT leave-related notifications (those are private to admin/mentor)
         const DEMO_NOTIFICATIONS = [
             { id: 'n1', type: 'mentor', title: 'Project Deadline Reminder', message: 'Please submit your Phase 1 report by March 5th.', time: '2 hours ago', unread: true },
             { id: 'n2', type: 'mentor', title: 'Meeting Scheduled', message: 'Progress review meeting on Friday at 3 PM in Lab 204.', time: '1 day ago', unread: false },
@@ -2508,7 +2849,8 @@
 
             updateAttUI() {
                 const u = this.s.user; if (!u) return;
-                const absent = u.absentCount || 0, total = 26, present = Math.max(0, total - absent), pct = Math.round((present / total) * 100);
+                // FIX 3: Changed total days from 26 to 90
+                const absent = u.absentCount || 0, total = 90, present = Math.max(0, total - absent), pct = Math.round((present / total) * 100);
                 document.getElementById('att-pct').textContent = pct + '%';
                 document.getElementById('att-fraction').textContent = `${present}/${total}`;
                 const b = document.getElementById('att-status-badge');
@@ -2604,7 +2946,6 @@
                     const cols = Math.min(10, Math.ceil(Math.sqrt(total)) || 10);
                     const docs = p.documents || [];
                     const docCount = docs.length;
-
                     return `<div class="card proj-card" style="margin-bottom:24px;">
                         <div class="proj-card-header">
                             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
@@ -2612,10 +2953,7 @@
                                     <div style="font-weight:700;font-size:1.2rem;">${p.name || 'Unnamed'}</div>
                                     <div class="sub">Team: ${p.teamName || 'Solo'} · Track: ${p.track || '---'}</div>
                                 </div>
-                                <div style="text-align:center;">
-                                    <div class="score-big">${pct}</div>
-                                    <div class="lbl">Score</div>
-                                </div>
+                                <div style="text-align:center;"><div class="score-big">${pct}</div><div class="lbl">Score</div></div>
                             </div>
                             <div style="margin-top:12px;"><div class="progress-bar"><div class="progress-fill ${pct >= 80 ? 'green' : pct >= 50 ? 'amber' : ''}" style="width:${pct}%;"></div></div></div>
                         </div>
@@ -2631,9 +2969,7 @@
                         </div>
                         <div class="proj-docs-section">
                             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                                <div class="lbl"><i class="fas fa-folder-open" style="margin-right:6px;color:var(--c-primary);"></i>Project Documents
-                                    <span class="badge badge-blue" style="margin-left:8px;">${docCount}</span>
-                                </div>
+                                <div class="lbl"><i class="fas fa-folder-open" style="margin-right:6px;color:var(--c-primary);"></i>Project Documents <span class="badge badge-blue" style="margin-left:8px;">${docCount}</span></div>
                                 <span class="sub" style="font-size:.75rem;">Uploaded by Mentor</span>
                             </div>
                             <div class="docs-grid">
@@ -2644,16 +2980,11 @@
                                             <div class="doc-card-title">${this._escHtml(doc.name || doc.fileName || 'Document')}</div>
                                             <div class="doc-card-meta">${this._escHtml(doc.uploadedBy || 'Mentor')}${doc.uploadedAt ? ' · ' + doc.uploadedAt : ''}</div>
                                             <div class="doc-card-actions">
-                                                <button class="btn btn-ghost"
-                                                    data-pid="${p.id}"
-                                                    data-di="${di}"
-                                                    data-docname="${this._escAttr(doc.name || doc.fileName || 'Document')}"
-                                                    onclick="App.openDocByIndex(this)">
+                                                <button class="btn btn-ghost" data-pid="${p.id}" data-di="${di}" data-docname="${this._escAttr(doc.name || doc.fileName || 'Document')}" onclick="App.openDocByIndex(this)">
                                                     <i class="fas fa-eye"></i> View
                                                 </button>
                                             </div>
-                                        </div>`)
-                                .join('')
+                                        </div>`).join('')
                             : `<div class="doc-card-empty"><i class="fas fa-clock"></i>No documents yet. Your mentor will upload project documents here.</div>`
                         }
                             </div>
@@ -2675,9 +3006,7 @@
             },
 
             _escHtml(str) {
-                return String(str || '')
-                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             },
             _escAttr(str) {
                 return String(str || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -2719,8 +3048,7 @@
                             <button class="btn btn-success" onclick="App.updateTask('${t.id}','accepted')"><i class="fas fa-check"></i> Accept Task</button>
                             <button class="btn btn-danger" onclick="App.rejectTask('${t.id}')"><i class="fas fa-times"></i> Decline</button>`;
                     } else if (status === 'accepted') {
-                        actions = `
-                            <div class="task-submit-section" style="width:100%;">
+                        actions = `<div class="task-submit-section" style="width:100%;">
                                 <div class="sub">Submit your work link (GitHub, Google Drive, etc.) to complete this task.</div>
                                 <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
                                     <input type="text" class="input task-link-input" id="tlink-${t.id}" placeholder="Paste link here…" value="${t.submitLink || ''}">
@@ -2728,16 +3056,14 @@
                                 </div>
                             </div>`;
                     } else if (status === 'submitted') {
-                        actions = `
-                            <div style="width:100%;">
+                        actions = `<div style="width:100%;">
                                 <div style="padding:12px 16px;background:var(--c-purple-soft);border:1px solid rgba(124,58,237,.2);border-radius:10px;">
                                     <div style="font-size:.82rem;font-weight:600;color:var(--c-purple);margin-bottom:8px;"><i class="fas fa-hourglass-half"></i> Awaiting mentor review</div>
                                     ${t.submitLink ? `<div style="font-size:.78rem;color:var(--c-text2);word-break:break-all;margin-bottom:8px;"><i class="fas fa-link" style="margin-right:4px;color:var(--c-purple);"></i><strong>Your submission:</strong> ${t.submitLink}</div><a href="${t.submitLink}" target="_blank" class="btn btn-ghost" style="font-size:.78rem;padding:6px 12px;"><i class="fas fa-external-link-alt"></i> Open Submission</a>` : ''}
                                 </div>
                             </div>`;
                     } else if (status === 'done') {
-                        actions = `
-                            <div style="width:100%;">
+                        actions = `<div style="width:100%;">
                                 <div style="padding:12px 16px;background:var(--c-green-soft);border:1px solid rgba(22,163,74,.2);border-radius:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                                     <span class="badge badge-green" style="font-size:.85rem;"><i class="fas fa-check-circle"></i> Approved by Mentor</span>
                                     ${t.submitLink ? `<a href="${t.submitLink}" target="_blank" class="btn btn-ghost" style="font-size:.78rem;padding:6px 12px;"><i class="fas fa-external-link-alt"></i> View Submission</a>` : ''}
@@ -2775,18 +3101,40 @@
             },
 
             updateNotifDot() {
-                const unread = (this.s.notifications.length ? this.s.notifications : DEMO_NOTIFICATIONS).filter(n => n.unread);
+                const u = this.s.user;
+                // FIX 1: Filter notifications - students only see mentor/admin type, NOT leave notifications
+                const allNotifs = this.s.notifications.length ? this.s.notifications : DEMO_NOTIFICATIONS;
+                const studentNotifs = allNotifs.filter(n => {
+                    // Exclude leave-related notifications entirely (those are for admin/mentor only)
+                    if (n.targetMentor || n.studentId) return false; // leave request notifications
+                    if (n.title && n.title.toLowerCase().includes('leave request')) return false;
+                    return n.type === 'mentor' || n.type === 'admin' || n.type === 'info';
+                });
+                const unread = studentNotifs.filter(n => n.unread);
                 const dot = document.getElementById('notif-dot');
                 if (dot) dot.style.display = unread.length ? 'block' : 'none';
             },
 
             renderNotifications() {
-                const notifs = this.s.notifications.length ? this.s.notifications : DEMO_NOTIFICATIONS;
+                const u = this.s.user;
+                const allNotifs = this.s.notifications.length ? this.s.notifications : DEMO_NOTIFICATIONS;
+
+                // FIX 1: Students only see notifications intended for them
+                // Filter out leave request notifications (those are admin/mentor only)
+                // Students see: mentor broadcast messages, admin broadcast messages
+                // NOT: leave requests submitted by students (those show in leave history section)
+                const studentNotifs = allNotifs.filter(n => {
+                    // Skip leave request notifications - they go to admin/mentor portals, not student feed
+                    if (n.targetMentor || n.studentId) return false;
+                    if (n.title && n.title.toLowerCase().includes('leave request')) return false;
+                    return true;
+                });
+
                 const icons = { mentor: 'fa-chalkboard-teacher', admin: 'fa-shield-halved', info: 'fa-info-circle' };
                 const colors = { mentor: 'var(--c-primary-soft)', admin: 'var(--c-purple-soft)', info: 'var(--c-green-soft)' };
                 const tcolors = { mentor: 'var(--c-primary)', admin: 'var(--c-purple)', info: 'var(--c-green)' };
                 const render = (type, cid) => {
-                    const list = notifs.filter(n => n.type === type || (!n.type && type === 'admin'));
+                    const list = studentNotifs.filter(n => n.type === type || (!n.type && type === 'admin'));
                     const el = document.getElementById(cid); if (!el) return;
                     el.innerHTML = list.length ? list.map(n => `
                         <div class="notif-item ${n.unread ? 'unread' : ''}">
@@ -2803,12 +3151,9 @@
                 render('mentor', 'notif-mentor'); render('admin', 'notif-admin');
             },
 
-            // ══════════════════════════════════════════════════════════════
-            // FIX 1: CHAT — renderChatList now stores contact data in a map
-            // and openChat uses a contactId to look up name/avatar,
-            // avoiding the broken event.currentTarget reference issue.
-            // ══════════════════════════════════════════════════════════════
+            // ── CHAT (FIX 2: Fully restored and fixed) ──
             _chatContacts: {},
+            _chatUnsub: null,
 
             renderChatList() {
                 const u = this.s.user; if (!u) return;
@@ -2823,7 +3168,6 @@
                     });
                 });
 
-                // Store contacts in a map for lookup by ID
                 this._chatContacts = {};
                 contacts.forEach(c => { this._chatContacts[c.id] = c; });
 
@@ -2834,52 +3178,82 @@
                         <div class="c-avatar" style="${c.type === 'mentor' ? 'background:var(--c-primary-soft);color:var(--c-primary);' : c.type === 'admin' ? 'background:var(--c-purple-soft);color:var(--c-purple);' : ''}">${c.avatar}</div>
                         <div style="flex:1;min-width:0;"><div class="c-name">${c.name}</div><div class="c-preview">${c.desc}</div></div>
                     </div>`).join('');
+
+                // Re-open active chat if there was one
+                if (this.s.activeChat && this._chatContacts[this.s.activeChat]) {
+                    this.openChat(this.s.activeChat);
+                }
             },
 
-            // FIX 1 cont: openChat now takes just the contact ID and looks up
-            // name/avatar from the stored map — no more broken event references.
             openChat(id) {
                 const contact = this._chatContacts[id];
                 if (!contact) return;
 
                 this.s.activeChat = id;
-
-                // Update header
                 document.getElementById('chat-active-name').textContent = contact.name;
                 document.getElementById('chat-active-avatar').textContent = contact.avatar;
                 document.getElementById('chat-status-badge').style.display = 'inline-flex';
 
-                // Update active styling on contact list items
                 document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
                 const contactEl = document.getElementById(`chat-contact-${id}`);
                 if (contactEl) contactEl.classList.add('active');
 
-                // Start listening to messages for this channel
                 this.listenMessages(id);
             },
 
             listenMessages(channelId) {
-                if (this._chatUnsub) this._chatUnsub();
-                const q = db.collection(`${PATH}/messages`).where('channel', '==', channelId).orderBy('createdAt', 'asc').limitToLast(50);
-                this._chatUnsub = q.onSnapshot(
-                    snap => { this.renderMessages(snap.docs.map(d => ({ id: d.id, ...d.data() }))); },
-                    err => {
-                        console.warn('Chat listener error:', err);
-                        this.renderMessages([]);
-                    }
-                );
+                // Unsubscribe previous listener
+                if (this._chatUnsub) { this._chatUnsub(); this._chatUnsub = null; }
+
+                const msgsEl = document.getElementById('chat-messages');
+                msgsEl.innerHTML = '<div style="text-align:center;color:var(--c-text3);font-size:.875rem;padding:40px;margin:auto;">Loading messages…</div>';
+
+                try {
+                    // Build channel ID to scope messages per student-contact pair
+                    const u = this.s.user;
+                    const channelKey = [u.srn || u.id, channelId].sort().join('_');
+
+                    const q = db.collection(`${PATH}/messages`)
+                        .where('channel', '==', channelKey)
+                        .orderBy('createdAt', 'asc')
+                        .limitToLast(50);
+
+                    this._chatUnsub = q.onSnapshot(
+                        snap => { this.renderMessages(snap.docs.map(d => ({ id: d.id, ...d.data() }))); },
+                        err => {
+                            console.warn('Chat listener error (index may be needed):', err);
+                            // Fallback: try without orderBy if index missing
+                            const q2 = db.collection(`${PATH}/messages`).where('channel', '==', channelKey).limitToLast(50);
+                            this._chatUnsub = q2.onSnapshot(
+                                snap2 => {
+                                    const msgs = snap2.docs.map(d => ({ id: d.id, ...d.data() }))
+                                        .sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+                                    this.renderMessages(msgs);
+                                },
+                                err2 => { console.error('Chat fallback error:', err2); this.renderMessages([]); }
+                            );
+                        }
+                    );
+                } catch (e) {
+                    console.error('listenMessages error:', e);
+                    this.renderMessages([]);
+                }
             },
 
             renderMessages(msgs = []) {
-                const u = this.s.user; const el = document.getElementById('chat-messages');
+                const u = this.s.user;
+                const el = document.getElementById('chat-messages');
                 if (!msgs.length) {
-                    el.innerHTML = '<div style="text-align:center;color:var(--c-text3);font-size:.875rem;margin:auto;padding:40px;">No messages yet. Say hello! 👋</div>';
+                    el.innerHTML = `<div class="chat-empty-state"><i class="fas fa-comments"></i><p>No messages yet. Say hello! 👋</p></div>`;
                     return;
                 }
                 el.innerHTML = msgs.map(m => {
                     const isMe = m.senderId === u.id || m.senderId === u.srn;
                     const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
-                    return `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">${this._escHtml(m.text || '')}<div class="msg-time">${time}</div></div>`;
+                    return `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">
+                        ${this._escHtml(m.text || '')}
+                        <div class="msg-time">${isMe ? 'You' : m.senderName || ''} ${time}</div>
+                    </div>`;
                 }).join('');
                 el.scrollTop = el.scrollHeight;
             },
@@ -2887,15 +3261,14 @@
             async sendMessage() {
                 const inp = document.getElementById('chat-input');
                 const text = inp.value.trim();
-                if (!text || !this.s.activeChat) {
-                    if (!this.s.activeChat) this.toast('Select a conversation first.', 'error');
-                    return;
-                }
+                if (!text) return;
+                if (!this.s.activeChat) { this.toast('Select a conversation first.', 'error'); return; }
                 inp.value = '';
                 const u = this.s.user;
+                const channelKey = [u.srn || u.id, this.s.activeChat].sort().join('_');
                 try {
                     await db.collection(`${PATH}/messages`).add({
-                        channel: this.s.activeChat,
+                        channel: channelKey,
                         text,
                         senderId: u.id || u.srn,
                         senderName: u.name || 'Student',
@@ -2904,7 +3277,7 @@
                 } catch (e) {
                     console.error('Send message error:', e);
                     this.toast('Failed to send message. Try again.', 'error');
-                    inp.value = text; // restore text on failure
+                    inp.value = text;
                 }
             },
 
@@ -2912,10 +3285,8 @@
                 const res = this.s.resources.length ? this.s.resources : DEMO_RESOURCES;
                 const filtered = this.s.resourceFilter === 'all' ? res : res.filter(r => r.category === this.s.resourceFilter);
                 const el = document.getElementById('resources-grid');
-                // Store resource URLs in a map to avoid embedding in onclick
                 this._resUrls = {};
                 filtered.forEach(r => { this._resUrls[r.id] = { url: r.pdfUrl || '', title: r.title || 'Resource' }; });
-
                 el.innerHTML = filtered.map(r => `
                     <div class="res-card" onclick="App.openResById('${r.id}')">
                         <div class="res-icon"><i class="fas fa-file-pdf"></i></div>
@@ -2954,6 +3325,7 @@
                 document.getElementById('leave-modal').classList.add('open');
             },
             closeLeaveModal() { document.getElementById('leave-modal').classList.remove('open'); },
+
             async submitLeave() {
                 const name = document.getElementById('leave-name').value.trim();
                 const type = document.getElementById('leave-type').value;
@@ -2966,8 +3338,24 @@
                 if (!leaves.requests) leaves.requests = [];
                 leaves.requests.push({ type, from, to: to || from, reason, name, status: 'pending', appliedAt: new Date().toISOString() });
                 await db.doc(`${PATH}/students/${u.id}`).update({ leaves });
-                await db.collection(`${PATH}/notifications`).add({ type: 'admin', title: `Leave Request: ${name}`, message: `${name} (${u.srn}) applied for ${type} leave from ${from} to ${to || from}. Reason: ${reason}`, time: 'Just now', unread: true, targetMentor: u.mentor, studentId: u.id });
-                this.closeLeaveModal(); this.toast('Leave request submitted!', 'success');
+
+                // FIX 1: Leave notifications go to a SEPARATE admin collection with specific targeting
+                // They use 'targetMentor' and 'studentId' fields so they are filtered OUT of student notification views
+                // Only admin/mentor portals (which don't filter these fields) will show them
+                await db.collection(`${PATH}/notifications`).add({
+                    type: 'leave_request',            // Special type - NOT 'mentor' or 'admin' broadcast
+                    title: `Leave Request: ${name}`,
+                    message: `${name} (${u.srn}) applied for ${type} leave from ${from} to ${to || from}. Reason: ${reason}`,
+                    time: 'Just now',
+                    unread: true,
+                    targetMentor: u.mentor,           // Scoped to specific mentor
+                    studentId: u.id,                  // Scoped to specific student
+                    srn: u.srn,
+                    createdAt: new Date().toISOString()
+                });
+
+                this.closeLeaveModal();
+                this.toast('Leave request submitted! Your mentor will review it.', 'success');
                 ['leave-name', 'leave-from', 'leave-to', 'leave-reason'].forEach(id => document.getElementById(id).value = '');
                 document.getElementById('leave-type').value = '';
             },
@@ -3025,7 +3413,6 @@
             closeSidebar() { document.getElementById('sidebar').classList.remove('open'); },
 
             toast(msg, type = 'info') {
-                // Remove any existing toast
                 document.querySelectorAll('.app-toast').forEach(t => t.remove());
                 const t = document.createElement('div');
                 t.className = 'app-toast';
@@ -3036,20 +3423,11 @@
                 setTimeout(() => t.remove(), 3000);
             },
 
-            // ══════════════════════════════════════════════════════════════
-            // FIX 2: TOUR — completely rewritten to work correctly.
-            // Key fixes:
-            // 1. Tour now requires login — redirects to login if not logged in
-            //    and auto-starts tour after login via a pending flag.
-            // 2. renderTourStep uses requestAnimationFrame to ensure elements
-            //    are visible before measuring their bounding rects.
-            // 3. tour-overlay uses visibility properly with pointer-events.
-            // 4. Skips steps where the target element doesn't exist or is hidden.
-            // ══════════════════════════════════════════════════════════════
+            // ── Tour ──
             tourSteps: [
                 { target: 'tour-identity', title: 'Your Profile', desc: 'Your name, branch, and registration number are shown here at all times.' },
                 { target: 'tour-mentor', title: 'Your Mentor', desc: 'Your assigned faculty mentor who guides you through the program.' },
-                { target: 'tour-attendance-card', title: 'Attendance Overview', desc: 'Live attendance percentage with a visual ring chart showing your status.' },
+                { target: 'tour-attendance-card', title: 'Attendance Overview', desc: 'Live attendance percentage with a visual ring chart showing your status out of 90 days.' },
                 { target: 'tour-checkin', title: 'Check In / Out', desc: 'Mark your daily attendance. Check in when you arrive, check out when you leave.' },
                 { target: 'tour-leaves', title: 'Leave Balance', desc: 'Track your sick (5 total) and normal (2 total) leave balance. Apply via the button above.' },
                 { target: 'tour-projects-summary', title: 'Project Overview', desc: 'Quick summary of your projects with document counts and milestone completion.' },
@@ -3060,83 +3438,58 @@
 
             startTour() {
                 if (!this.s.user) {
-                    // Not logged in — go to login, tour will start after
                     this._pendingTour = true;
                     this.showLogin();
                     this.toast('Sign in first to take the tour!', 'info');
                     return;
                 }
-                // Make sure we're on the dashboard tab
                 this.switchTab('dashboard');
                 this.s.tourStep = 0;
                 this.s.tourActive = true;
                 const overlay = document.getElementById('tour-overlay');
                 overlay.classList.remove('hidden');
                 overlay.classList.add('visible');
-                // Small delay to let the tab render
                 setTimeout(() => this.renderTourStep(), 100);
             },
 
             renderTourStep() {
                 if (!this.s.tourActive) return;
                 const steps = this.tourSteps;
-                // Skip steps if element not found or not visible
                 while (this.s.tourStep < steps.length) {
                     const el = document.getElementById(steps[this.s.tourStep].target);
-                    if (el && el.offsetParent !== null) break; // found a visible element
+                    if (el && el.offsetParent !== null) break;
                     this.s.tourStep++;
                 }
                 if (this.s.tourStep >= steps.length) { this.tourSkip(); return; }
-
                 const step = steps[this.s.tourStep];
                 const target = document.getElementById(step.target);
-
-                // Scroll target into view, then use rAF to measure after paint
                 target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         if (!this.s.tourActive) return;
                         const rect = target.getBoundingClientRect();
                         const pad = 8;
-
-                        // Position highlight
                         const hl = document.getElementById('tour-highlight');
                         hl.style.left = `${rect.left - pad}px`;
                         hl.style.top = `${rect.top - pad}px`;
                         hl.style.width = `${rect.width + pad * 2}px`;
                         hl.style.height = `${rect.height + pad * 2}px`;
-
-                        // Update popup content
                         document.getElementById('tour-title').textContent = step.title;
                         document.getElementById('tour-desc').textContent = step.desc;
                         document.getElementById('tour-step-label').textContent = `${this.s.tourStep + 1} of ${steps.length}`;
                         document.getElementById('tour-next-btn').textContent = this.s.tourStep === steps.length - 1 ? 'Finish ✓' : 'Next →';
                         document.getElementById('tour-dots').innerHTML = steps.map((_, i) =>
-                            `<div class="tour-dot ${i === this.s.tourStep ? 'active' : ''}"></div>`
-                        ).join('');
-
-                        // Smart popup positioning — avoid going off screen
+                            `<div class="tour-dot ${i === this.s.tourStep ? 'active' : ''}"></div>`).join('');
                         const pop = document.getElementById('tour-popup');
                         const popW = 320, popH = 200, margin = 12;
                         const vw = window.innerWidth, vh = window.innerHeight;
-
                         let top, left;
-
-                        // Try below first, then above
-                        if (rect.bottom + popH + margin < vh) {
-                            top = rect.bottom + margin;
-                        } else if (rect.top - popH - margin > 0) {
-                            top = rect.top - popH - margin;
-                        } else {
-                            top = Math.max(margin, vh / 2 - popH / 2);
-                        }
-
-                        // Align left with target, but keep on screen
+                        if (rect.bottom + popH + margin < vh) top = rect.bottom + margin;
+                        else if (rect.top - popH - margin > 0) top = rect.top - popH - margin;
+                        else top = Math.max(margin, vh / 2 - popH / 2);
                         left = rect.left;
                         if (left + popW > vw - margin) left = vw - popW - margin;
                         if (left < margin) left = margin;
-
                         pop.style.top = `${top}px`;
                         pop.style.left = `${left}px`;
                     });
@@ -3145,10 +3498,7 @@
 
             tourNext() {
                 this.s.tourStep++;
-                if (this.s.tourStep >= this.tourSteps.length) {
-                    this.tourSkip();
-                    return;
-                }
+                if (this.s.tourStep >= this.tourSteps.length) { this.tourSkip(); return; }
                 this.renderTourStep();
             },
 
@@ -3164,7 +3514,6 @@
         window.App = App;
         document.addEventListener('DOMContentLoaded', () => {
             App.init();
-            // Check for pending tour after portal loads
             const origEnter = App.enterPortal.bind(App);
             App.enterPortal = function () {
                 origEnter();
