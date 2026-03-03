@@ -2321,10 +2321,6 @@
     <!-- Landing View -->
     <div id="view-home" class="hidden">
         <div class="hero-section">
-            <!-- Transparent watermark logo in background -->
-            <!-- <div class="hero-watermark">
-                <img src="smps-logo.jpg" alt="" aria-hidden="true" onerror="this.parentElement.style.display='none'">
-            </div> -->
             <!-- Hero content above watermark -->
             <div class="hero-content">
                 <div class="smps-hero-logo">
@@ -2762,8 +2758,7 @@
             { id: 'r6', title: 'Research Methodology Guide', description: 'Guidelines for writing technical papers and project reports.', category: 'reference', uploadedBy: 'Dr. Kavitha R', uploadedAt: '2026-02-01', pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
         ];
 
-        // FIX 1: Demo notifications for students should ONLY show mentor/admin messages
-        // NOT leave-related notifications (those are private to admin/mentor)
+        // Demo notifications for students - only mentor/admin messages (no leave notifications)
         const DEMO_NOTIFICATIONS = [
             { id: 'n1', type: 'mentor', title: 'Project Deadline Reminder', message: 'Please submit your Phase 1 report by March 5th.', time: '2 hours ago', unread: true },
             { id: 'n2', type: 'mentor', title: 'Meeting Scheduled', message: 'Progress review meeting on Friday at 3 PM in Lab 204.', time: '1 day ago', unread: false },
@@ -2781,6 +2776,7 @@
                 theme: localStorage.getItem('theme') || 'light',
                 tourStep: 0, tourActive: false,
                 projectsById: {},
+                groups: [], // Added groups array
             },
 
             async init() {
@@ -2843,11 +2839,12 @@
                 document.getElementById('u-name').textContent = u.name || 'Student';
                 document.getElementById('u-srn').textContent = u.srn || '---';
                 document.getElementById('u-avatar').textContent = (u.name || 'S')[0].toUpperCase();
-                this.syncAll(); this.renderDashboard();
+                this.syncAll();
+                this.renderDashboard();
             },
 
             syncAll() {
-                ['projects', 'tasks', 'mentors', 'resources', 'notifications'].forEach(c => {
+                ['projects', 'tasks', 'mentors', 'resources', 'notifications', 'groups'].forEach(c => {
                     db.collection(`${PATH}/${c}`).onSnapshot(snap => {
                         this.s[c] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                         if (c === 'projects') {
@@ -2869,6 +2866,7 @@
                 if (col === 'notifications') { this.updateNotifDot(); if (tab === 'notifications') this.renderNotifications(); }
                 if (col === 'resources' && tab === 'resources') this.renderResources();
                 if (col === 'mentors') this.renderMentor();
+                if (col === 'groups') this.s.groups = this.s.groups || []; // Ensure groups array exists
             },
 
             refreshUserUI() {
@@ -2901,7 +2899,6 @@
 
             updateAttUI() {
                 const u = this.s.user; if (!u) return;
-                // FIX 3: Changed total days from 26 to 90
                 const absent = u.absentCount || 0, total = 90, present = Math.max(0, total - absent), pct = Math.round((present / total) * 100);
                 document.getElementById('att-pct').textContent = pct + '%';
                 document.getElementById('att-fraction').textContent = `${present}/${total}`;
@@ -3152,16 +3149,46 @@
                 this.toast('Work submitted! Awaiting mentor review.', 'success');
             },
 
+            // Helper function to check if student is in a group
+            isStudentInGroup(studentId, groupId) {
+                const group = this.s.groups?.find(g => g.id === groupId);
+                return group?.members?.includes(studentId) || false;
+            },
+
             updateNotifDot() {
                 const u = this.s.user;
-                // FIX 1: Filter notifications - students only see mentor/admin type, NOT leave notifications
                 const allNotifs = this.s.notifications.length ? this.s.notifications : DEMO_NOTIFICATIONS;
+
                 const studentNotifs = allNotifs.filter(n => {
-                    // Exclude leave-related notifications entirely (those are for admin/mentor only)
-                    if (n.targetMentor || n.studentId) return false; // leave request notifications
+                    // FILTER OUT leave request notifications (these have studentId)
+                    if (n.studentId) return false;
                     if (n.title && n.title.toLowerCase().includes('leave request')) return false;
-                    return n.type === 'mentor' || n.type === 'admin' || n.type === 'info';
+
+                    // FILTER OUT mentor-targeted notifications
+                    if (n.targetMentor || n.targetMentorId) return false;
+
+                    // NOW CHECK what this student should see:
+
+                    // Case 1: Broadcast to all students
+                    if (n.targetAudience === 'all_students') return true;
+
+                    // Case 2: General notification with no targeting (older format)
+                    if (!n.targetAudience && !n.targetType && n.type === 'admin') return true;
+
+                    // Case 3: Mentor notification (general)
+                    if (n.type === 'mentor') return true;
+
+                    // Case 4: Targeted to specific group
+                    if (n.targetAudience === 'group') {
+                        return this.isStudentInGroup(u.id, n.targetGroupId);
+                    }
+
+                    // Case 5: Targeted to specific student (if needed)
+                    if (n.targetAudience === 'student' && n.targetId === u.id) return true;
+
+                    return false;
                 });
+
                 const unread = studentNotifs.filter(n => n.unread);
                 const dot = document.getElementById('notif-dot');
                 if (dot) dot.style.display = unread.length ? 'block' : 'none';
@@ -3171,26 +3198,50 @@
                 const u = this.s.user;
                 const allNotifs = this.s.notifications.length ? this.s.notifications : DEMO_NOTIFICATIONS;
 
-                // FIX 1: Students only see notifications intended for them
-                // Filter out leave request notifications (those are admin/mentor only)
-                // Students see: mentor broadcast messages, admin broadcast messages
-                // NOT: leave requests submitted by students (those show in leave history section)
                 const studentNotifs = allNotifs.filter(n => {
-                    // Skip leave request notifications - they go to admin/mentor portals, not student feed
-                    if (n.targetMentor || n.studentId) return false;
+                    // FILTER OUT leave request notifications (these have studentId)
+                    if (n.studentId) return false;
                     if (n.title && n.title.toLowerCase().includes('leave request')) return false;
-                    return true;
+
+                    // FILTER OUT mentor-targeted notifications
+                    if (n.targetMentor || n.targetMentorId) return false;
+
+                    // NOW CHECK what this student should see:
+
+                    // Case 1: Broadcast to all students
+                    if (n.targetAudience === 'all_students') return true;
+
+                    // Case 2: General notification with no targeting (older format)
+                    if (!n.targetAudience && !n.targetType && n.type === 'admin') return true;
+
+                    // Case 3: Mentor notification (general)
+                    if (n.type === 'mentor') return true;
+
+                    // Case 4: Targeted to specific group
+                    if (n.targetAudience === 'group') {
+                        return this.isStudentInGroup(u.id, n.targetGroupId);
+                    }
+
+                    // Case 5: Targeted to specific student (if needed)
+                    if (n.targetAudience === 'student' && n.targetId === u.id) return true;
+
+                    return false;
                 });
 
                 const icons = { mentor: 'fa-chalkboard-teacher', admin: 'fa-shield-halved', info: 'fa-info-circle' };
                 const colors = { mentor: 'var(--c-primary-soft)', admin: 'var(--c-purple-soft)', info: 'var(--c-green-soft)' };
                 const tcolors = { mentor: 'var(--c-primary)', admin: 'var(--c-purple)', info: 'var(--c-green)' };
+
                 const render = (type, cid) => {
                     const list = studentNotifs.filter(n => n.type === type || (!n.type && type === 'admin'));
-                    const el = document.getElementById(cid); if (!el) return;
+                    const el = document.getElementById(cid);
+                    if (!el) return;
+
                     el.innerHTML = list.length ? list.map(n => `
                         <div class="notif-item ${n.unread ? 'unread' : ''}">
-                            <div class="notif-icon-wrap" style="background:${colors[n.type] || colors.info};color:${tcolors[n.type] || tcolors.info};"><i class="fas ${icons[n.type] || 'fa-bell'}"></i></div>
+                            <div class="notif-icon-wrap" style="background:${colors[n.type] || colors.info};color:${tcolors[n.type] || tcolors.info};">
+                                <i class="fas ${icons[n.type] || 'fa-bell'}"></i>
+                            </div>
                             <div class="notif-body" style="flex:1;">
                                 <div class="title">${n.title || 'Notification'}</div>
                                 <div class="msg">${n.message || n.msg || ''}</div>
@@ -3200,10 +3251,12 @@
                         </div>`).join('')
                         : '<div class="notif-item"><div class="notif-body"><div class="msg">No notifications yet.</div></div></div>';
                 };
-                render('mentor', 'notif-mentor'); render('admin', 'notif-admin');
+
+                render('mentor', 'notif-mentor');
+                render('admin', 'notif-admin');
             },
 
-            // ── CHAT (FIX 2: Fully restored and fixed) ──
+            // ── CHAT ──
             _chatContacts: {},
             _chatUnsub: null,
 
@@ -3391,17 +3444,16 @@
                 leaves.requests.push({ type, from, to: to || from, reason, name, status: 'pending', appliedAt: new Date().toISOString() });
                 await db.doc(`${PATH}/students/${u.id}`).update({ leaves });
 
-                // FIX 1: Leave notifications go to a SEPARATE admin collection with specific targeting
-                // They use 'targetMentor' and 'studentId' fields so they are filtered OUT of student notification views
-                // Only admin/mentor portals (which don't filter these fields) will show them
+                // Leave notifications go to admin/mentor with studentId field
+                // These will be filtered OUT of student notification view (correct behavior)
                 await db.collection(`${PATH}/notifications`).add({
-                    type: 'leave_request',            // Special type - NOT 'mentor' or 'admin' broadcast
+                    type: 'leave_request',
                     title: `Leave Request: ${name}`,
                     message: `${name} (${u.srn}) applied for ${type} leave from ${from} to ${to || from}. Reason: ${reason}`,
                     time: 'Just now',
                     unread: true,
-                    targetMentor: u.mentor,           // Scoped to specific mentor
-                    studentId: u.id,                  // Scoped to specific student
+                    targetMentor: u.mentor,
+                    studentId: u.id,
                     srn: u.srn,
                     createdAt: new Date().toISOString()
                 });
