@@ -1695,7 +1695,7 @@
                                 placeholder="Write your message…"></textarea></div>
                         <div class="form-group"><label>Target</label>
                             <select class="input" id="bc-target">
-                                <option value="all">All Students & Mentors</option>
+                                <option value="all">All Students</option>
                                 <option value="students">Students Only</option>
                                 <option value="mentors">Mentors Only</option>
                                 <option value="group">Specific Group</option>
@@ -2493,14 +2493,16 @@
                 if (decision === 'approved') { const type = leaves.requests[idx].type; leaves[type] = (leaves[type] || 0) + 1; }
                 await db.doc(`${PATH}/students/${studentId}`).update({ leaves });
 
-                // Send notification to student
+                // Send notification to student - using studentId field (this is intentional for targeted notifications)
                 await db.collection(`${PATH}/notifications`).add({
                     type: 'admin',
                     title: `Leave Request ${decision}`,
                     message: `Your ${leaves.requests[idx].type} leave request has been ${decision}.`,
                     time: 'Just now',
                     unread: true,
-                    studentId: studentId
+                    studentId: studentId,  // Targeted notification - uses studentId
+                    targetType: 'student', // Additional targeting info
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
                 this.toast(`Leave ${decision}!`, decision === 'approved' ? 'success' : 'error');
@@ -2556,7 +2558,8 @@
                 document.getElementById('chat-active-name').textContent = name;
                 document.getElementById('chat-av').textContent = av;
                 document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
-                event?.currentTarget?.classList.add('active');
+                const current = event?.currentTarget;
+                if (current) current.classList.add('active');
                 if (this._chatUnsub) this._chatUnsub();
                 const q = db.collection(`${PATH}/messages`).where('channel', '==', id).orderBy('createdAt', 'asc').limitToLast(50);
                 this._chatUnsub = q.onSnapshot(snap => this._showMsgs(snap.docs.map(d => ({ id: d.id, ...d.data() }))), () => this._showMsgs([]));
@@ -2573,7 +2576,7 @@
                 el.innerHTML = msgs.map(m => {
                     const isMe = m.senderRole === 'admin' || m.senderId === 'admin';
                     const t = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
-                    return `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">${m.text || ''}<div class="msg-time">${t}</div></div>`;
+                    return `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">${this._esc(m.text || '')}<div class="msg-time">${t}</div></div>`;
                 }).join('');
                 el.scrollTop = el.scrollHeight;
             },
@@ -2590,7 +2593,7 @@
                 });
             },
 
-            // ─── BROADCAST ───
+            // ─── BROADCAST (UPDATED WITH STABLE NOTIFICATION SYSTEM) ───
             async sendBroadcast() {
                 const title = document.getElementById('bc-title').value.trim();
                 const msg = document.getElementById('bc-msg').value.trim();
@@ -2600,61 +2603,88 @@
                 if (!title || !msg) { this.toast('Fill in title and message.', 'error'); return; }
                 if (target === 'group' && !groupId) { this.toast('Please select a group.', 'error'); return; }
 
-                let targetStudents = [];
-                if (target === 'all') {
-                    targetStudents = this.s.students.map(s => s.id);
-                } else if (target === 'students') {
-                    targetStudents = this.s.students.map(s => s.id);
-                } else if (target === 'mentors') {
-                    // Send to mentors
-                    for (const m of this.s.mentors) {
+                const broadcastData = {
+                    type: 'admin',
+                    title,
+                    message: msg,
+                    from: 'Super Admin',
+                    senderRole: 'Super Admin',
+                    time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+                    unread: true,
+                    broadcastId: Date.now().toString(),
+                    targetType: target,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                try {
+                    if (target === 'all' || target === 'students') {
+                        // For all students - create ONE notification with broadcast flag
                         await db.collection(`${PATH}/notifications`).add({
-                            type: 'admin',
-                            title,
-                            message: msg,
-                            from: 'Super Admin',
-                            senderRole: 'Super Admin',
-                            time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
-                            unread: true,
-                            targetMentor: m.id,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            ...broadcastData,
+                            targetAudience: 'all_students',  // Special flag for "show to all students"
+                            // DO NOT include studentId field - this makes it a broadcast
                         });
                     }
-                } else if (target === 'group') {
-                    const group = this.s.groups.find(g => g.id === groupId);
-                    if (group) {
-                        targetStudents = group.members || [];
+                    else if (target === 'mentors') {
+                        // Send to mentors individually
+                        for (const m of this.s.mentors) {
+                            await db.collection(`${PATH}/notifications`).add({
+                                ...broadcastData,
+                                targetAudience: 'mentor',
+                                targetMentorId: m.id,  // Use mentor-specific field
+                            });
+                        }
                     }
+                    else if (target === 'group') {
+                        const group = this.s.groups.find(g => g.id === groupId);
+                        if (group) {
+                            // Create ONE notification for the group
+                            await db.collection(`${PATH}/notifications`).add({
+                                ...broadcastData,
+                                targetAudience: 'group',
+                                targetGroupId: groupId,
+                                targetGroupName: group.name,
+                                // DO NOT include studentId field
+                            });
+                        }
+                    }
+
+                    this.toast(`Broadcast sent to ${target} recipients!`, 'success');
+                } catch (error) {
+                    console.error('Broadcast error:', error);
+                    this.toast('Error sending broadcast.', 'error');
                 }
 
-                // Send to students
-                for (const studentId of targetStudents) {
-                    await db.collection(`${PATH}/notifications`).add({
-                        type: 'admin',
-                        title,
-                        message: msg,
-                        from: 'Super Admin',
-                        senderRole: 'Super Admin',
-                        time: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
-                        unread: true,
-                        studentId: studentId,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
-
+                // Clear form
                 document.getElementById('bc-title').value = '';
                 document.getElementById('bc-msg').value = '';
-                this.toast(`Broadcast sent to ${target} recipients!`, 'success');
             },
 
             renderBroadcasts() {
-                const mine = this.s.notifications.filter(n => n.senderRole === 'Super Admin' || n.from === 'Super Admin').slice().reverse();
-                document.getElementById('recent-broadcasts').innerHTML = mine.slice(0, 10).map(n => `
+                const mine = this.s.notifications
+                    .filter(n => n.senderRole === 'Super Admin' || n.from === 'Super Admin')
+                    .slice()
+                    .reverse();
+
+                document.getElementById('recent-broadcasts').innerHTML = mine.slice(0, 10).map(n => {
+                    // Determine target display text
+                    let targetText = '';
+                    if (n.targetAudience === 'all_students') targetText = '👥 All Students';
+                    else if (n.targetAudience === 'mentor') targetText = '👤 Mentor';
+                    else if (n.targetAudience === 'group') targetText = `👥 Group: ${n.targetGroupName || 'Unknown'}`;
+                    else if (n.studentId) targetText = '👤 Specific Student';
+                    else targetText = '👥 Broadcast';
+
+                    return `
                     <div style="padding:12px;background:var(--c-surface2);border:1px solid var(--c-border);border-radius:10px;margin-bottom:8px;">
-                        <div style="font-weight:600;font-size:.875rem;margin-bottom:2px;">${n.title || 'Broadcast'}</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                            <div style="font-weight:600;font-size:.875rem;">${n.title || 'Broadcast'}</div>
+                            <span class="badge badge-blue" style="font-size:9px;">${targetText}</span>
+                        </div>
                         <div style="font-size:.78rem;color:var(--c-text2);">${n.message || n.text || ''}</div>
                         <div style="font-size:.72rem;color:var(--c-text3);margin-top:5px;">${n.time || ''}</div>
-                    </div>`).join('') || '<p style="font-size:.82rem;color:var(--c-text3);">No broadcasts yet.</p>';
+                    </div>`;
+                }).join('') || '<p style="font-size:.82rem;color:var(--c-text3);">No broadcasts yet.</p>';
 
                 // Update group dropdown
                 const select = document.getElementById('bc-group');
@@ -3239,7 +3269,7 @@
             },
 
             _esc(str) {
-                return String(str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             },
 
             // ─── TOAST ───
