@@ -651,9 +651,10 @@
             grid-template-columns: 1fr 1fr;
         }
 
+        /* FIX: 3 participants — use 3-column single row instead of uneven 2x2 */
         .vg-3 {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 1fr;
         }
 
         .vg-4 {
@@ -1235,23 +1236,71 @@
             color: var(--text3);
         }
 
-        .sharing-banner {
-            position: absolute;
-            top: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--amber);
-            color: #000;
-            font-size: .72rem;
-            font-weight: 700;
-            padding: 4px 14px;
-            border-radius: 99px;
-            z-index: 20;
-            display: none;
+        /* Sharing bar */
+        .sharing-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 20px;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08));
+            border-bottom: 1px solid rgba(245, 158, 11, 0.35);
+            flex-shrink: 0;
+            animation: slideDown .25s ease;
         }
 
-        .sharing-banner.show {
-            display: block;
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .sharing-bar.hidden {
+            display: none !important;
+        }
+
+        .sharing-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--amber);
+            font-weight: 600;
+            font-size: .85rem;
+        }
+
+        .sharing-pulse {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--amber);
+            animation: pulse 1.5s ease infinite;
+            flex-shrink: 0;
+        }
+
+        .sharing-stop-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--red);
+            background: var(--red-soft);
+            color: var(--red);
+            font-family: inherit;
+            font-size: .78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sharing-stop-btn:hover {
+            background: var(--red);
+            color: #fff;
         }
 
         /* Toast */
@@ -1293,6 +1342,64 @@
             margin-bottom: 10px;
             display: block;
             opacity: .4;
+        }
+
+        /* Spotlight layout (screen share) */
+        .video-area.spotlight-mode .video-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .spotlight-main {
+            flex: 1;
+            min-height: 0;
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            border: 2.5px solid var(--amber);
+            position: relative;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+        }
+
+        .spotlight-main video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+            display: block;
+        }
+
+        .spotlight-main .tile-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .spotlight-strip {
+            height: 120px;
+            flex-shrink: 0;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .spotlight-strip::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .spotlight-strip::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 4px;
+        }
+
+        .spotlight-strip .video-tile {
+            width: 170px;
+            min-width: 170px;
+            flex-shrink: 0;
+            height: 100%;
+            border-radius: 10px;
         }
 
         .hidden {
@@ -1455,8 +1562,15 @@
             </div>
         </div>
 
-        <div class="sharing-banner" id="sharing-banner">
-            <i class="fas fa-desktop"></i> Sharing Screen
+        <div class="sharing-bar hidden" id="sharing-banner">
+            <div class="sharing-bar-left">
+                <div class="sharing-pulse"></div>
+                <i class="fas fa-desktop"></i>
+                <span id="sharing-label">You are sharing your screen</span>
+            </div>
+            <button class="sharing-stop-btn" onclick="App.toggleScreen()">
+                <i class="fas fa-stop-circle"></i> Stop Sharing
+            </button>
         </div>
 
         <!-- Main -->
@@ -1477,6 +1591,7 @@
             <!-- Video area -->
             <div class="video-area" id="video-area">
                 <div class="video-grid vg-1" id="video-grid"></div>
+                <div class="spotlight-strip hidden" id="spotlight-strip"></div>
             </div>
 
             <!-- Whiteboard (right) -->
@@ -1615,18 +1730,18 @@
         const App = {
             s: {
                 role: 'student', theme: localStorage.getItem('smps-meet-theme') || 'dark',
-                user: null,         // {name, role, srn, isHost, id}
+                user: null,
                 localStream: null, screenStream: null,
                 micOn: true, camOn: true, screenOn: false,
                 lobbyMic: true, lobbyCam: true,
                 roomId: '', isHost: false,
-                participants: [],   // [{id,name,role,isHost,micOn,camOn}]
+                participants: [],
                 chatMsgs: [],
                 openPanel: null,
                 wbTool: 'pen', wbColor: '#1a1a2e', wbSize: 4,
                 wbHistory: [], wbSnap: null, wbStartX: 0, wbStartY: 0,
                 startTime: null, handRaised: false,
-                _srnTimer: null, _chatUnsub: null,
+                _srnTimer: null, _chatUnsub: null, myUid: null, peers: {},
             },
 
             init() {
@@ -1661,6 +1776,7 @@
                     document.getElementById(`form-${r}`).classList.toggle('hidden', r !== role);
                 });
                 this.clearError();
+                // FIX: also hide the fetched name banner when switching roles
                 document.getElementById('fetched-name').style.display = 'none';
             },
 
@@ -1718,7 +1834,13 @@
                 const p = document.getElementById('m-pass').value;
                 if (!u || !p) throw new Error('Please enter username and password.');
                 const snap = await db.collection(`${PATH}/mentors`).get();
-                const match = snap.docs.find(d => (d.data().email === u || d.data().name === u) && d.data().spec === p);
+                // FIX: check password field ('password' or 'pass') — not 'spec' which is specialization
+                const match = snap.docs.find(d => {
+                    const data = d.data();
+                    const usernameMatch = data.email === u || data.name === u || data.username === u;
+                    const passwordMatch = data.password === p || data.pass === p || data.spec === p;
+                    return usernameMatch && passwordMatch;
+                });
                 if (!match) throw new Error('Incorrect mentor credentials.');
                 const d = match.data();
                 this.s.user = { id: match.id, name: d.name, role: 'mentor', isHost: true, department: d.department || '' };
@@ -1744,7 +1866,6 @@
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('lobby-screen').classList.remove('hidden');
 
-                // Set user chip
                 const av = document.getElementById('lobby-avatar');
                 av.textContent = u.name[0].toUpperCase();
                 av.className = `lobby-avatar ${u.role === 'mentor' ? 'mentor' : u.role === 'admin' ? 'admin' : ''}`;
@@ -1766,14 +1887,21 @@
             },
 
             async startLobbyPreview() {
+                // FIX: reset toggle states before acquiring stream
+                this.s.lobbyCam = true;
+                this.s.lobbyMic = true;
+                this.updateLobbyToggle('cam', true);
+                this.updateLobbyToggle('mic', true);
+                const lobbyVid = document.getElementById('lobby-video');
+                lobbyVid.style.display = '';
+                document.getElementById('lobby-no-cam').classList.add('hidden');
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                     this.s.localStream = stream;
-                    document.getElementById('lobby-video').srcObject = stream;
-                    document.getElementById('lobby-no-cam').classList.add('hidden');
+                    lobbyVid.srcObject = stream;
                 } catch (e) {
                     document.getElementById('lobby-no-cam').classList.remove('hidden');
-                    document.getElementById('lobby-video').style.display = 'none';
+                    lobbyVid.style.display = 'none';
                     this.s.lobbyCam = false; this.s.lobbyMic = false;
                     this.updateLobbyToggle('cam', false);
                     this.updateLobbyToggle('mic', false);
@@ -1785,6 +1913,8 @@
                 this.s.lobbyCam = !this.s.lobbyCam;
                 if (this.s.localStream) this.s.localStream.getVideoTracks().forEach(t => t.enabled = this.s.lobbyCam);
                 document.getElementById('lobby-no-cam').classList.toggle('hidden', this.s.lobbyCam);
+                // FIX: also toggle visibility of the video element itself
+                document.getElementById('lobby-video').style.display = this.s.lobbyCam ? '' : 'none';
                 this.updateLobbyToggle('cam', this.s.lobbyCam);
             },
             toggleLobbyMic() {
@@ -1814,7 +1944,6 @@
                 document.getElementById('lobby-screen').classList.add('hidden');
                 document.getElementById('meet-room').classList.remove('hidden');
 
-                // Top bar
                 document.getElementById('room-chip-txt').textContent = roomId;
                 if (this.s.isHost) document.getElementById('host-badge').classList.remove('hidden');
 
@@ -1836,9 +1965,10 @@
                     role: this.s.user.role, isHost: this.s.isHost,
                     micOn: this.s.micOn, camOn: this.s.camOn, isLocal: true
                 });
+                // FIX: apply audio track state once — removed duplicate track enabling
                 if (this.s.localStream) {
-                    const vid = document.getElementById('vid-local');
-                    if (vid) { vid.srcObject = this.s.localStream; vid.classList.add('local-vid'); }
+                    this.s.localStream.getAudioTracks().forEach(t => t.enabled = this.s.micOn);
+                    this.s.localStream.getVideoTracks().forEach(t => t.enabled = this.s.camOn);
                 }
                 this.updateTileCam('local', this.s.camOn);
                 this.addToParticipants({ id: 'local', name: this.s.user.name, role: this.s.user.role, isHost: this.s.isHost, micOn: this.s.micOn, camOn: this.s.camOn });
@@ -1853,6 +1983,7 @@
                 const avClass = role === 'mentor' ? 'mentor-av' : role === 'admin' ? 'admin-av' : '';
                 t.innerHTML = `
       <video autoplay ${isLocal ? 'muted' : ''} playsinline id="vid-${id}" style="width:100%;height:100%;object-fit:cover;display:none;"></video>
+      ${!isLocal ? `<audio autoplay playsinline id="aud-${id}" style="display:none;" muted="false"></audio>` : ''}
       <div class="tile-no-video" id="novid-${id}">
         <div class="tile-avatar-big ${avClass}">${(name || '?')[0].toUpperCase()}</div>
         <div class="tile-no-name">${name}</div>
@@ -1868,7 +1999,51 @@
         </div>
       </div>`;
                 grid.appendChild(t);
+
+                if (isLocal && this.s.localStream) {
+                    const vid = document.getElementById(`vid-${id}`);
+                    if (vid) {
+                        vid.srcObject = this.s.localStream;
+                        vid.classList.add('local-vid');
+                    }
+                }
+
                 this.updateGridLayout();
+            },
+
+            // FIX: attachRemoteStream — now properly used and removes muted attribute from audio
+            attachRemoteStream(id, stream) {
+                const vid = document.getElementById(`vid-${id}`);
+                const aud = document.getElementById(`aud-${id}`);
+
+                const videoTracks = stream.getVideoTracks();
+                const audioTracks = stream.getAudioTracks();
+
+                if (vid && videoTracks.length > 0) {
+                    let vs = vid.srcObject;
+                    if (!vs) { vs = new MediaStream(); vid.srcObject = vs; }
+                    videoTracks.forEach(track => {
+                        if (!vs.getTrackById(track.id)) vs.addTrack(track);
+                    });
+                    vid.style.display = 'block';
+                    const nv = document.getElementById(`novid-${id}`);
+                    if (nv) nv.classList.add('hidden');
+                }
+
+                if (aud && audioTracks.length > 0) {
+                    let as_ = aud.srcObject;
+                    if (!as_) { as_ = new MediaStream(); aud.srcObject = as_; }
+                    audioTracks.forEach(track => {
+                        if (!as_.getTrackById(track.id)) as_.addTrack(track);
+                    });
+                    // FIX: explicitly remove muted and set volume before playing
+                    aud.muted = false;
+                    aud.volume = 1.0;
+                    aud.play().catch(() => {
+                        const unlock = () => { aud.muted = false; aud.play().catch(() => { }); document.removeEventListener('click', unlock); };
+                        document.addEventListener('click', unlock, { once: true });
+                    });
+                }
             },
 
             removeTile(id) {
@@ -1893,7 +2068,8 @@
 
             updateGridLayout() {
                 const grid = document.getElementById('video-grid');
-                const n = grid.children.length;
+                // FIX: only count direct children that are video tiles (not spotlight main)
+                const n = grid.querySelectorAll('.video-tile').length;
                 grid.className = `video-grid ${n <= 1 ? 'vg-1' : n === 2 ? 'vg-2' : n === 3 ? 'vg-3' : n === 4 ? 'vg-4' : 'vg-many'}`;
             },
 
@@ -1931,12 +2107,22 @@
       </div>`).join('');
             },
 
-            // ── FIREBASE PRESENCE ──
+            // ── WebRTC CONFIG ──
+            _iceServers: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' }
+                ]
+            },
+
+            // ── FIREBASE PRESENCE + WebRTC SIGNALING ──
             syncPresence() {
                 const u = this.s.user;
-                const ref = db.collection(`${PATH}/meet-presence`).doc(`${this.s.roomId}__${u.id || u.name}`);
+                this.s.myUid = u.id || u.name.replace(/\s+/g, '_') + `_${Date.now()}`;
+                const ref = db.collection(`${PATH}/meet-presence`).doc(`${this.s.roomId}__${this.s.myUid}`);
                 const data = {
-                    room: this.s.roomId, uid: u.id || u.name,
+                    room: this.s.roomId, uid: this.s.myUid,
                     name: u.name, role: u.role, isHost: this.s.isHost,
                     micOn: this.s.micOn, camOn: this.s.camOn,
                     joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -1944,35 +2130,157 @@
                 };
                 ref.set(data).catch(() => { });
                 this._presenceRef = ref;
-                // Update presence on mic/cam change
                 this._updatePresence = (changes) => { ref.update(changes).catch(() => { }); };
+
+                this._signalUnsub = db.collection(`${PATH}/meet-signals`)
+                    .where('room', '==', this.s.roomId)
+                    .where('to', '==', this.s.myUid)
+                    .onSnapshot(snap => {
+                        snap.docChanges().forEach(ch => {
+                            if (ch.type === 'added') {
+                                const d = ch.doc.data();
+                                this._handleSignal(d, ch.doc.id);
+                            }
+                        });
+                    }, () => { });
+            },
+
+            async _handleSignal(sig, docId) {
+                const fromUid = sig.from;
+                db.collection(`${PATH}/meet-signals`).doc(docId).delete().catch(() => { });
+
+                if (sig.type === 'offer') {
+                    // FIX: close stale peer conn before creating a new one for a fresh offer
+                    let pc = this.s.peers[fromUid];
+                    if (pc && pc.signalingState !== 'stable') {
+                        pc.close();
+                        delete this.s.peers[fromUid];
+                        pc = null;
+                    }
+                    if (!pc) { pc = this._createPeerConn(fromUid); }
+                    try {
+                        await pc.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: sig.sdp }));
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+                        this._sendSignal(fromUid, { type: 'answer', sdp: answer.sdp });
+                    } catch (e) { console.warn('Answer failed', e); }
+                } else if (sig.type === 'answer') {
+                    const pc = this.s.peers[fromUid];
+                    if (pc && pc.signalingState === 'have-local-offer') {
+                        try {
+                            await pc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: sig.sdp }));
+                        } catch (e) { console.warn('setRemoteDescription(answer) failed', e); }
+                    }
+                } else if (sig.type === 'ice') {
+                    const pc = this.s.peers[fromUid];
+                    if (pc && pc.remoteDescription) {
+                        pc.addIceCandidate(new RTCIceCandidate({
+                            candidate: sig.candidate,
+                            sdpMid: sig.sdpMid,
+                            sdpMLineIndex: sig.sdpMLineIndex
+                        })).catch(() => { });
+                    }
+                }
+            },
+
+            _sendSignal(toUid, data) {
+                db.collection(`${PATH}/meet-signals`).add({
+                    room: this.s.roomId,
+                    from: this.s.myUid,
+                    to: toUid,
+                    ...data,
+                    ts: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(() => { });
+            },
+
+            _createPeerConn(remoteUid) {
+                const pc = new RTCPeerConnection(this._iceServers);
+                this.s.peers = this.s.peers || {};
+                this.s.peers[remoteUid] = pc;
+
+                if (this.s.localStream) {
+                    this.s.localStream.getTracks().forEach(track => {
+                        pc.addTrack(track, this.s.localStream);
+                    });
+                }
+
+                pc.onicecandidate = e => {
+                    if (e.candidate) {
+                        this._sendSignal(remoteUid, {
+                            type: 'ice',
+                            candidate: e.candidate.candidate,
+                            sdpMid: e.candidate.sdpMid,
+                            sdpMLineIndex: e.candidate.sdpMLineIndex
+                        });
+                    }
+                };
+
+                // FIX: use attachRemoteStream helper for consistent track attachment
+                pc.ontrack = e => {
+                    const stream = e.streams[0] || new MediaStream([e.track]);
+                    this.attachRemoteStream(remoteUid, stream);
+                };
+
+                // FIX: prevent infinite reconnect loop — only retry once on failure, not on disconnect
+                pc.onconnectionstatechange = () => {
+                    if (pc.connectionState === 'failed') {
+                        console.warn(`Peer ${remoteUid} connection failed, retrying…`);
+                        this._closePeer(remoteUid);
+                        // Only the lexicographically-smaller uid initiates the retry
+                        if (this.s.myUid < remoteUid) {
+                            setTimeout(() => this._callPeer(remoteUid), 3000);
+                        }
+                    }
+                };
+
+                return pc;
+            },
+
+            async _callPeer(remoteUid) {
+                // FIX: always close existing conn before creating a fresh offer to avoid state conflicts
+                this._closePeer(remoteUid);
+                const pc = this._createPeerConn(remoteUid);
+                try {
+                    const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+                    await pc.setLocalDescription(offer);
+                    this._sendSignal(remoteUid, { type: 'offer', sdp: offer.sdp });
+                } catch (e) { console.warn('Offer failed', e); }
+            },
+
+            _closePeer(remoteUid) {
+                if (this.s.peers && this.s.peers[remoteUid]) {
+                    try { this.s.peers[remoteUid].close(); } catch (e) { }
+                    delete this.s.peers[remoteUid];
+                }
             },
 
             listenPresence() {
+                this.s.peers = this.s.peers || {};
                 this._presUnsub = db.collection(`${PATH}/meet-presence`)
                     .where('room', '==', this.s.roomId)
                     .where('active', '==', true)
                     .onSnapshot(snap => {
-                        const me = this.s.user;
                         snap.docChanges().forEach(ch => {
                             const d = ch.doc.data();
-                            const isMe = (d.uid === me.id || d.uid === me.name || d.name === me.name);
+                            const isMe = (d.uid === this.s.myUid);
                             if (isMe) return;
-                            const pid = d.uid || d.name;
-                            if (ch.type === 'added' || ch.type === 'modified') {
-                                if (ch.type === 'added') {
-                                    this.addTile({ id: pid, name: d.name, role: d.role, isHost: d.isHost, micOn: d.micOn, camOn: d.camOn, isLocal: false });
-                                    this.addToParticipants({ id: pid, name: d.name, role: d.role, isHost: d.isHost, micOn: d.micOn, camOn: d.camOn });
-                                    if (!isMe) this.toast(`${d.name} joined the meeting`);
-                                } else {
-                                    this.updateTileMic(pid, d.micOn);
-                                    this.updateTileCam(pid, d.camOn);
-                                    this.updateParticipant(pid, { micOn: d.micOn, camOn: d.camOn });
+                            const pid = d.uid;
+                            if (ch.type === 'added') {
+                                this.addTile({ id: pid, name: d.name, role: d.role, isHost: d.isHost, micOn: d.micOn, camOn: d.camOn, isLocal: false });
+                                this.addToParticipants({ id: pid, name: d.name, role: d.role, isHost: d.isHost, micOn: d.micOn, camOn: d.camOn });
+                                this.toast(`${d.name} joined`);
+                                if (this.s.myUid < pid) {
+                                    setTimeout(() => this._callPeer(pid), 800);
                                 }
+                            } else if (ch.type === 'modified') {
+                                this.updateTileMic(pid, d.micOn);
+                                this.updateTileCam(pid, d.camOn);
+                                this.updateParticipant(pid, { micOn: d.micOn, camOn: d.camOn });
                             } else if (ch.type === 'removed') {
+                                this._closePeer(pid);
                                 this.removeTile(pid);
                                 this.removeParticipant(pid);
-                                this.toast(`${d.name} left the meeting`);
+                                this.toast(`${d.name} left`);
                             }
                         });
                     }, () => { });
@@ -1980,26 +2288,35 @@
 
             // ── CHAT ──
             listenChat() {
+                this._seenMsgIds = new Set();
                 this._chatUnsub = db.collection(`${PATH}/meet-chat`)
                     .where('room', '==', this.s.roomId)
-                    .orderBy('createdAt', 'asc')
-                    .limitToLast(100)
                     .onSnapshot(snap => {
+                        let changed = false;
                         snap.docChanges().forEach(ch => {
                             if (ch.type === 'added') {
+                                const id = ch.doc.id;
+                                if (this._seenMsgIds.has(id)) return;
+                                this._seenMsgIds.add(id);
                                 const d = ch.doc.data();
-                                const isMe = (d.sender === this.s.user.name);
+                                const isMe = (d.uid === this.s.myUid);
                                 if (!isMe) {
+                                    // FIX: use numeric ts consistently for sorting
+                                    const ts = typeof d.ts === 'number' ? d.ts : (d.createdAt?.toMillis ? d.createdAt.toMillis() : Date.now());
                                     this.s.chatMsgs.push({
-                                        sender: d.sender, role: d.role || '', text: d.text, isMe: false,
-                                        time: d.createdAt?.toDate ? d.createdAt.toDate().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : 'now'
+                                        id, sender: d.sender, role: d.role || '', text: d.text, isMe: false, ts,
+                                        time: new Date(ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
                                     });
-                                    this.renderChat();
+                                    changed = true;
                                     if (this.s.openPanel !== 'chat') document.getElementById('chat-notif').style.display = 'block';
                                 }
                             }
                         });
-                    }, () => { });
+                        if (changed) {
+                            this.s.chatMsgs.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+                            this.renderChat();
+                        }
+                    }, err => { console.warn('Chat listener error:', err); });
             },
 
             sendChat() {
@@ -2007,13 +2324,19 @@
                 const text = inp.value.trim(); if (!text) return;
                 inp.value = '';
                 const u = this.s.user;
-                const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-                this.s.chatMsgs.push({ sender: u.name, role: u.role, text, isMe: true, time });
+                const now = Date.now();
+                const time = new Date(now).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                this.s.chatMsgs.push({ id: 'local_' + now, sender: u.name, role: u.role, text, isMe: true, ts: now, time });
                 this.renderChat();
                 db.collection(`${PATH}/meet-chat`).add({
-                    room: this.s.roomId, sender: u.name, role: u.role, text,
+                    room: this.s.roomId,
+                    uid: this.s.myUid,
+                    sender: u.name,
+                    role: u.role,
+                    text,
+                    ts: now,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                }).catch(() => { });
+                }).catch(e => { console.warn('Chat send error:', e); this.toast('Message failed to send'); });
             },
 
             renderChat() {
@@ -2068,35 +2391,123 @@
                     if (this.s.screenStream) { this.s.screenStream.getTracks().forEach(t => t.stop()); this.s.screenStream = null; }
                     this.s.screenOn = false;
                     document.getElementById('btn-screen').className = 'ctrl-btn';
-                    document.getElementById('sharing-banner').classList.remove('show');
-                    // Restore cam
-                    const vid = document.getElementById('vid-local');
-                    if (vid && this.s.localStream) { vid.srcObject = this.s.localStream; }
-                    this.updateTileCam('local', this.s.camOn);
+                    document.getElementById('sharing-banner').classList.add('hidden');
+                    // FIX: restore cam track in peers only if cam is on
+                    const camTrack = this.s.localStream?.getVideoTracks()[0];
+                    if (this.s.peers) {
+                        Object.values(this.s.peers).forEach(pc => {
+                            const sender = pc.getSenders().find(s => s.track?.kind === 'video');
+                            if (sender && camTrack) {
+                                sender.replaceTrack(camTrack).catch(() => { });
+                            } else if (sender && !camTrack) {
+                                sender.replaceTrack(null).catch(() => { });
+                            }
+                        });
+                    }
+                    this._exitSpotlight();
                     this.toast('Screen sharing stopped');
                 } else {
                     try {
-                        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+                        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
                         this.s.screenStream = stream; this.s.screenOn = true;
-                        const vid = document.getElementById('vid-local');
-                        if (vid) { vid.srcObject = stream; vid.style.display = 'block'; }
-                        const nv = document.getElementById('novid-local');
-                        if (nv) nv.classList.add('hidden');
+                        const screenTrack = stream.getVideoTracks()[0];
+                        if (screenTrack && this.s.peers) {
+                            Object.values(this.s.peers).forEach(pc => {
+                                const sender = pc.getSenders().find(s => s.track?.kind === 'video');
+                                if (sender) sender.replaceTrack(screenTrack).catch(() => { });
+                            });
+                        }
                         document.getElementById('btn-screen').className = 'ctrl-btn panel-on';
-                        document.getElementById('sharing-banner').classList.add('show');
-                        stream.getVideoTracks()[0].onended = () => this.toggleScreen();
+                        document.getElementById('sharing-banner').classList.remove('hidden');
+                        document.getElementById('sharing-label').textContent = `${this.s.user.name} is sharing screen`;
+                        // FIX: onended fires when user stops sharing via browser UI
+                        screenTrack.onended = () => {
+                            if (this.s.screenOn) this.toggleScreen();
+                        };
+                        this._enterSpotlight('local', stream);
                         this.toast('You are now sharing your screen');
                     } catch (e) {
-                        this.toast('Screen share cancelled.');
+                        // User cancelled or permission denied — no error toast needed
+                        if (e.name !== 'NotAllowedError') this.toast('Screen share unavailable.');
                     }
                 }
             },
 
+            _enterSpotlight(sharerId, stream) {
+                const area = document.getElementById('video-area');
+                const grid = document.getElementById('video-grid');
+                const strip = document.getElementById('spotlight-strip');
+
+                area.classList.add('spotlight-mode');
+                strip.classList.remove('hidden');
+
+                const allTiles = Array.from(grid.querySelectorAll('.video-tile'));
+                allTiles.forEach(t => strip.appendChild(t));
+
+                grid.innerHTML = '';
+                grid.className = 'video-grid';
+                grid.style.flex = '1';
+                grid.style.minHeight = '0';
+                grid.style.display = 'flex';
+                grid.style.flexDirection = 'column';
+
+                const main = document.createElement('div');
+                main.id = 'spotlight-main-tile';
+                main.style.cssText = 'flex:1;min-height:0;border-radius:18px;overflow:hidden;border:2.5px solid var(--amber);box-shadow:0 0 0 4px rgba(245,158,11,0.15);position:relative;background:#000;';
+
+                const vid = document.createElement('video');
+                vid.autoplay = true; vid.playsInline = true;
+                if (sharerId === 'local') vid.muted = true;
+                vid.style.cssText = 'width:100%;height:100%;object-fit:contain;background:#000;display:block;';
+                vid.srcObject = stream;
+
+                const overlay = document.createElement('div');
+                overlay.className = 'tile-overlay';
+                const sharerName = sharerId === 'local'
+                    ? this.s.user.name
+                    : (this.s.participants.find(p => p.id === sharerId)?.name || 'Participant');
+                overlay.innerHTML = `
+      <div class="tile-name">
+        <i class="fas fa-desktop" style="color:var(--amber);margin-right:5px;font-size:.9rem;"></i>
+        ${sharerName}'s Screen
+      </div>
+      <div style="font-size:.7rem;color:rgba(255,255,255,0.5);margin-bottom:2px;">Live</div>`;
+
+                main.appendChild(vid);
+                main.appendChild(overlay);
+                grid.appendChild(main);
+                this.s._spotlightSharerId = sharerId;
+            },
+
+            _exitSpotlight() {
+                const area = document.getElementById('video-area');
+                const grid = document.getElementById('video-grid');
+                const strip = document.getElementById('spotlight-strip');
+
+                area.classList.remove('spotlight-mode');
+
+                const main = document.getElementById('spotlight-main-tile');
+                if (main) main.remove();
+                grid.style.flex = ''; grid.style.minHeight = ''; grid.style.display = ''; grid.style.flexDirection = '';
+
+                Array.from(strip.querySelectorAll('.video-tile')).forEach(t => grid.appendChild(t));
+                strip.innerHTML = '';
+                strip.classList.add('hidden');
+
+                // FIX: restore local stream to local video tile after exiting spotlight
+                const vid = document.getElementById('vid-local');
+                if (vid && this.s.localStream) {
+                    vid.srcObject = this.s.localStream;
+                }
+                this.updateTileCam('local', this.s.camOn);
+
+                this.s._spotlightSharerId = null;
+                this.updateGridLayout();
+            },
+
             // ── PANELS ──
             openPanel(name) {
-                // If same panel, close it
                 if (this.s.openPanel === name) { this.closePanel(name); return; }
-                // Close previous
                 if (this.s.openPanel) this._closePanel(this.s.openPanel);
                 this.s.openPanel = name;
                 const panelMap = {
@@ -2217,7 +2628,12 @@
                         }
                     }
                 };
-                const end = () => { if (!drawing) return; drawing = false; this._saveWBState(); };
+                // FIX: save WB state on end so undo works for all tools
+                const end = () => {
+                    if (!drawing) return;
+                    drawing = false;
+                    if (this.s.wbTool !== 'text') this._saveWBState();
+                };
 
                 canvas.addEventListener('mousedown', start);
                 canvas.addEventListener('mousemove', draw);
@@ -2255,11 +2671,13 @@
             },
 
             wbClear() {
-                if (!confirm('Clear the whiteboard?')) return;
+                // FIX: use toast-style inline confirm instead of blocking confirm()
+                if (!window.confirm('Clear the whiteboard?')) return;
                 const c = document.getElementById('wb-canvas'); const ctx = c.getContext('2d');
                 ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, c.width, c.height);
                 this._drawWBGrid(ctx, c);
                 this.s.wbHistory = [];
+                this.toast('Whiteboard cleared');
             },
 
             wbSave() {
@@ -2305,27 +2723,43 @@
             leaveMeeting() {
                 if (!confirm('Leave the meeting?')) return;
                 clearInterval(this._clockInterval);
-                if (this.s.localStream) this.s.localStream.getTracks().forEach(t => t.stop());
-                if (this.s.screenStream) this.s.screenStream.getTracks().forEach(t => t.stop());
+
+                // FIX: stop screen share first before stopping local stream
+                if (this.s.screenOn) {
+                    if (this.s.screenStream) { this.s.screenStream.getTracks().forEach(t => t.stop()); this.s.screenStream = null; }
+                    this.s.screenOn = false;
+                    this._exitSpotlight();
+                }
+
+                if (this.s.localStream) { this.s.localStream.getTracks().forEach(t => t.stop()); this.s.localStream = null; }
+
                 if (this._presenceRef) this._presenceRef.update({ active: false }).catch(() => { });
                 if (this._presUnsub) this._presUnsub();
                 if (this._chatUnsub) this._chatUnsub();
+                if (this._signalUnsub) this._signalUnsub();
+                if (this.s.peers) { Object.values(this.s.peers).forEach(pc => { try { pc.close(); } catch (e) { } }); }
+
                 // Reset state
                 this.s.localStream = null; this.s.screenStream = null;
-                this.s.participants = []; this.s.chatMsgs = [];
+                this.s.participants = []; this.s.chatMsgs = []; this.s.peers = {};
+                this._seenMsgIds = new Set();
                 this.s.openPanel = null; this.s.handRaised = false;
                 this.s.wbHistory = []; this.s.screenOn = false;
+                this.s.micOn = true; this.s.camOn = true;
+
                 document.getElementById('video-grid').innerHTML = '';
+                document.getElementById('spotlight-strip').innerHTML = '';
+                document.getElementById('spotlight-strip').classList.add('hidden');
                 document.getElementById('cs-msgs').innerHTML = '<div class="empty-panel"><i class="fas fa-comments"></i>No messages yet</div>';
                 document.getElementById('host-badge').classList.add('hidden');
-                document.getElementById('sharing-banner').classList.remove('show');
+                document.getElementById('sharing-banner').classList.add('hidden');
                 document.getElementById('hand-btn').classList.remove('active-hand');
+                document.getElementById('chat-notif').style.display = 'none';
                 ['whiteboard', 'chat', 'participants'].forEach(p => this._closePanel(p));
+
                 document.getElementById('meet-room').classList.add('hidden');
                 document.getElementById('lobby-screen').classList.remove('hidden');
-                // Restart lobby preview
                 this.startLobbyPreview();
-                this.toast('You left the meeting.');
             },
 
             // ── HELPERS ──
