@@ -378,6 +378,146 @@
             margin: 20px 0;
         }
 
+        /* ── Attendance Timer Popup ── */
+        .attendance-confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .6);
+            backdrop-filter: blur(6px);
+            z-index: 8500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: .3s;
+        }
+
+        .attendance-confirm-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .attendance-confirm-box {
+            background: var(--c-surface);
+            border-radius: var(--r-xl);
+            border: 1px solid var(--c-border);
+            padding: 32px;
+            width: 100%;
+            max-width: 400px;
+            transform: translateY(16px);
+            transition: .3s;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .attendance-confirm-overlay.open .attendance-confirm-box {
+            transform: translateY(0);
+        }
+
+        .att-time-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--c-primary);
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .att-date-display {
+            text-align: center;
+            color: var(--c-text2);
+            margin-bottom: 20px;
+            font-size: .9rem;
+        }
+
+        .att-type-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .att-type-badge.in {
+            background: var(--c-green-soft);
+            color: var(--c-green);
+        }
+
+        .att-type-badge.out {
+            background: var(--c-amber-soft);
+            color: var(--c-amber);
+        }
+
+        .timer-container {
+            background: var(--c-surface2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: center;
+            border: 1px solid var(--c-border);
+        }
+
+        .timer-label {
+            font-size: .8rem;
+            color: var(--c-text3);
+            margin-bottom: 4px;
+        }
+
+        .timer-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--c-primary);
+            font-family: 'DM Mono', monospace;
+        }
+
+        .timer-sub {
+            font-size: .75rem;
+            color: var(--c-text2);
+            margin-top: 4px;
+        }
+
+        .checked-in-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--c-green-soft);
+            color: var(--c-green);
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: .9rem;
+            font-weight: 600;
+            margin-top: 10px;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(22, 163, 74, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+            }
+        }
+
+        .checked-out-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--c-surface2);
+            color: var(--c-text2);
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: .9rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
         /* ── Top Nav ── */
         #top-nav {
             position: fixed;
@@ -516,26 +656,6 @@
             font-size: 3.5rem;
             color: var(--c-primary);
         }
-
-        /* Transparent watermark logo behind hero text
-        .hero-watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: min(600px, 90vw);
-            height: min(600px, 90vw);
-            pointer-events: none;
-            z-index: 0;
-        } */
-
-        /* .hero-watermark img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            opacity: 0.12;
-            filter: saturate(0) brightness(0.6);
-        } */
 
         .hero-content {
             position: relative;
@@ -748,14 +868,7 @@
 
         .login-logo i {
             font-size: 1.5rem;
-            color: #fff;
-        }
-
-        .login-box h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: -.03em;
+            color: transparent;
         }
 
         .login-brand-sub {
@@ -765,10 +878,6 @@
             letter-spacing: .07em;
             text-transform: uppercase;
             margin-bottom: 24px;
-        }
-
-        .login-box .sub {
-            margin-bottom: 32px;
         }
 
         .form-group {
@@ -2223,6 +2332,21 @@
 
     <button id="mob-menu-btn" onclick="App.toggleSidebar()"><i class="fas fa-bars"></i></button>
 
+    <!-- Attendance Confirmation Modal -->
+    <div id="attendance-confirm-modal" class="attendance-confirm-overlay">
+        <div class="attendance-confirm-box">
+            <div id="att-confirm-type" class="att-type-badge in">Check In</div>
+            <div class="att-date-display" id="att-confirm-date"></div>
+            <div class="att-time-display" id="att-confirm-time"></div>
+            <p id="att-confirm-message" style="text-align: center; margin-bottom: 24px; color: var(--c-text2);"></p>
+            <div style="display:flex;gap:10px;">
+                <button class="btn btn-ghost" style="flex:1;" onclick="App.closeAttendanceConfirm()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1;" onclick="App.confirmAttendanceAction()"
+                    id="att-confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <!-- PDF Modal -->
     <div id="pdf-modal" class="modal-overlay">
         <div class="modal-box">
@@ -2546,12 +2670,18 @@
                     <div class="card span-3" id="tour-checkin">
                         <div class="lbl">Presence</div>
                         <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
-                            <button class="btn btn-success" onclick="App.markLog('IN')"><i
+                            <button class="btn btn-success" onclick="App.showAttendanceConfirm('IN')"><i
                                     class="fas fa-sign-in-alt"></i> Check In</button>
-                            <button class="btn btn-ghost" onclick="App.markLog('OUT')"><i
+                            <button class="btn btn-ghost" onclick="App.showAttendanceConfirm('OUT')"><i
                                     class="fas fa-sign-out-alt"></i> Check Out</button>
                         </div>
                         <div id="att-badge" style="margin-top:10px;"></div>
+                        <!-- Live Timer Display -->
+                        <div id="live-timer-container" class="timer-container" style="display: none;">
+                            <div class="timer-label">Time in Office Today</div>
+                            <div class="timer-value" id="live-timer">00:00:00</div>
+                            <div class="timer-sub" id="timer-checkin-time"></div>
+                        </div>
                     </div>
                     <div class="card span-6" id="tour-leaves">
                         <div class="lbl" style="margin-bottom:12px;">Leave Balance</div>
@@ -2777,6 +2907,10 @@
                 tourStep: 0, tourActive: false,
                 projectsById: {},
                 groups: [], // Added groups array
+                pendingAttendanceType: null, // For confirmation modal
+                timerInterval: null,
+                checkInTime: null,
+                currentTimerDisplay: '00:00:00'
             },
 
             async init() {
@@ -2855,7 +2989,12 @@
                     });
                 });
                 db.doc(`${PATH}/students/${this.s.user.id}`).onSnapshot(doc => {
-                    if (doc.exists) { this.s.user = { id: doc.id, ...doc.data() }; this.refreshUserUI(); }
+                    if (doc.exists) {
+                        this.s.user = { id: doc.id, ...doc.data() };
+                        this.refreshUserUI();
+                        // Check if user is checked in and start timer
+                        this.checkAndStartTimer();
+                    }
                 });
             },
 
@@ -2888,6 +3027,8 @@
                 document.getElementById('d-name').textContent = u.name || '---';
                 document.getElementById('d-details').textContent = `${u.branch || ''} · ${u.srn || ''}`;
                 this.renderMentor(); this.updateAttUI(); this.updateLeaveUI(); this.renderProjectsSummary();
+                // Check and update timer display
+                this.checkAndStartTimer();
             },
 
             renderMentor() {
@@ -2906,12 +3047,215 @@
                 if (pct >= 85) { b.textContent = 'Good'; b.className = 'badge badge-green'; }
                 else if (pct >= 75) { b.textContent = 'Average'; b.className = 'badge badge-amber'; }
                 else { b.textContent = 'Low'; b.className = 'badge badge-red'; }
-                document.getElementById('att-badge').innerHTML = `<span class="badge badge-blue">${u.att || 'Offline'}</span>`;
+
+                // Update attendance badge based on today's status
+                const today = new Date().toISOString().split('T')[0];
+                const todayLog = u.logs?.[today];
+                let statusText = 'Offline';
+                if (todayLog?.in && todayLog?.out) statusText = 'Completed';
+                else if (todayLog?.in && !todayLog?.out) statusText = 'Checked In ✓';
+                else statusText = 'Not Checked In';
+
+                document.getElementById('att-badge').innerHTML = `<span class="badge ${todayLog?.in ? (todayLog?.out ? 'badge-green' : 'badge-blue') : 'badge-amber'}">${statusText}</span>`;
+
                 const canvas = document.getElementById('att-ring');
                 if (canvas) {
                     if (window._attChart) window._attChart.destroy();
                     const color = pct >= 85 ? '#16A34A' : pct >= 75 ? '#D97706' : '#DC2626';
                     window._attChart = new Chart(canvas, { type: 'doughnut', data: { datasets: [{ data: [pct, 100 - pct], backgroundColor: [color, '#E5E7EB'], borderWidth: 0 }] }, options: { cutout: '75%', plugins: { legend: { display: false } }, responsive: false, animation: { duration: 600 } } });
+                }
+            },
+
+            // Attendance Timer Functions
+            checkAndStartTimer() {
+                const u = this.s.user;
+                if (!u) return;
+
+                const today = new Date().toISOString().split('T')[0];
+                const todayLog = u.logs?.[today];
+
+                // Clear existing timer if any
+                if (this.s.timerInterval) {
+                    clearInterval(this.s.timerInterval);
+                    this.s.timerInterval = null;
+                }
+
+                const timerContainer = document.getElementById('live-timer-container');
+                const timerElement = document.getElementById('live-timer');
+                const checkinTimeElement = document.getElementById('timer-checkin-time');
+
+                if (todayLog?.in && !todayLog?.out) {
+                    // User is checked in
+                    timerContainer.style.display = 'block';
+
+                    // Parse check-in time
+                    const checkinTimeStr = todayLog.in;
+                    const now = new Date();
+
+                    // Create check-in date object
+                    const checkinDate = new Date();
+                    const timeParts = checkinTimeStr.match(/(\d+):(\d+):(\d+)?\s*(AM|PM)?/i);
+
+                    if (timeParts) {
+                        let hours = parseInt(timeParts[1]);
+                        const minutes = parseInt(timeParts[2]);
+                        const seconds = timeParts[3] ? parseInt(timeParts[3]) : 0;
+                        const ampm = timeParts[4] ? timeParts[4].toUpperCase() : null;
+
+                        if (ampm === 'PM' && hours < 12) hours += 12;
+                        if (ampm === 'AM' && hours === 12) hours = 0;
+
+                        checkinDate.setHours(hours, minutes, seconds, 0);
+                        this.s.checkInTime = checkinDate;
+                    } else {
+                        // Fallback if parsing fails
+                        this.s.checkInTime = new Date();
+                    }
+
+                    checkinTimeElement.textContent = `Checked in at ${checkinTimeStr}`;
+
+                    // Start timer
+                    this.s.timerInterval = setInterval(() => {
+                        this.updateTimer();
+                    }, 1000);
+
+                    // Initial update
+                    this.updateTimer();
+                } else {
+                    // User is not checked in
+                    timerContainer.style.display = 'none';
+                    this.s.checkInTime = null;
+                }
+            },
+
+            updateTimer() {
+                if (!this.s.checkInTime) return;
+
+                const now = new Date();
+                const diffMs = now - this.s.checkInTime;
+
+                if (diffMs < 0) return;
+
+                const hours = Math.floor(diffMs / 3600000);
+                const minutes = Math.floor((diffMs % 3600000) / 60000);
+                const seconds = Math.floor((diffMs % 60000) / 1000);
+
+                const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('live-timer').textContent = timeString;
+                this.s.currentTimerDisplay = timeString;
+            },
+
+            showAttendanceConfirm(type) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+                document.getElementById('att-confirm-type').textContent = type === 'IN' ? 'Check In' : 'Check Out';
+                document.getElementById('att-confirm-type').className = `att-type-badge ${type === 'IN' ? 'in' : 'out'}`;
+                document.getElementById('att-confirm-date').textContent = dateStr;
+                document.getElementById('att-confirm-time').textContent = timeStr;
+                document.getElementById('att-confirm-message').textContent =
+                    type === 'IN' ? 'Confirm your check-in time. This will start your attendance timer.' :
+                        'Confirm your check-out time. This will end your attendance tracking for today.';
+
+                this.s.pendingAttendanceType = type;
+                document.getElementById('attendance-confirm-modal').classList.add('open');
+            },
+
+            closeAttendanceConfirm() {
+                document.getElementById('attendance-confirm-modal').classList.remove('open');
+                this.s.pendingAttendanceType = null;
+            },
+
+            async confirmAttendanceAction() {
+                const type = this.s.pendingAttendanceType;
+                if (!type) return;
+
+                await this.markLog(type);
+                this.closeAttendanceConfirm();
+            },
+
+            async markLog(type) {
+                const u = this.s.user; if (!u) return;
+                const now = new Date(), time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }), dk = now.toISOString().split('T')[0];
+                const logs = JSON.parse(JSON.stringify(u.logs || {}));
+                if (!logs[dk]) logs[dk] = {};
+                logs[dk][type.toLowerCase()] = time;
+
+                // Calculate total time spent if checking out
+                let totalTimeSpent = null;
+                if (type === 'OUT' && logs[dk].in) {
+                    // Parse check-in time and calculate duration
+                    const checkinTimeStr = logs[dk].in;
+                    const checkoutTimeStr = time;
+
+                    // Create date objects for calculation
+                    const checkinDate = new Date();
+                    const checkoutDate = new Date();
+
+                    const parseTime = (timeStr) => {
+                        const parts = timeStr.match(/(\d+):(\d+):(\d+)?\s*(AM|PM)?/i);
+                        if (parts) {
+                            let hours = parseInt(parts[1]);
+                            const minutes = parseInt(parts[2]);
+                            const seconds = parts[3] ? parseInt(parts[3]) : 0;
+                            const ampm = parts[4] ? parts[4].toUpperCase() : null;
+
+                            if (ampm === 'PM' && hours < 12) hours += 12;
+                            if (ampm === 'AM' && hours === 12) hours = 0;
+
+                            return { hours, minutes, seconds };
+                        }
+                        return null;
+                    };
+
+                    const checkinParts = parseTime(checkinTimeStr);
+                    const checkoutParts = parseTime(checkoutTimeStr);
+
+                    if (checkinParts && checkoutParts) {
+                        checkinDate.setHours(checkinParts.hours, checkinParts.minutes, checkinParts.seconds, 0);
+                        checkoutDate.setHours(checkoutParts.hours, checkoutParts.minutes, checkoutParts.seconds, 0);
+
+                        // If checkout is earlier than checkin, assume it's next day (past midnight)
+                        if (checkoutDate < checkinDate) {
+                            checkoutDate.setDate(checkoutDate.getDate() + 1);
+                        }
+
+                        const diffMs = checkoutDate - checkinDate;
+                        const hours = Math.floor(diffMs / 3600000);
+                        const minutes = Math.floor((diffMs % 3600000) / 60000);
+                        const seconds = Math.floor((diffMs % 60000) / 1000);
+
+                        totalTimeSpent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        logs[dk].totalTime = totalTimeSpent;
+                    }
+                }
+
+                await db.doc(`${PATH}/students/${u.id}`).update({
+                    att: type === 'IN' ? 'Checked In' : 'Checked Out',
+                    logs,
+                    lastAction: type,
+                    ...(type === 'IN' ? { lastCheckIn: time } : { lastCheckOut: time })
+                });
+
+                // Show success message with time
+                if (type === 'IN') {
+                    this.toast(`✅ Checked in at ${time}. Timer started.`, 'success');
+                } else {
+                    const timeSpentMsg = totalTimeSpent ? ` Total time: ${totalTimeSpent}` : '';
+                    this.toast(`✅ Checked out at ${time}.${timeSpentMsg}`, 'success');
+                }
+
+                // Update timer display
+                if (type === 'IN') {
+                    this.checkAndStartTimer();
+                } else {
+                    // Stop timer on checkout
+                    if (this.s.timerInterval) {
+                        clearInterval(this.s.timerInterval);
+                        this.s.timerInterval = null;
+                    }
+                    document.getElementById('live-timer-container').style.display = 'none';
                 }
             },
 
@@ -2973,11 +3317,15 @@
                 }
                 document.getElementById('att-calendar').innerHTML = html;
                 const keys = Object.keys(logs).sort().reverse();
-                document.getElementById('daily-logs').innerHTML = keys.length ? keys.map(dk => `
+                document.getElementById('daily-logs').innerHTML = keys.length ? keys.map(dk => {
+                    const log = logs[dk];
+                    const timeSpent = log.totalTime ? `<span style="color:var(--c-green); font-size:.7rem; margin-left:4px;">(${log.totalTime})</span>` : '';
+                    return `
                     <div class="log-item">
                         <div class="mono" style="font-size:.8rem;">${dk}</div>
-                        <div style="font-size:.78rem;color:var(--c-text2);">${logs[dk].in || '--'} → ${logs[dk].out || '--'}</div>
-                    </div>`).join('') : '<p class="sub" style="font-size:.82rem;">No logs found.</p>';
+                        <div style="font-size:.78rem;color:var(--c-text2);">${log.in || '--'} → ${log.out || '--'}${timeSpent}</div>
+                    </div>`;
+                }).join('') : '<p class="sub" style="font-size:.82rem;">No logs found.</p>';
             },
 
             renderProjects() {
@@ -3464,16 +3812,6 @@
                 document.getElementById('leave-type').value = '';
             },
 
-            async markLog(type) {
-                const u = this.s.user; if (!u) return;
-                const now = new Date(), time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }), dk = now.toISOString().split('T')[0];
-                const logs = JSON.parse(JSON.stringify(u.logs || {}));
-                if (!logs[dk]) logs[dk] = {};
-                logs[dk][type.toLowerCase()] = time;
-                await db.doc(`${PATH}/students/${u.id}`).update({ att: type === 'IN' ? 'Checked In' : 'Checked Out', logs, lastAction: type });
-                this.toast(`${type === 'IN' ? 'Checked in' : 'Checked out'} at ${time}`, 'success');
-            },
-
             async openPDF(url, title) {
                 if (!url) { this.toast('No document available.', 'error'); return; }
                 document.getElementById('pdf-modal-title').textContent = title || 'Document';
@@ -3532,7 +3870,7 @@
                 { target: 'tour-identity', title: 'Your Profile', desc: 'Your name, branch, and registration number are shown here at all times.' },
                 { target: 'tour-mentor', title: 'Your Mentor', desc: 'Your assigned faculty mentor who guides you through the program.' },
                 { target: 'tour-attendance-card', title: 'Attendance Overview', desc: 'Live attendance percentage with a visual ring chart showing your status out of 90 days.' },
-                { target: 'tour-checkin', title: 'Check In / Out', desc: 'Mark your daily attendance. Check in when you arrive, check out when you leave.' },
+                { target: 'tour-checkin', title: 'Check In / Out', desc: 'Mark your daily attendance. Check in when you arrive, check out when you leave. A live timer will show your time in office.' },
                 { target: 'tour-leaves', title: 'Leave Balance', desc: 'Track your sick (5 total) and normal (2 total) leave balance. Apply via the button above.' },
                 { target: 'tour-projects-summary', title: 'Project Overview', desc: 'Quick summary of your projects with document counts and milestone completion.' },
                 { target: 'nav-notifications', title: 'Notifications', desc: 'View mentor and admin updates here. A red dot appears when you have unread notifications.' },
@@ -3629,10 +3967,12 @@
         });
         document.getElementById('pdf-modal').addEventListener('click', function (e) { if (e.target === this) App.closePDF(); });
         document.getElementById('leave-modal').addEventListener('click', function (e) { if (e.target === this) App.closeLeaveModal(); });
+        document.getElementById('attendance-confirm-modal').addEventListener('click', function (e) { if (e.target === this) App.closeAttendanceConfirm(); });
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
                 App.closePDF();
                 App.closeLeaveModal();
+                App.closeAttendanceConfirm();
                 if (App.s.tourActive) App.tourSkip();
             }
         });
